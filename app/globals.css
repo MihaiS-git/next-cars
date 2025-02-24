@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body{
+  background-image:url('/background/main_background.webp') ;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  height: "100vh";
+  width: "100vw";
+}
 
 
 @layer base {
