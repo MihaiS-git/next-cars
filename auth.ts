@@ -11,10 +11,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
   providers: [
     Credentials({
-      credentials: {
-        email: {},
-        password: {},
-      },
       authorize: async (credentials) => {
         const parsedCredentials = logInSchema.safeParse(credentials);
         if (parsedCredentials.success) {

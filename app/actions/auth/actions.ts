@@ -1,18 +1,26 @@
 'use server';
 
-import { signIn, signOut } from '@/auth';
+import { signIn } from '@/auth';
 import { AuthError } from "next-auth";
 import { signUpSchema } from '@/lib/auth-zod';
 import { saltAndHashPassword } from '@/lib/util/password';
 import { createNewUser, getUserByEmail } from '@/lib/queries/users-queries';
 
-export async function authenticate(prevState: string | undefined, formData: FormData, method: 'credentials' | 'google') {
+export async function authenticate(prevState: string | undefined, formData: FormData, provider: 'google' | 'credentials') {
     try {
-        if (method === 'google') {
-            await signIn('google');
-        } else {
-            await signIn('credentials', formData);
+        if (provider === 'google') {
+            return await signIn('google');
+        } else if (provider === 'credentials') {
+            const res = await signIn('credentials', {
+                redirect: false,
+                email: formData.get('email'),
+                password: formData.get('password')
+            });
+            if (res?.error) {
+                return 'Invalid credentials.';
+            }
         }
+        return null;
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {
@@ -25,7 +33,6 @@ export async function authenticate(prevState: string | undefined, formData: Form
         throw error;
     }
 }
-
 
 export type State = {
     errors?: {

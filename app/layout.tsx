@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
 import MainHeader from "@/components/ui/main-header";
 import MainFooter from "@/components/ui/main-footer";
 import { SessionProvider } from "next-auth/react";
@@ -23,9 +22,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
-}: Readonly<{
+}: {
     children: React.ReactNode;
-}>) {
+}) {
     return (
         <html lang="en">
             <body

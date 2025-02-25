@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
-export default function GoogleLoginButton() {
+interface GoogleLoginButtonProps {
+    onClick: () => void;
+}
+
+export default function GoogleLoginButton({ onClick }: GoogleLoginButtonProps) {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/account";
 
