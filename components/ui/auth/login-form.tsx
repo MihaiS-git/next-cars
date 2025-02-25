@@ -1,7 +1,7 @@
 "use client";
 
 import { authenticate } from "@/app/actions/auth/actions";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,6 @@ import Link from "next/link";
 
 export default function LoginForm() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const callbackUrl = searchParams.get("callbackUrl") || "/account";
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [emailTouched, setEmailTouched] = useState(false);
@@ -23,20 +22,18 @@ export default function LoginForm() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const error = await authenticate(undefined, formData, "credentials");
-        setErrorMessage(error ?? null);
+        setErrorMessage(error ?? "Something went wrong.");
         if (!error) {
             await update();
-            router.push(callbackUrl);
         }
     };
 
     const handleGoogleLogin = async () => {
         setErrorMessage(null);
         const error = await authenticate(undefined, new FormData(), "google");
-        setErrorMessage(error ?? null);
+        setErrorMessage(error ?? "Something went wrong.");
         if (!error) {
             await update();
-            router.push(callbackUrl);
         }
     };
 

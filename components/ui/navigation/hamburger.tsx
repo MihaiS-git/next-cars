@@ -10,9 +10,9 @@ export default function Hamburger() {
 
     const toggleOpenState = useCallback(() => {
         setIsOpen((prev) => !prev);
-    }, []);
-
-    const memoizedMenu = useMemo(() => <HamburgerMenu />, []);
+    }, [isOpen]);
+    
+    const memoizedMenu = useMemo(() => <HamburgerMenu openState={isOpen} handleClose={toggleOpenState} />, [isOpen, toggleOpenState]);
 
     return (
         <div>
