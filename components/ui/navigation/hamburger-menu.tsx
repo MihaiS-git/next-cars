@@ -13,7 +13,7 @@ export default function HamburgerMenu({ openState, handleClose }: HamburgerMenuP
     if (status === "loading") return <p className="text-zinc-50">Loading...</p>;
 
     return (
-        <ul className="flex flex-col justify-center space-y-2 mb-4 pt-8 text-center h-full sm:text-xl md:text-3xl md:space-y-4">
+        <ul className="flex flex-col justify-center space-y-2 mb-4 pt-8 text-center h-full sm:text-xl md:space-y-4">
             <li className="px-4 py-2 w-60">
                 <Link href="/cars" onClick={handleClose}>Cars</Link>
             </li>

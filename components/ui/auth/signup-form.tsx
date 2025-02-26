@@ -30,7 +30,7 @@ export default function SignupForm() {
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="email" className="w-3/12 xl:w-2/12">Email</label>
                     <input
-                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1"
+                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         type="email"
                         id="email"
                         name="email"
@@ -48,7 +48,7 @@ export default function SignupForm() {
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="password" className="w-3/12 xl:w-2/12">Password</label>
                     <input
-                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1"
+                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         type="password"
                         id="password"
                         name="password"
@@ -66,7 +66,7 @@ export default function SignupForm() {
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="confirmPassword" className="w-3/12 xl:w-2/12">Confirmation</label>
                     <input
-                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1"
+                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         type="password"
                         id="confirmPassword"
                         name="confirmPassword"

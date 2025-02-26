@@ -18,12 +18,12 @@ export default function Hamburger() {
         <div>
             {!isOpen && (
                 <div
-                    className="lg:hidden fixed top-4 right-4 md:top-2 md:right-2 py-2 w-8 h-8 space-y-1 md:py-3 md:w-12 md:h-12 md-pace-y-2 bg-zinc-950 rounded shadow flex flex-col justify-between"
+                    className="lg:hidden fixed top-4 right-4 md:top-2 md:right-2 py-2 w-8 h-8 space-y-1 md:py-3 md:w-12 md:h-12 md-pace-y-2 bg-zinc-900 rounded shadow flex flex-col justify-between"
                     onClick={toggleOpenState}
                 >
-                    <span className="block mx-auto w-6 md:w-7 h-0.5 md:h-0.5 bg-zinc-50 animate-pulse"></span>
-                    <span className="block mx-auto w-6 md:w-7 h-0.5 md:h-0.5 bg-zinc-50 animate-pulse"></span>
-                    <span className="block mx-auto w-6 md:w-7 h-0.5 md:h-0.5 bg-zinc-50 animate-pulse"></span>
+                    <span className="block mx-auto w-6 md:w-7 h-0.5 md:h-0.5 bg-red-600 animate-pulse"></span>
+                    <span className="block mx-auto w-6 md:w-7 h-0.5 md:h-0.5 bg-red-600 animate-pulse"></span>
+                    <span className="block mx-auto w-6 md:w-7 h-0.5 md:h-0.5 bg-red-600 animate-pulse"></span>
                 </div>
             )}
             
