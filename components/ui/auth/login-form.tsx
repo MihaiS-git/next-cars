@@ -1,8 +1,8 @@
 "use client";
 
 import { authenticate } from "@/app/actions/auth/actions";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import GoogleLoginButton from "./google-login-button";
@@ -14,7 +14,14 @@ export default function LoginForm() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [emailTouched, setEmailTouched] = useState(false);
     const [passwordTouched, setPasswordTouched] = useState(false);
-    const { update } = useSession();
+    const { data: session, status, update } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push(callbackUrl);
+        }
+    }, [status]);
 
     const handleFormSubmit = async (
         event: React.FormEvent<HTMLFormElement>
@@ -48,7 +55,7 @@ export default function LoginForm() {
                         Email
                     </label>
                     <input
-                        className="text-zinc-950 w-10/12 p-1"
+                        className="text-zinc-950 w-10/12 p-1 rounded-md"
                         type="email"
                         id="email"
                         name="email"
@@ -62,7 +69,7 @@ export default function LoginForm() {
                         Password
                     </label>
                     <input
-                        className="text-zinc-950 w-10/12 p-1"
+                        className="text-zinc-950 w-10/12 p-1 rounded-md"
                         type="password"
                         id="password"
                         name="password"
@@ -76,13 +83,13 @@ export default function LoginForm() {
                     type="submit"
                     variant="secondary"
                     size="lg"
-                    className="mb-2 mt-4 mx-auto w-3/4 md:w-1/2"
+                    className="mb-0 mt-4 mx-auto w-3/4 md:w-1/2"
                 >
                     Login
                 </Button>
                 <Link
                     href="/auth/signup"
-                    className="text-cyan-400 underline mx-auto mb-8 cursor-pointer hover:animate-pulse"
+                    className="text-cyan-400 underline mx-auto cursor-pointer hover:animate-pulse"
                 >
                     Create new account
                 </Link>
@@ -92,8 +99,9 @@ export default function LoginForm() {
                             <p className="text-red-600">{errorMessage}</p>
                         </div>
                     )}
+            <hr className="my-4 h-0.5 bg-zinc-50 border-none"/>
             </form>
-            <div className="mb-2 mt-4 p-4 md:p-8 text-center w-full">
+            <div className="mb-2 text-center w-full px-4 md:px-8" >
                 <GoogleLoginButton onClick={handleGoogleLogin} />
             </div>
         </>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import { Button } from "../button";
 
 export default function LogoutButton() {
     const { status, update } = useSession();
@@ -15,8 +16,13 @@ export default function LogoutButton() {
     }
 
     return (
-        <button type="button" onClick={handleLogout} className="text-slate-200 px-4 hover:animate-pulse hover:text-red-600">
+        <Button
+            variant="destructive"
+            size="lg"
+            onClick={handleLogout}
+            className="text-base"
+        >
             Logout
-        </button>
+        </Button>
     );
 }

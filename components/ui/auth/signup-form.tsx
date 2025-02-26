@@ -1,7 +1,7 @@
 "use client";
 
 import { signup } from "@/app/actions/auth/actions";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -10,6 +10,9 @@ export default function SignupForm() {
     const initialState = { message: "", errors: {} };
     const [formState, formAction] = useActionState(signup, initialState);
     const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     useEffect(() => {
         if (formState.redirectTo) {
@@ -21,7 +24,8 @@ export default function SignupForm() {
         <>
             <form
                 action={formAction}
-                 className="flex flex-col gap-4 justify-between align-middle w-full p-4 md:p-8"
+                className="flex flex-col gap-4 justify-between align-middle w-full p-4 md:p-8"
+                noValidate
             >
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="email" className="w-3/12 xl:w-2/12">Email</label>
@@ -30,6 +34,8 @@ export default function SignupForm() {
                         type="email"
                         id="email"
                         name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         aria-describedby="email-error"
                     />
                 </p>
@@ -46,6 +52,8 @@ export default function SignupForm() {
                         type="password"
                         id="password"
                         name="password"
+                        value={password}
+                        onChange={(e)=>setPassword(e.target.value)}
                         aria-describedby="password-error"
                     />
                 </p>
@@ -62,6 +70,8 @@ export default function SignupForm() {
                         type="password"
                         id="confirmPassword"
                         name="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e)=>{setConfirmPassword(e.target.value)}}
                         aria-describedby="confirmPassword-error"
                     />
                 </p>
@@ -79,7 +89,7 @@ export default function SignupForm() {
                 >
                     Signup
                 </Button>
-                <Link href="/auth/login" className="text-cyan-400 underline mx-auto mb-8 cursor-pointer hover:animate-pulse">
+                <Link href="/auth/login" className="text-cyan-400 underline mx-auto mb-6 cursor-pointer hover:animate-pulse">
                     Login with existent account
                 </Link>
                 <div id="general-error" className="text-center text-base text-red-600">
