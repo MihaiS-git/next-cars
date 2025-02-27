@@ -1,6 +1,7 @@
 import mongoose, { model, Schema } from "mongoose";
 
 export interface IRentalAgencyDetails extends Document {
+    _id?: string;
     agencyName: string;
     contactNumber: string;
 }

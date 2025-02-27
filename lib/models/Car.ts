@@ -7,6 +7,7 @@ import { IRentalAgencyDetails } from '@/lib/models/RentalAgencyDetails';
 import { Schema } from 'mongoose';
 
 export interface ICar extends Document {
+    _id?: string;
     make: string;
     model: string;
     year: number;

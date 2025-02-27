@@ -1,6 +1,7 @@
 import mongoose, { model, Schema } from "mongoose";
 
 export interface ICarImagesAndDocuments extends Document {
+    _id?: string;
     carImages: string[],
     registrationNumber: string,
     insurancePolicyNumber: string,
