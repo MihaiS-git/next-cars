@@ -1,6 +1,7 @@
 import mongoose, { model, Schema } from "mongoose";
 
 export interface ICarRentalDetails extends Document {
+    id?: string;
     rentalPricePerDay: number;
     currency: string;
     availabilityStatus: 'Available' | 'Rented' | 'Under Maintenance';

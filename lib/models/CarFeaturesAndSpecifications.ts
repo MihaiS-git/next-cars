@@ -1,6 +1,7 @@
 import mongoose, { model, Schema } from "mongoose";
 
 export interface ICarFeaturesAndSpecifications extends Document {
+    id?: string;
     airConditioning: boolean;
     gps: boolean;
     bluetooth: boolean;

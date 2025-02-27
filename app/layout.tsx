@@ -4,6 +4,8 @@ import "./globals.css";
 import MainHeader from "@/components/ui/main-header";
 import MainFooter from "@/components/ui/main-footer";
 import { SessionProvider } from "next-auth/react";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -30,13 +32,15 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <SessionProvider>
-                    <MainHeader />
-                    <main className="flex flex-col items-center py-16">
-                        {children}
-                    </main>
-                    <MainFooter />
-                </SessionProvider>
+                <Provider store={store}>
+                    <SessionProvider>
+                        <MainHeader />
+                        <main className="flex flex-col items-center py-16">
+                            {children}
+                        </main>
+                        <MainFooter />
+                    </SessionProvider>
+                </Provider>
             </body>
         </html>
     );
