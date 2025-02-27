@@ -2,9 +2,6 @@
 
 import { User } from "@/lib/definitions";
 import { withDb } from "@/lib/util/db-helper";
-import dotenv from 'dotenv';
-dotenv.config();
-
 
 export async function getUserByEmail(email: string): Promise<User | null> {
   return withDb('users', async (collection) => {
