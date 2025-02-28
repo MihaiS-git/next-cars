@@ -20,3 +20,4 @@ export const getCars = async (): Promise<ICar[]> => {
         throw new Error("Error fetching cars from the database");
     }
 };
+

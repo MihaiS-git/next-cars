@@ -10,6 +10,7 @@ import { store } from "@/app/store";
 import { metadata } from '@/app/layout-server';
 import "./globals.css";
 
+
 const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
