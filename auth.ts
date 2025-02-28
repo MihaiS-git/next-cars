@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { validatePassword } from "@/lib/util/password";
 import { authConfig } from "@/auth.config";
-import { logInSchema } from "@/lib/auth-zod";
+import { logInSchema } from "@/lib/validators/auth-zod";
 import { getUserByEmail } from "@/lib/queries/users-queries";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

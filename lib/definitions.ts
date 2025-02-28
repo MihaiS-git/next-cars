@@ -5,10 +5,43 @@ export type User = {
     name?: string;
 };
 
-export interface ICarFrontend {
+export interface ICarRentalDetails {
+    id?: string;
+    rentalPricePerDay: number;
+    currency: string;
+    availabilityStatus: 'Available' | 'Rented' | 'Under Maintenance';
+    carLocation: string;
+    minRentalPeriod: number;
+    maxRentalPeriod: number;
+}
+
+export interface ICarFeaturesAndSpecifications {
+    id?: string;
+    airConditioning: boolean;
+    gps: boolean;
+    bluetooth: boolean;
+    fuelPolicy: 'Full-to-full' | 'Prepaid';
+    insuranceIncluded: boolean;
+    additionalFeatures: string[];
+}
+
+export interface ICarImagesAndDocuments {
+    id?: string;
+    carImages: string[],
+    registrationNumber: string,
+    insurancePolicyNumber: string,
+}
+
+export interface IRentalAgencyDetails {
+    id?: string;
+    agencyName: string;
+    contactNumber: string;
+}
+
+export interface ICar {
     id?: string;
     make: string;
-    model: string;
+    carModel: string;
     year: number;
     category: 'Classic' | 'Sport' | 'Sedan' | 'SUV';
     seats: number;
@@ -16,8 +49,9 @@ export interface ICarFrontend {
     transmission: 'Manual' | 'Automatic';
     fuelType: 'Gasoline' | 'Diesel' | 'Electric' | 'Hybrid';
     mileage: number;
-    carRentalDetails: string;
-    carFeaturesAndSpecifications: string;
-    carImagesAndDocuments: string;
-    rentalAgencyDetails: string;
+    carRentalDetails: string | ICarRentalDetails | null;
+    carFeaturesAndSpecifications: string | ICarFeaturesAndSpecifications | null;
+    carImagesAndDocuments: string | ICarImagesAndDocuments | null;
+    rentalAgencyDetails: string | IRentalAgencyDetails | null;
 }
+

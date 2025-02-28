@@ -1,9 +1,6 @@
-import { ICarFrontend } from "@/lib/definitions";
-import { mapCarsToFrontend } from "@/lib/mappers/carMapper";
+import { ICar } from "@/lib/definitions";
 
-export const getCars = async (): Promise<ICarFrontend[]> => {
-    console.log("fetchCars action called");
-
+export const getCars = async (): Promise<ICar[]> => {
     try {
         const response = await fetch("/api/cars");
 
@@ -11,9 +8,12 @@ export const getCars = async (): Promise<ICarFrontend[]> => {
             throw new Error("Failed to fetch cars");
         }
 
-        const data = await response.json();
-        const cars = mapCarsToFrontend(data);
-        
+        const result = await response.json();
+        console.log("RESPONSE: ", result);
+
+        const cars: ICar[] = result.data || [];
+        console.log("CARS: ", cars);
+
         return cars;
     } catch (error) {
         console.error(error);

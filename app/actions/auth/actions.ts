@@ -2,7 +2,7 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from "next-auth";
-import { signUpSchema } from '@/lib/auth-zod';
+import { signUpSchema } from '@/lib/validators/auth-zod';
 import { saltAndHashPassword } from '@/lib/util/password';
 import { createNewUser, getUserByEmail } from '@/lib/queries/users-queries';
 
