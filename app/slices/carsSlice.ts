@@ -1,10 +1,10 @@
 'use client';
 
-import { ICarFrontend } from "@/lib/definitions";
+import { ICar } from "@/lib/definitions";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CarState {
-  cars: ICarFrontend[];
+  cars: ICar[];
   loading: boolean;
   error: string | null;
 }
@@ -20,17 +20,14 @@ const carSlice = createSlice({
   initialState,
   reducers: {
     getCarsStart: (state) => {
-      console.log("getCarsStart called");
       state.loading = true;
       state.error = null;
     },
-    getCarsSuccess: (state, action: PayloadAction<ICarFrontend[]>) => {
-      console.log("getCarsSuccess called");
+    getCarsSuccess: (state, action: PayloadAction<ICar[]>) => {
       state.loading = false;
       state.cars = action.payload;
     },
     getCarsFailure: (state, action: PayloadAction<string>) => {
-      console.log("getCarsFailure called");
       state.loading = false;
       state.error = action.payload;
     },

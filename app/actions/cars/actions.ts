@@ -9,10 +9,7 @@ export const getCars = async (): Promise<ICar[]> => {
         }
 
         const result = await response.json();
-        console.log("RESPONSE: ", result);
-
         const cars: ICar[] = result.data || [];
-        console.log("CARS: ", cars);
 
         return cars;
     } catch (error) {

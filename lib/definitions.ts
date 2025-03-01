@@ -1,12 +1,12 @@
 export type User = {
-    id?: string;
+    _id?: string;
     email: string;
     password: string;
     name?: string;
 };
 
 export interface ICarRentalDetails {
-    id?: string;
+    _id?: string;
     rentalPricePerDay: number;
     currency: string;
     availabilityStatus: 'Available' | 'Rented' | 'Under Maintenance';
@@ -16,7 +16,7 @@ export interface ICarRentalDetails {
 }
 
 export interface ICarFeaturesAndSpecifications {
-    id?: string;
+    _id?: string;
     airConditioning: boolean;
     gps: boolean;
     bluetooth: boolean;
@@ -26,20 +26,20 @@ export interface ICarFeaturesAndSpecifications {
 }
 
 export interface ICarImagesAndDocuments {
-    id?: string;
+    _id?: string;
     carImages: string[],
     registrationNumber: string,
     insurancePolicyNumber: string,
 }
 
 export interface IRentalAgencyDetails {
-    id?: string;
+    _id?: string;
     agencyName: string;
     contactNumber: string;
 }
 
 export interface ICar {
-    id?: string;
+    _id?: string;
     make: string;
     carModel: string;
     year: number;
