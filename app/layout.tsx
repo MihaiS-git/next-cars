@@ -2,13 +2,13 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-import { Provider } from "react-redux";
 
 import MainHeader from "@/components/ui/main-header";
 import MainFooter from "@/components/ui/main-footer";
-import { store } from "@/app/store";
 import { metadata } from '@/app/layout-server';
 import "./globals.css";
+import { queryClient } from "@/lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 
 const geistSans = Geist({
@@ -27,7 +27,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
             <html lang="en">
                 <head>
                     <title>{String(metadata.title) || "Next Cars"}</title>
@@ -45,6 +45,6 @@ export default function RootLayout({
                     </SessionProvider>
                 </body>
             </html>
-        </Provider>
+        </QueryClientProvider>
     );
 }
