@@ -1,7 +1,7 @@
 "use client";
 
 import { ICar } from "@/lib/definitions";
-import CarCard from "./car-card";
+import CarCard from "./CarCard";
 import { getAllCarsWithPictures } from "@/app/actions/cars/actions";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
