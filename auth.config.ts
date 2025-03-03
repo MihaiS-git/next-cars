@@ -10,7 +10,7 @@ export const authConfig = {
         token.id = user.id;
         token.email = user.email;
       }
-      return token; 
+      return token;
     },
     async session({ session, token }) {
       if (token) {
@@ -19,16 +19,26 @@ export const authConfig = {
       }
       return session;
     },
-    authorized({ auth, request: { nextUrl } }) {
+    async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const protectedRoutes = ['/account'];
-      const isOnProtectedRoute = protectedRoutes.some(route => nextUrl.pathname.startsWith(route));
-      if (isOnProtectedRoute) {
-        if (isLoggedIn) return true;
-        return false;
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL('/account', nextUrl));
+      const protectedRoutes = ['/welcome', '/cars'];
+
+      // If the user is logged in and tries to access /welcome, allow them to stay
+      if (protectedRoutes.some(route => nextUrl.pathname.startsWith(route)) && isLoggedIn) {
+        return true;  // Stay on /welcome
       }
+
+      // If the user is not logged in and tries to access a protected route, deny access
+      if (protectedRoutes.some(route => nextUrl.pathname.startsWith(route)) && !isLoggedIn) {
+        return false;  // Deny access to /welcome
+      }
+
+      // If the user is logged in and tries to access any other route, allow access to that route
+      if (isLoggedIn) {
+        return true;
+      }
+
+      // If the user is not logged in, allow access to non-protected routes
       return true;
     },
   },

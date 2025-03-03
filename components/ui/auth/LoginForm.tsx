@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function LoginForm() {
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get("callbackUrl") || "/account";
+    const callbackUrl = searchParams.get("callbackUrl") || "/welcome";
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [emailTouched, setEmailTouched] = useState(false);
     const [passwordTouched, setPasswordTouched] = useState(false);

@@ -8,7 +8,7 @@ interface GoogleLoginButtonProps {
 
 export default function GoogleLoginButton({ onClick }: GoogleLoginButtonProps) {
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get("callbackUrl") || "/account";
+    const callbackUrl = searchParams.get("callbackUrl") || "/welcome";
 
     return (
         <>

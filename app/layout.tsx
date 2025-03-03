@@ -28,17 +28,17 @@ export default function RootLayout({
 }) {
     return (
         <QueryClientProvider client={queryClient}>
-            <html lang="en">
+            <html lang="en" className="w-screen h-screen">
                 <head>
                     <title>{String(metadata.title) || "Next Cars"}</title>
                     <meta name="description" content={metadata.description ?? undefined} />
                 </head>
                 <body
-                    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                    className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
                 >
                     <SessionProvider>
                         <MainHeader />
-                        <main className="flex flex-col items-center py-16">
+                        <main className="flex flex-col items-center py-16 w-full min-h-screen">
                             {children}
                         </main>
                         <MainFooter />

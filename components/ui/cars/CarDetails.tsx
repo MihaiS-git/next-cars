@@ -6,7 +6,7 @@ export default function CarDetails({ car }: {car: ICar}) {
     return (
         <div className="flex flex-col bg-zinc-800 text-zinc-50 w-full md:w-11/12 rounded-lg border border-red-600 mt-4 items-center lg:items-stretch">
             <div>
-                <Carousel className="mx-auto w-full lg:w-8/12">
+                <Carousel className="mx-auto w-full lg:w-8/12 lg:pt-8">
                     <CarouselContent>
                         {typeof car?.carImagesAndDocuments === 'object' && car?.carImagesAndDocuments?.carImages.map(
                             (image: string) => {
@@ -17,6 +17,7 @@ export default function CarDetails({ car }: {car: ICar}) {
                                             alt={`${car!.make} ${car!.carModel} `}
                                             width={900}
                                             height={600}
+                                            quality={100}
                                             className="mx-auto overflow-hidden"
                                         />
                                     </CarouselItem>
