@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import GoogleLoginButton from "./google-login-button";
+import GoogleLoginButton from "./GoogleLoginButton";
 import Link from "next/link";
 
 export default function LoginForm() {

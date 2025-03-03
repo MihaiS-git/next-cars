@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
-import LogoutButton from "@/components/ui/auth/logout-button";
+import LogoutButton from "@/components/ui/auth/LogoutButton";
 import { Button } from "../button";
 
 export default function MainNavigation() {

@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import LogoutButton from "../auth/logout-button";
+import LogoutButton from "../auth/LogoutButton";
 
 interface HamburgerMenuProps {
     openState: boolean;
