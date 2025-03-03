@@ -28,7 +28,7 @@ export default function MainNavigation() {
                     <Link href="/account">Account</Link>
                 </li>
                 <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
-                    <Link href="/">Contact</Link>
+                    <Link href="/contact">Contact</Link>
                 </li>
                 {status === "authenticated" ? (
                     <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">

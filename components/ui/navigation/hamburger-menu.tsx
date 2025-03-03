@@ -30,7 +30,7 @@ export default function HamburgerMenu({ openState, handleClose }: HamburgerMenuP
                 <Link href="/account" onClick={handleClose}>Account</Link>
             </li>
             <li className="px-4 py-2 w-60">
-                <Link href="/" onClick={handleClose}>Contact</Link>
+                <Link href="/contact" onClick={handleClose}>Contact</Link>
             </li>
             {status === "authenticated" ? (
                 <li className="px-4 hover:animate-pulse hover:text-red-600">
