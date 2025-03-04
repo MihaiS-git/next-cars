@@ -14,42 +14,42 @@ import { updateUser } from "@/app/actions/account/actions";
 export default function AccountPage() {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<User>();
-    const [userData, setUserData] = useState<User>({
+    const [userData, setUserData] = useState<{
+        name: string;
+        address: string;
+        phone: string;
+        email: string;
+        role: string;
+        dob: string;
+        drivingSince: string;
+    }>({
         name: "",
         address: "",
         phone: "",
-        email: "",
+        email: session?.user?.email || "",
         role: "CUSTOMER",
         dob: "",
         drivingSince: "",
-        password: "",
     });
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const email = session?.user?.email;
 
     useEffect(() => {
-        if (status === "authenticated" && email) {
+        if (status === "authenticated") {
             const fetchUser = async () => {
                 try {
-                    const userData = await getUserByEmail(email);
-                    const user = userData as User;
+                    const user = await getUserByEmail(userData.email);
 
                     if (user) {
-                        if (!user.role) {
-                            user.role = "CUSTOMER";
-                        }
-                        setUser(user);
                         setUserData({
+                            email: user.email,
                             name: user.name || "",
                             address: user.address || "",
                             phone: user.phone || "",
-                            email: user.email || "",
-                            role: user.role || "CUSTOMER",
+                            role: user.role ? user.role : "CUSTOMER",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
-                            password: user.password
                         });
                     } else {
                         setError("User not found");
@@ -62,7 +62,7 @@ export default function AccountPage() {
             };
             fetchUser();
         }
-    }, [session, status, email]);
+    }, [session, status]);
 
     const initialState = { message: "", errors: {} };
     const [formState, formAction] = useActionState(updateUser, initialState);
@@ -82,17 +82,19 @@ export default function AccountPage() {
     return (
         <div className="flex flex-col items-center bg-zinc-900 text-red-600 w-full md:w-10/12 lg:w-8/12 xl:w-6/12 2xl:w-4/12 rounded-lg border border-red-600 mt-4">
             <h3 className="my-8 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
-                <em>Contact</em>
+                <em>Your Account</em>
             </h3>
 
             <Image
                 src={user?.pictureUrl || "/customers/nc_default_user.png"}
                 alt="user image"
-                width={200}
-                height={200}
+                width={150}
+                height={150}
                 quality={80}
             />
-
+            <p className="text-xl">
+                Hello {userData.name || session?.user?.name}!
+            </p>
             <form
                 action={() => {
                     const formData = new FormData();
@@ -199,8 +201,20 @@ export default function AccountPage() {
                         type="email"
                         value={userData.email}
                         disabled
+                        aria-describedby="email-error"
                     />
                 </p>
+                <div
+                    id="email-error"
+                    className="text-center text-base text-red-600"
+                >
+                    {formState.errors?.name &&
+                        formState.errors?.name.map((error) => (
+                            <p key={error} className="hidden">
+                                {error}
+                            </p>
+                        ))}
+                </div>
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="role" className="w-3/12 xl:w-2/12">
                         Role:
@@ -217,12 +231,22 @@ export default function AccountPage() {
                             }))
                         }
                         disabled={user?.role === "CUSTOMER"}
+                        aria-describedby="role-error"
                     >
                         <option value="CUSTOMER">CUSTOMER</option>
                         <option value="DRIVER">DRIVER</option>
                         <option value="ADMIN">ADMIN</option>
                     </select>
                 </p>
+                <div
+                    id="role-error"
+                    className="text-center text-base text-red-600"
+                >
+                    {formState.errors?.role &&
+                        formState.errors?.role.map((error) => (
+                            <p key={error}>{error}</p>
+                        ))}
+                </div>
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="dob" className="w-3/12 xl:w-2/12">
                         Date of birth:
@@ -232,7 +256,13 @@ export default function AccountPage() {
                         id="dob"
                         name="dob"
                         type="date"
-                        value={userData.dob ? new Date(userData.dob).toISOString().split('T')[0] : ""}
+                        value={
+                            userData.dob
+                                ? new Date(userData.dob)
+                                      .toISOString()
+                                      .split("T")[0]
+                                : ""
+                        }
                         onChange={(e) =>
                             setUserData((prev) => ({
                                 ...prev,
@@ -260,7 +290,13 @@ export default function AccountPage() {
                         id="drivingSince"
                         name="drivingSince"
                         type="date"
-                        value={userData.drivingSince ? new Date(userData.drivingSince).toISOString().split('T')[0] : ""}
+                        value={
+                            userData.drivingSince
+                                ? new Date(userData.drivingSince)
+                                      .toISOString()
+                                      .split("T")[0]
+                                : ""
+                        }
                         onChange={(e) =>
                             setUserData((prev) => ({
                                 ...prev,
@@ -281,7 +317,10 @@ export default function AccountPage() {
                 </div>
                 <Button
                     type="submit"
-                    className="bg-zinc-200 text-zinc-950 mt-4 hover:text-zinc-50 hover:bg-zinc-700"
+                    variant="secondary"
+                    size="lg"
+                    className="mx-auto w-1/2"
+                    disabled={formState.message ? true : false}
                 >
                     Update
                 </Button>
