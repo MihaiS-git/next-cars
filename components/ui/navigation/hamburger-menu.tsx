@@ -21,10 +21,7 @@ export default function HamburgerMenu({ openState, handleClose }: HamburgerMenuP
                 <Link href="/drivers" onClick={handleClose}>Drivers</Link>
             </li>
             <li className="px-4 py-2 w-60">
-                <Link href="/" onClick={handleClose}>Cart</Link>
-            </li>
-            <li className="px-4 py-2 w-60">
-                <Link href="/" onClick={handleClose}>Appointments</Link>
+                <Link href="/appointments" onClick={handleClose}>Appointments</Link>
             </li>
             <li className="px-4 py-2 w-60">
                 <Link href="/account" onClick={handleClose}>Account</Link>

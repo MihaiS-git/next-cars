@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
     return (
         <QueryClientProvider client={queryClient}>
-            <html lang="en" className="w-screen h-screen">
+            <html lang="en" className="min-w-screen min-h-screen top-0 left-0">
                 <head>
                     <title>{String(metadata.title) || "Next Cars"}</title>
                     <meta name="description" content={metadata.description ?? undefined} />

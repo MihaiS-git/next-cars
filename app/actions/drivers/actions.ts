@@ -4,6 +4,31 @@ import { User } from "@/lib/definitions";
 import { connectDB } from "@/lib/mongoDb";
 import { ObjectId } from "mongodb";
 
+export async function getAllDrivers() {
+    const db = await connectDB();
+
+    const drivers = await db.collection('users')
+        .find({ role: 'DRIVER' })
+        .toArray();
+    
+    if (!drivers[0]) return [];
+
+    const mappedDrivers: User[] = drivers.map(driver => ({ 
+        _id: driver._id.toString(),
+        email: driver.email,
+        password: '',
+        name: driver.name,
+        role: driver.role,
+        address: driver.address,
+        phone: driver.phone,
+        dob: driver.dob,
+        drivingSince: driver.drivingSince,
+        pictureUrl: driver.pictureUrl,
+    }));
+
+    return mappedDrivers;
+}
+
 export async function getAllDriversPaginated(page: number = 1, limit: number = 10) {
     const db = await connectDB();
     const skip = (page - 1) * limit;

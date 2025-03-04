@@ -19,10 +19,7 @@ export default function MainNavigation() {
                     <Link href="/drivers">Drivers</Link>
                 </li>
                 <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
-                    <Link href="/">Cart</Link>
-                </li>
-                <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
-                    <Link href="/">Appointments</Link>
+                    <Link href="/appointments">Appointments</Link>
                 </li>
                 <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
                     <Link href="/account">Account</Link>
