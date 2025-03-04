@@ -21,7 +21,7 @@ export const authConfig = {
     },
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const protectedRoutes = ['/welcome', '/cars'];
+      const protectedRoutes = ['/welcome', '/cars', '/account'];
 
       // If the user is logged in and tries to access /welcome, allow them to stay
       if (protectedRoutes.some(route => nextUrl.pathname.startsWith(route)) && isLoggedIn) {
