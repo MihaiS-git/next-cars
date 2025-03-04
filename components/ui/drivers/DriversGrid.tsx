@@ -1,8 +1,8 @@
 "use client";
 
-import { ICar } from "@/lib/definitions";
-import CarCard from "./CarCard";
-import { getAllCarsWithPicturesPaginated } from "@/app/actions/cars/actions";
+import { User } from "@/lib/definitions";
+import DriverCard from "@/components/ui/drivers/DriverCard";
+import { getAllDriversPaginated } from "@/app/actions/drivers/actions";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -18,25 +18,25 @@ import { Button } from "../button";
 import { X } from "lucide-react";
 import { redirect } from "next/navigation";
 
-export default function CarsGrid({
-    initialCars,
+export default function DriversGrid({
+    initialDrivers,
     totalCount,
 }: {
-    initialCars: ICar[];
+    initialDrivers: User[];
     totalCount: number;
 }) {
     const [currentPage, setCurrentPage] = useState(1);
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ["cars", currentPage],
+        queryKey: ["drivers", currentPage],
         queryFn: async () => {
-            const { cars } = await getAllCarsWithPicturesPaginated(
+            const { drivers } = await getAllDriversPaginated(
                 currentPage,
                 10
             );
-            return cars;
+            return drivers;
         },
-        initialData: currentPage === 1 ? initialCars : undefined,
+        initialData: currentPage === 1 ? initialDrivers : undefined,
         placeholderData: (previousData) => previousData, // Maintain previous data while fetching
         staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     });
@@ -55,7 +55,7 @@ export default function CarsGrid({
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-40">
-                <p className="text-gray-500">Loading cars...</p>
+                <p className="text-gray-500">Loading drivers...</p>
             </div>
         );
     }
@@ -63,7 +63,7 @@ export default function CarsGrid({
     if (error) {
         return (
             <div className="text-center text-red-500">
-                <p>Failed to load cars. Please try again.</p>
+                <p>Failed to load drivers. Please try again.</p>
             </div>
         );
     }
@@ -71,9 +71,9 @@ export default function CarsGrid({
     return (
         <div className="p-4">
             <ul className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                {data?.map((car) => (
-                    <li key={car._id}>
-                        <CarCard car={car} slug={car._id!.toString()} />
+                {data?.map((driver: User) => (
+                    <li key={driver._id}>
+                        <DriverCard driver={driver} slug={driver._id!.toString()} />
                     </li>
                 ))}
             </ul>
@@ -148,7 +148,7 @@ export default function CarsGrid({
                         </PaginationItem>
                     )}
 
-                    {currentPage < totalPages - 1 && (
+                    {currentPage < totalPages - 2 && (
                         <PaginationItem className="">
                             <PaginationLink
                                 href="#"

@@ -60,4 +60,3 @@ export interface ICar {
     carImagesAndDocuments: string | ICarImagesAndDocuments | null;
     rentalAgencyDetails: string | IRentalAgencyDetails | null;
 }
-
