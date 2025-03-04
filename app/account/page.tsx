@@ -23,11 +23,11 @@ export default function AccountPage() {
         dob: string;
         drivingSince: string;
     }>({
-        name: "",
+        name: session?.user?.name || "",
         address: "",
         phone: "",
         email: session?.user?.email || "",
-        role: "CUSTOMER",
+        role: "",
         dob: "",
         drivingSince: "",
     });
@@ -40,14 +40,13 @@ export default function AccountPage() {
             const fetchUser = async () => {
                 try {
                     const user = await getUserByEmail(userData.email);
-
                     if (user) {
                         setUserData({
                             email: user.email,
                             name: user.name || "",
                             address: user.address || "",
                             phone: user.phone || "",
-                            role: user.role ? user.role : "CUSTOMER",
+                            role: user.role || "",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
                         });
@@ -93,7 +92,7 @@ export default function AccountPage() {
                 quality={80}
             />
             <p className="text-xl">
-                Hello {userData.name || session?.user?.name}!
+                Hello {userData.name}!
             </p>
             <form
                 action={() => {
@@ -195,7 +194,7 @@ export default function AccountPage() {
                         E-mail:
                     </label>
                     <input
-                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
+                        className="text-zinc-950 disabled:bg-zinc-500 w-8/12 sm:w-9/12 p-1 rounded-md"
                         id="email"
                         name="email"
                         type="email"
@@ -220,17 +219,17 @@ export default function AccountPage() {
                         Role:
                     </label>
                     <select
-                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
+                        className="text-zinc-950 disabled:bg-zinc-500 w-8/12 sm:w-9/12 p-1 rounded-md"
                         name="role"
                         id="role"
-                        value={user?.role || "CUSTOMER"}
+                        value={userData.role}
                         onChange={(e) =>
                             setUserData((prev) => ({
                                 ...prev,
                                 [e.target.name]: e.target.value,
                             }))
                         }
-                        disabled={user?.role === "CUSTOMER"}
+                        disabled
                         aria-describedby="role-error"
                     >
                         <option value="CUSTOMER">CUSTOMER</option>
