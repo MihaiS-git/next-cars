@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";

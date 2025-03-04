@@ -4,11 +4,15 @@ import { User } from "@/lib/definitions";
 import { withDb } from "@/lib/util/db-helper";
 
 export async function getUserByEmail(email: string): Promise<User | null> {
-  return withDb('users', async (collection) => {
+  const user = withDb('users', async (collection) => {
     const user = (await collection.findOne({ email })) as User | null;
-    if (!user) return null;
-    return user;
+    if (user) {
+      user._id = user._id!.toString();
+      return user;
+    }
+    return null;
   });
+  return user;
 }
 
 export async function createNewUser(email: string, password: string) {

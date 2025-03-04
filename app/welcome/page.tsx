@@ -1,5 +1,6 @@
 import AutoCarousel from "@/components/ui/welcome/AutoCarousel";
 import { getAllCarsWithPictures } from "../actions/cars/actions";
+import { Suspense } from "react";
 
 export default async function WelcomePage() {
     const cars = await getAllCarsWithPictures();
@@ -12,7 +13,9 @@ export default async function WelcomePage() {
             <p className="mb-8 mt-2 text-red-600 font-semibold text-lg lg:font-bold lg:text-xl text-center">
                 <em>Your car rental partner</em>
             </p>
-            <AutoCarousel cars={cars} />
+            <Suspense fallback={<p>Loading...</p>}>
+                <AutoCarousel cars={cars} />
+            </Suspense>
             <p className="pb-4 px-4 text-justify">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                 Dolores quisquam neque enim in expedita temporibus quo iste.

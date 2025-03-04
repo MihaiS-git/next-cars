@@ -3,6 +3,12 @@ export type User = {
     email: string;
     password: string;
     name?: string;
+    role?: 'ADMIN' | 'CUSTOMER' | 'DRIVER';
+    address?: string;
+    phone?: string;
+    dob?: string;
+    drivingSince: string;
+    pictureUrl?: string;
 };
 
 export interface ICarRentalDetails {
