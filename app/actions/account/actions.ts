@@ -5,11 +5,9 @@ import { updateUserSchema } from "@/lib/validators/user-zod";
 
 export type State = {
     errors?: {
-        email?: string[];
         name?: string[];
         address?: string[];
         phone?: string[];
-        role?: string[];
         dob?: string[];
         drivingSince?: string[];
     };
@@ -18,13 +16,12 @@ export type State = {
 
 export async function updateUser(prevState: State, formData: FormData) {
     const email = formData.get('email');
+    const role = formData.get('role');
 
     const validatedFields = updateUserSchema.safeParse({
-        email: formData.get('email'),
         name: formData.get('name'),
         address: formData.get('address'),
         phone: formData.get('phone'),
-        role: formData.get('role'),
         dob: formData.get('dob') || undefined,
         drivingSince: formData.get('drivingSince') || undefined
     });
@@ -36,7 +33,7 @@ export async function updateUser(prevState: State, formData: FormData) {
         };
     }
 
-    const { name, address, phone, role, dob, drivingSince } = validatedFields.data;
+    const { name, address, phone, dob, drivingSince } = validatedFields.data;
 
     try {
         const db = await connectDB();
@@ -54,7 +51,7 @@ export async function updateUser(prevState: State, formData: FormData) {
                         name,
                         phone,
                         role,
-                        updatedAt: new Date()
+                        updatedAt: new Date(),
                     },
                 },
                 { returnDocument: "after" }
@@ -71,12 +68,17 @@ export async function updateUser(prevState: State, formData: FormData) {
                 drivingSince: dob ? new Date(drivingSince) : null,
                 name,
                 phone,
-                role,
+                role: "CUSTOMER",
                 createdAt: new Date(),
                 updatedAt: new Date()
             });
 
-            return { message: 'User profile created successfully.' };
+            if (newUser) {
+                return { message: 'User profile created successfully.' };
+            } else {
+                return {message: 'Failed to create user profile.'}
+            }
+
         }
     } catch (error: any) {
         return { message: `Database error: ${error.message}` };

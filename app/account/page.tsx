@@ -22,6 +22,7 @@ export default function AccountPage() {
         role: string;
         dob: string;
         drivingSince: string;
+        pictureUrl: string;
     }>({
         name: session?.user?.name || "",
         address: "",
@@ -30,6 +31,7 @@ export default function AccountPage() {
         role: "",
         dob: "",
         drivingSince: "",
+        pictureUrl: "",
     });
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -46,9 +48,10 @@ export default function AccountPage() {
                             name: user.name || "",
                             address: user.address || "",
                             phone: user.phone || "",
-                            role: user.role || "",
+                            role: user.role || "CUSTOMER",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
+                            pictureUrl: user.pictureUrl || "",
                         });
                     } else {
                         setError("User not found");
@@ -85,10 +88,10 @@ export default function AccountPage() {
             </h3>
 
             <Image
-                src={user?.pictureUrl || "/customers/nc_default_user.png"}
+                src={userData?.pictureUrl || "/drivers/nc_default_user.png"}
                 alt="user image"
-                width={150}
-                height={150}
+                width={300}
+                height={300}
                 quality={80}
             />
             <p className="text-xl">
@@ -241,9 +244,9 @@ export default function AccountPage() {
                     id="role-error"
                     className="text-center text-base text-red-600"
                 >
-                    {formState.errors?.role &&
-                        formState.errors?.role.map((error) => (
-                            <p key={error}>{error}</p>
+                    {formState.errors?.name &&
+                        formState.errors?.name.map((error) => (
+                            <p key={error} className="hidden">{error}</p>
                         ))}
                 </div>
                 <p className="flex flex-row justify-between mx-2">
