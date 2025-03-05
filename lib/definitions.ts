@@ -9,6 +9,7 @@ export type User = {
     dob?: string;
     drivingSince: string;
     pictureUrl?: string;
+    booked?: { start: Date, end: Date }[];
 };
 
 export interface ICarRentalDetails {
@@ -55,6 +56,7 @@ export interface ICar {
     transmission: 'Manual' | 'Automatic';
     fuelType: 'Gasoline' | 'Diesel' | 'Electric' | 'Hybrid';
     mileage: number;
+    booked?: { start: Date, end: Date }[];
     carRentalDetails: string | ICarRentalDetails | null;
     carFeaturesAndSpecifications: string | ICarFeaturesAndSpecifications | null;
     carImagesAndDocuments: string | ICarImagesAndDocuments | null;

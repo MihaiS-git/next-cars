@@ -14,44 +14,44 @@ import { updateUser } from "@/app/actions/account/actions";
 export default function AccountPage() {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<User>();
-    const [userData, setUserData] = useState<{
-        name: string;
-        address: string;
-        phone: string;
-        email: string;
-        role: string;
-        dob: string;
-        drivingSince: string;
-        pictureUrl: string;
-    }>({
-        name: session?.user?.name || "",
+    const [userData, setUserData] = useState<User>({
+        name: "",
         address: "",
         phone: "",
-        email: session?.user?.email || "",
-        role: "",
+        email: "",
+        role: "CUSTOMER",
         dob: "",
         drivingSince: "",
-        pictureUrl: "",
+        password: "",
     });
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const email = session?.user?.email;
+
+    console.log("EMAIL: ", email);
 
     useEffect(() => {
-        if (status === "authenticated") {
+        console.log("Session Data:", session);
+    }, [session]);    
+
+    useEffect(() => {
+        if (status === "authenticated" && email) {
             const fetchUser = async () => {
                 try {
-                    const user = await getUserByEmail(userData.email);
+                    const userData = await getUserByEmail(email);
+                    const user = userData as User;
+
                     if (user) {
                         setUserData({
-                            email: user.email,
+                            email: user.email || email,
                             name: user.name || "",
                             address: user.address || "",
                             phone: user.phone || "",
-                            role: user.role || "CUSTOMER",
+                            role: user.role ? user.role : "CUSTOMER",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
-                            pictureUrl: user.pictureUrl || "",
+                            password: user.password
                         });
                     } else {
                         setError("User not found");
@@ -64,7 +64,7 @@ export default function AccountPage() {
             };
             fetchUser();
         }
-    }, [session, status]);
+    }, [session, status, email]);
 
     const initialState = { message: "", errors: {} };
     const [formState, formAction] = useActionState(updateUser, initialState);
@@ -84,19 +84,17 @@ export default function AccountPage() {
     return (
         <div className="flex flex-col items-center bg-zinc-900 text-red-600 w-full md:w-10/12 lg:w-8/12 xl:w-6/12 2xl:w-4/12 rounded-lg border border-red-600 mt-4">
             <h3 className="my-8 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
-                <em>Your Account</em>
+                <em>Contact</em>
             </h3>
 
             <Image
-                src={userData?.pictureUrl || "/drivers/nc_default_user.png"}
+                src={user?.pictureUrl || "/customers/nc_default_user.png"}
                 alt="user image"
-                width={300}
-                height={300}
+                width={200}
+                height={200}
                 quality={80}
             />
-            <p className="text-xl">
-                Hello {userData.name}!
-            </p>
+            <p className="text-xl">Hello {userData.name || session?.user?.name}!</p> 
             <form
                 action={() => {
                     const formData = new FormData();
@@ -197,58 +195,36 @@ export default function AccountPage() {
                         E-mail:
                     </label>
                     <input
-                        className="text-zinc-950 disabled:bg-zinc-500 w-8/12 sm:w-9/12 p-1 rounded-md"
+                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         id="email"
                         name="email"
                         type="email"
-                        value={userData.email}
+                        value={userData.email || email || ""}
                         disabled
-                        aria-describedby="email-error"
                     />
                 </p>
-                <div
-                    id="email-error"
-                    className="text-center text-base text-red-600"
-                >
-                    {formState.errors?.name &&
-                        formState.errors?.name.map((error) => (
-                            <p key={error} className="hidden">
-                                {error}
-                            </p>
-                        ))}
-                </div>
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="role" className="w-3/12 xl:w-2/12">
                         Role:
                     </label>
                     <select
-                        className="text-zinc-950 disabled:bg-zinc-500 w-8/12 sm:w-9/12 p-1 rounded-md"
+                        className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         name="role"
                         id="role"
-                        value={userData.role}
+                        value={user?.role || "CUSTOMER"}
                         onChange={(e) =>
                             setUserData((prev) => ({
                                 ...prev,
                                 [e.target.name]: e.target.value,
                             }))
                         }
-                        disabled
-                        aria-describedby="role-error"
+                        disabled={user?.role === "CUSTOMER"}
                     >
                         <option value="CUSTOMER">CUSTOMER</option>
                         <option value="DRIVER">DRIVER</option>
                         <option value="ADMIN">ADMIN</option>
                     </select>
                 </p>
-                <div
-                    id="role-error"
-                    className="text-center text-base text-red-600"
-                >
-                    {formState.errors?.name &&
-                        formState.errors?.name.map((error) => (
-                            <p key={error} className="hidden">{error}</p>
-                        ))}
-                </div>
                 <p className="flex flex-row justify-between mx-2">
                     <label htmlFor="dob" className="w-3/12 xl:w-2/12">
                         Date of birth:
@@ -258,13 +234,7 @@ export default function AccountPage() {
                         id="dob"
                         name="dob"
                         type="date"
-                        value={
-                            userData.dob
-                                ? new Date(userData.dob)
-                                      .toISOString()
-                                      .split("T")[0]
-                                : ""
-                        }
+                        value={userData.dob ? new Date(userData.dob).toISOString().split('T')[0] : ""}
                         onChange={(e) =>
                             setUserData((prev) => ({
                                 ...prev,
@@ -292,13 +262,7 @@ export default function AccountPage() {
                         id="drivingSince"
                         name="drivingSince"
                         type="date"
-                        value={
-                            userData.drivingSince
-                                ? new Date(userData.drivingSince)
-                                      .toISOString()
-                                      .split("T")[0]
-                                : ""
-                        }
+                        value={userData.drivingSince ? new Date(userData.drivingSince).toISOString().split('T')[0] : ""}
                         onChange={(e) =>
                             setUserData((prev) => ({
                                 ...prev,
@@ -319,10 +283,7 @@ export default function AccountPage() {
                 </div>
                 <Button
                     type="submit"
-                    variant="secondary"
-                    size="lg"
-                    className="mx-auto w-1/2"
-                    disabled={formState.message ? true : false}
+                    className="bg-zinc-200 text-zinc-950 mt-4 hover:text-zinc-50 hover:bg-zinc-700"
                 >
                     Update
                 </Button>
