@@ -1,4 +1,4 @@
-export type User = {
+export interface User {
     _id?: string;
     email: string;
     password: string;
@@ -7,9 +7,9 @@ export type User = {
     address?: string;
     phone?: string;
     dob?: string;
-    drivingSince: string;
+    drivingSince?: string;
     pictureUrl?: string;
-    booked?: { start: Date, end: Date }[];
+    bookings?: IBooking[];
 };
 
 export interface ICarRentalDetails {
@@ -56,9 +56,22 @@ export interface ICar {
     transmission: 'Manual' | 'Automatic';
     fuelType: 'Gasoline' | 'Diesel' | 'Electric' | 'Hybrid';
     mileage: number;
-    booked?: { start: Date, end: Date }[];
     carRentalDetails: string | ICarRentalDetails | null;
     carFeaturesAndSpecifications: string | ICarFeaturesAndSpecifications | null;
     carImagesAndDocuments: string | ICarImagesAndDocuments | null;
     rentalAgencyDetails: string | IRentalAgencyDetails | null;
+    bookings?: IBooking[];
+}
+
+export interface IDatesInterval {
+    start: Date;
+    end: Date;
+}
+
+export interface IBooking {
+    _id?: string;
+    customer: string | null;
+    car: string | null;
+    driver: string | null;
+    timeInterval: IDatesInterval;
 }

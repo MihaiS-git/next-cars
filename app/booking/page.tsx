@@ -4,15 +4,23 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCarsWithPictures } from "../actions/cars/actions";
 import { getAllDrivers } from "../actions/drivers/actions";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import BookingCarousel from "@/components/ui/booking/booking-carousel";
+import { bookCar } from "../actions/booking/actions";
+import { useSession } from "next-auth/react";
 
 export default function BookingPage() {
+    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [daysNo, setDaysNo] = useState(1);
     const [carId, setCarId] = useState("");
     const [driverId, setDriverId] = useState("");
     const carCarouselRef = useRef<HTMLDivElement | null>(null);
     const driverCarouselRef = useRef<HTMLDivElement>(null);
+    const initialState = { message: "", errors: {} };
+    const [formState, formAction] = useActionState(bookCar, initialState);
+    const { data: session, status } = useSession();
 
+    const customerEmail = session?.user?.email;
 
     const setupIntersectionObserver = (
         ref: React.RefObject<HTMLDivElement | null>,
@@ -83,7 +91,8 @@ export default function BookingPage() {
     }, [cars]);
 
     const carouselDrivers = useMemo(() => {
-        const driversArray: { elementId: string; elementPicture: string }[] = [];
+        const driversArray: { elementId: string; elementPicture: string }[] =
+            [];
         drivers?.forEach((driver) => {
             const elementId = driver?._id?.toString();
             const elementPicture = driver.pictureUrl;
@@ -160,10 +169,18 @@ export default function BookingPage() {
             />
 
             <div className="lg:col-span-2 flex flex-col items-center m-auto w-full">
+                <hr className="h-0.5 w-full pb-4" />
                 <form
-                    action=""
+                    action={formAction}
                     className="flex flex-col justify-between align-middle pb-4 w-full lg:w-1/2"
                 >
+                    <input
+                        type="hidden"
+                        name="customerEmail"
+                        value={customerEmail || ""}
+                    />
+                    <input type="hidden" name="carId" value={carId} />
+                    <input type="hidden" name="driverId" value={driverId} />
                     <p className="flex flex-row justify-between m-2">
                         <label htmlFor="startDate">Start Date: </label>
                         <input
@@ -171,6 +188,8 @@ export default function BookingPage() {
                             id="startDate"
                             type="date"
                             name="startDate"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
                         />
                     </p>
                     <p className="flex flex-row justify-between m-2">
@@ -180,6 +199,8 @@ export default function BookingPage() {
                             id="daysNo"
                             type="number"
                             name="daysNo"
+                            value={daysNo}
+                            onChange={(e) => setDaysNo(+e.target.value)}
                         />
                     </p>
 
@@ -187,11 +208,18 @@ export default function BookingPage() {
                         type="submit"
                         variant="secondary"
                         size="lg"
-                        className="mx-auto  w-1/2 md:w-1/3 lg:w-1/4"
+                        className="mx-auto w-1/2 md:w-1/3 px-2"
                     >
-                        Select
+                        Confirm Selection
                     </Button>
+                    <div
+                        id="general-error"
+                        className="text-center text-base text-red-600"
+                    >
+                        {formState?.message && <p>{formState.message}</p>}
+                    </div>
                 </form>
+                <hr className="h-0.5 w-full pb-4" />
             </div>
         </div>
     );

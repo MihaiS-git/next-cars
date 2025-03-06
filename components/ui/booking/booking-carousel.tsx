@@ -44,6 +44,7 @@ export default function BookingCarousel({isLoading, error, carouselRef, carousel
                                         height={480}
                                         quality={80}
                                         className="border border-red-600 mx-auto"
+                                        priority
                                     />
                                 </Link>
                             </CarouselItem>

@@ -4,7 +4,10 @@ import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { redirect } from "next/navigation";
-import Map from "@/components/ui/map";
+
+import dynamic from "next/dynamic";
+
+const Map = dynamic(() => import("@/components/ui/map"), { ssr: false });
 
 export default function ContactPage() {
     const handleClose = () => {

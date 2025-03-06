@@ -1,6 +1,6 @@
 "use server";
 
-import { ICar } from "@/lib/definitions";
+import { IBooking, ICar } from "@/lib/definitions";
 import { connectDB } from "@/lib/mongoDb";
 import { ObjectId } from "mongodb";
 
@@ -25,7 +25,6 @@ export async function getAllCarsWithPictures() {
         carModel: car.carModel,
         year: car.year,
         category: car.category,
-        price: car.price,
         mileage: car.mileage,
         fuelType: car.fuelType,
         transmission: car.transmission,
@@ -81,6 +80,16 @@ export async function getAllCarsWithPictures() {
                 }
                 : car.rentalAgencyDetails.toString()
             : null,
+
+        bookings: car.bookings
+            ? car.bookings.map((booking: IBooking) => ({
+                _id: booking._id?.toString(),
+                customer: booking.customer?.toString(),
+                car: booking.car?.toString(),
+                driver: booking.driver?.toString(),
+                timeInterval: booking.timeInterval,
+            }))
+            : []
     }));
 
     return mappedCars;
@@ -106,14 +115,13 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
 
     const totalCount = await db.collection("cars").countDocuments();
 
-    if (!cars[0]) return {cars: [], totalCount};
+    if (!cars[0]) return { cars: [], totalCount };
 
     const mappedCars: ICar[] = cars.map(car => ({
         make: car.make,
         carModel: car.carModel,
         year: car.year,
         category: car.category,
-        price: car.price,
         mileage: car.mileage,
         fuelType: car.fuelType,
         transmission: car.transmission,
@@ -169,9 +177,19 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
                 }
                 : car.rentalAgencyDetails.toString()
             : null,
+
+        bookings: car.bookings
+            ? car.bookings.map((booking: IBooking) => ({
+                _id: booking._id?.toString(),
+                customer: booking.customer?.toString(),
+                car: booking.car?.toString(),
+                driver: booking.driver?.toString(),
+                timeInterval: booking.timeInterval,
+            }))
+            : []
     }));
 
-    return {cars: mappedCars, totalCount};
+    return { cars: mappedCars, totalCount };
 }
 
 
@@ -226,6 +244,7 @@ export const getCarBySlug = async (slug: string) => {
                 carFeaturesAndSpecifications: { $arrayElemAt: ["$carFeaturesAndSpecifications", 0] },
                 carImagesAndDocuments: { $arrayElemAt: ["$carImagesAndDocuments", 0] },
                 rentalAgencyDetails: { $arrayElemAt: ["$rentalAgencyDetails", 0] },
+                bookings: 1,
                 createdAt: 1,
                 updatedAt: 1,
                 __v: 1
@@ -235,7 +254,7 @@ export const getCarBySlug = async (slug: string) => {
 
     if (!car[0]) return null;
 
-    const mappedCar: ICar = {
+    const mappedCar: ICar = ({
         make: car[0].make,
         carModel: car[0].carModel,
         year: car[0].year,
@@ -295,7 +314,159 @@ export const getCarBySlug = async (slug: string) => {
                 }
                 : car[0].rentalAgencyDetails.toString()
             : null,
-    };
-        
+
+        bookings: car[0].bookings.map((booking: any) => booking.toString()),
+    });
+
+    return mappedCar;
+};
+
+export const getCarByIdWithBookings = async (id: string) => {
+    const db = await connectDB();
+    const car = await db.collection('cars').aggregate([
+        { $match: { _id: new ObjectId(id) } },
+        {
+            $lookup: {
+                from: 'carrentaldetails',
+                localField: 'carRentalDetails',
+                foreignField: '_id',
+                as: 'carRentalDetails'
+            }
+        },
+        {
+            $lookup: {
+                from: 'carfeaturesandspecifications',
+                localField: 'carFeaturesAndSpecifications',
+                foreignField: '_id',
+                as: 'carFeaturesAndSpecifications'
+            }
+        },
+        {
+            $lookup: {
+                from: 'carimagesanddocuments',
+                localField: 'carImagesAndDocuments',
+                foreignField: '_id',
+                as: 'carImagesAndDocuments'
+            }
+        },
+        {
+            $lookup: {
+                from: 'rentalagencydetails',
+                localField: 'rentalAgencyDetails',
+                foreignField: '_id',
+                as: 'rentalAgencyDetails'
+            }
+        },
+        {
+            $unwind: {
+                path: "$bookings",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $lookup: {
+                from: 'bookings',
+                localField: 'bookings',
+                foreignField: '_id',
+                as: 'bookings'
+            }
+        },
+        {
+            $project: {
+                make: 1,
+                carModel: 1,
+                year: 1,
+                category: 1,
+                seats: 1,
+                doors: 1,
+                transmission: 1,
+                fuelType: 1,
+                mileage: 1,
+                carRentalDetails: { $arrayElemAt: ["$carRentalDetails", 0] },
+                carFeaturesAndSpecifications: { $arrayElemAt: ["$carFeaturesAndSpecifications", 0] },
+                carImagesAndDocuments: { $arrayElemAt: ["$carImagesAndDocuments", 0] },
+                rentalAgencyDetails: { $arrayElemAt: ["$rentalAgencyDetails", 0] },
+                bookings: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                __v: 1
+            }
+        }
+    ]).toArray();
+
+    if (!car[0]) return null;
+
+    const mappedCar: ICar = ({
+        make: car[0].make,
+        carModel: car[0].carModel,
+        year: car[0].year,
+        category: car[0].category,
+        mileage: car[0].mileage,
+        fuelType: car[0].fuelType,
+        transmission: car[0].transmission,
+        _id: car[0]._id.toString(),
+        seats: car[0].seats,
+        doors: car[0].doors,
+
+        carRentalDetails: car[0].carRentalDetails
+            ? car[0].carRentalDetails._id
+                ? {
+                    _id: car[0].carRentalDetails._id?.toString(),
+                    rentalPricePerDay: car[0].carRentalDetails.rentalPricePerDay,
+                    currency: car[0].carRentalDetails.currency,
+                    availabilityStatus: car[0].carRentalDetails.availabilityStatus,
+                    carLocation: car[0].carRentalDetails.carLocation,
+                    minRentalPeriod: car[0].carRentalDetails.minRentalPeriod,
+                    maxRentalPeriod: car[0].carRentalDetails.maxRentalPeriod
+                }
+                : car[0].carRentalDetails.toString()
+            : null,
+
+        carFeaturesAndSpecifications: car[0].carFeaturesAndSpecifications
+            ? car[0].carFeaturesAndSpecifications._id
+                ? {
+                    _id: car[0].carFeaturesAndSpecifications._id?.toString(),
+                    airConditioning: car[0].carFeaturesAndSpecifications.airConditioning,
+                    gps: car[0].carFeaturesAndSpecifications.gps,
+                    bluetooth: car[0].carFeaturesAndSpecifications.bluetooth,
+                    fuelPolicy: car[0].carFeaturesAndSpecifications.fuelPolicy,
+                    insuranceIncluded: car[0].carFeaturesAndSpecifications.insuranceIncluded,
+                    additionalFeatures: car[0].carFeaturesAndSpecifications.additionalFeatures
+                }
+                : car[0].carFeaturesAndSpecifications.toString()
+            : null,
+
+        carImagesAndDocuments: car[0].carImagesAndDocuments
+            ? car[0].carImagesAndDocuments._id
+                ? {
+                    _id: car[0].carImagesAndDocuments._id?.toString(),
+                    carImages: car[0].carImagesAndDocuments.carImages,
+                    registrationNumber: car[0].carImagesAndDocuments.registrationNumber,
+                    insurancePolicyNumber: car[0].carImagesAndDocuments.insurancePolicyNumber
+                }
+                : car[0].carImagesAndDocuments.toString()
+            : null,
+
+        rentalAgencyDetails: car[0].rentalAgencyDetails
+            ? car[0].rentalAgencyDetails._id
+                ? {
+                    _id: car[0].rentalAgencyDetails._id?.toString(),
+                    agencyName: car[0].rentalAgencyDetails.agencyName,
+                    contactNumber: car[0].rentalAgencyDetails.contactNumber
+                }
+                : car[0].rentalAgencyDetails.toString()
+            : null,
+
+        bookings: car[0].bookings
+            ? car[0].bookings.map((booking: IBooking) => ({
+                _id: booking._id?.toString(),
+                customer: booking.customer?.toString(),
+                car: booking.car?.toString(),
+                driver: booking.driver?.toString(),
+                timeInterval: booking.timeInterval,
+            }))
+            : []
+    });
+
     return mappedCar;
 };

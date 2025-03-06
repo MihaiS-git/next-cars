@@ -29,12 +29,6 @@ export default function AccountPage() {
     const router = useRouter();
     const email = session?.user?.email;
 
-    console.log("EMAIL: ", email);
-
-    useEffect(() => {
-        console.log("Session Data:", session);
-    }, [session]);    
-
     useEffect(() => {
         if (status === "authenticated" && email) {
             const fetchUser = async () => {
