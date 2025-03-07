@@ -1,10 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-/*   env: {
-    NEXTAUTH_URL: "http://localhost:3000",
-  }, */
+  images: {
+    domains: [process.env.V_CAR_IMAGES || ''],
+    unoptimized: false,
+  },
 };
 
 export default nextConfig;
