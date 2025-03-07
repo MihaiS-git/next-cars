@@ -108,6 +108,7 @@ export async function bookCar(prevState: State, formData: FormData) {
         // save the bookingId in the related documents
         const lightCar = await db.collection('cars').findOne({ _id: new ObjectId(carId) }, { projection: { bookings: 1 } });
         if (lightCar) {
+            if (!lightCar.bookings) lightCar.bookings = [];
             const updatedBookingsOnCar = [...lightCar.bookings, new ObjectId(bookingId)];
             const carResult = await db.collection('cars').updateOne(
                 { _id: new ObjectId(carId) },
@@ -117,6 +118,7 @@ export async function bookCar(prevState: State, formData: FormData) {
 
         const lightDriver = await db.collection('users').findOne({ _id: new ObjectId(driverId) }, { projection: { bookings: 1 } });
         if (lightDriver) {
+            if (!lightDriver.bookings) lightDriver.bookings = [];
             const updatedBookingsOnDriver = [...lightDriver.bookings, new ObjectId(bookingId)];
             const driverResult = await db.collection('users').updateOne(
                 { _id: new ObjectId(driverId) },
@@ -126,6 +128,7 @@ export async function bookCar(prevState: State, formData: FormData) {
 
         const lightCustomer = await db.collection('users').findOne({ _id: new ObjectId(customerId) }, { projection: { bookings: 1 } });
         if (lightCustomer) {
+            if(!lightCustomer.bookings) lightCustomer.bookings = [];
             const updatedBookingsOnCustomer = [...lightCustomer.bookings, new ObjectId(bookingId)];
             const customerResult = await db.collection('users').updateOne(
                 { _id: new ObjectId(customerId) },
