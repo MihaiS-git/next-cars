@@ -38,7 +38,7 @@ export default function BookingCarousel({isLoading, error, carouselRef, carousel
                             >
                                 <Link href={`/${baseLink}/${element.elementId}`}>
                                     <Image
-                                        src={element.elementPicture}
+                                        src={`/845/${element.elementPicture}`}
                                         alt="Element picture"
                                         width={640}
                                         height={480}

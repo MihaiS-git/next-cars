@@ -27,13 +27,13 @@ export default function CarDetails({ car }: { car: ICar }) {
                                     return (
                                         <CarouselItem key={image}>
                                             <Image
-                                                src={image}
+                                                src={`/845/${image}`}
                                                 alt={`${car!.make} ${
                                                     car!.carModel
                                                 } `}
-                                                width={900}
-                                                height={600}
-                                                quality={100}
+                                                width={845}
+                                                height={475}
+                                                quality={80}
                                                 className="mx-auto overflow-hidden"
                                             />
                                         </CarouselItem>

@@ -21,16 +21,19 @@ export default function DriverCard({
         <Link href={`/drivers/${slug}`} className="hover:animate-pulse">
             <Card className="bg-zinc-900 text-red-500 border border-red-600 shadow-lg shadow-red-200/50 py-4">
                 <CardHeader>
-                    <CardTitle className="text-xl font-bold">{driver.name}</CardTitle>
+                    <CardTitle className="text-xl font-bold">
+                        {driver.name}
+                    </CardTitle>
                 </CardHeader>
                 <CardContent className="pb-4">
                     <Image
                         src={
-                            driver.pictureUrl || "/drivers/nc_default_user.png"
+                            `/335/${driver.pictureUrl}` ||
+                            "/drivers/nc_default_user.png"
                         }
                         alt={`${driver.name}`}
-                        width={300}
-                        height={200}
+                        width={335}
+                        height={190}
                         className="w-full"
                     />
                 </CardContent>

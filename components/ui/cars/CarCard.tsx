@@ -24,12 +24,12 @@ export default function CarCard({ car, slug }: { car: ICar; slug: string }) {
                     <Image
                         src={
                             (typeof car.carImagesAndDocuments === "object" &&
-                                car.carImagesAndDocuments?.carImages?.[0]) ||
+                                `/335/${car.carImagesAndDocuments?.carImages?.[0]}`) ||
                             "/cars/default-image.webp"
                         }
                         alt={`${car.make} ${car.carModel}`}
-                        width={300}
-                        height={200}
+                        width={335}
+                        height={190}
                         className="w-full"
                     />
                 </CardContent>

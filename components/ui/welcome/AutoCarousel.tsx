@@ -51,7 +51,7 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
                         >
                             <div className="h-[300px] md:h-[450px] lg:h-[450px]">
                                 <Image
-                                    src={imageUrls[currentIndex]}
+                                    src={`/845/${imageUrls[currentIndex]}`}
                                     alt="car image"
                                     width={900}
                                     height={450}

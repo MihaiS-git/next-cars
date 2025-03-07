@@ -14,8 +14,8 @@ export default function CarDetails({ driver }: { driver: User }) {
             <div>
                 <Image
                     src={
-                        driver.pictureUrl ||
-                        "/public/drivers/nc_default_user.png"
+                        `/845/${driver.pictureUrl}` ||
+                        "/drivers/nc_default_user.png"
                     }
                     alt={driver!.name || "Driver picture"}
                     width={900}

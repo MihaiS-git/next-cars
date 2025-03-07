@@ -37,6 +37,7 @@ export default function AccountPage() {
                     const user = userData as User;
 
                     if (user) {
+                        setUser(user);
                         setUserData({
                             email: user.email || email,
                             name: user.name || "",
@@ -45,7 +46,8 @@ export default function AccountPage() {
                             role: user.role ? user.role : "CUSTOMER",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
-                            password: ''
+                            password: '',
+                            pictureUrl: user.pictureUrl || "",
                         });
                     } else {
                         setUserData((prev) => ({ 
@@ -78,12 +80,12 @@ export default function AccountPage() {
     if (error && error !== "User not found")
         return <p className="p-16 bg-slate-50 text-red-600">{error}</p>;
 
+    
     return (
         <div className="flex flex-col items-center bg-zinc-900 text-red-600 w-full md:w-10/12 lg:w-8/12 xl:w-6/12 2xl:w-4/12 rounded-lg border border-red-600 mt-4">
             <h3 className="my-8 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
                 <em>Contact</em>
             </h3>
-
             <Image
                 src={user?.pictureUrl || "/customers/nc_default_user.png"}
                 alt="user image"
