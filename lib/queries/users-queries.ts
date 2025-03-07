@@ -6,6 +6,18 @@ import { withDb } from "@/lib/util/db-helper";
 export async function getUserByEmail(email: string): Promise<User | null> {
   const user = withDb('users', async (collection) => {
     const user = (await collection.findOne({ email })) as User | null;
+    if (user) {
+      user._id = user._id!.toString();
+      return user;
+    }
+    return null;
+  });
+  return user;
+}
+
+export async function getFullUserByEmail(email: string): Promise<User | null> {
+  const user = withDb('users', async (collection) => {
+    const user = (await collection.findOne({ email })) as User | null;
     if (!user) return null;
 
     const mappedUser: User = {

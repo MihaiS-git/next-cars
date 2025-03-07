@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { getUserByEmail } from "@/lib/queries/users-queries";
+import { getFullUserByEmail } from "@/lib/queries/users-queries";
 import { useActionState, useEffect, useState } from "react";
 import { User } from "@/lib/definitions";
 import { useRouter } from "next/navigation";
@@ -33,7 +33,7 @@ export default function AccountPage() {
         if (status === "authenticated" && email) {
             const fetchUser = async () => {
                 try {
-                    const userData = await getUserByEmail(email);
+                    const userData = await getFullUserByEmail(email);
                     const user = userData as User;
 
                     if (user) {
