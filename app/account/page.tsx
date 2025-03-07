@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { getFullUserByEmail } from "@/lib/queries/users-queries";
+import { getUserByEmail } from "@/lib/queries/users-queries";
 import { useActionState, useEffect, useState } from "react";
 import { User } from "@/lib/definitions";
 import { useRouter } from "next/navigation";
@@ -33,7 +33,7 @@ export default function AccountPage() {
         if (status === "authenticated" && email) {
             const fetchUser = async () => {
                 try {
-                    const userData = await getFullUserByEmail(email);
+                    const userData = await getUserByEmail(email);
                     const user = userData as User;
 
                     if (user) {
@@ -45,10 +45,13 @@ export default function AccountPage() {
                             role: user.role ? user.role : "CUSTOMER",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
-                            password: user.password
+                            password: ''
                         });
                     } else {
-                        setError("User not found");
+                        setUserData((prev) => ({ 
+                            ...prev,
+                            email: email
+                        }));
                     }
                 } catch (err) {
                     setError("Error fetching user data");
@@ -95,6 +98,7 @@ export default function AccountPage() {
                     Object.entries(userData).forEach(([key, value]) => {
                         formData.append(key, value as string);
                     });
+                    formData.append("email", email || "");
                     formAction(formData);
                 }}
                 className="flex flex-col gap-4 justify-between align-middle w-full p-4 md:p-8"
@@ -194,7 +198,7 @@ export default function AccountPage() {
                         name="email"
                         type="email"
                         value={userData.email || email || ""}
-                        disabled
+                        readOnly
                     />
                 </p>
                 <p className="flex flex-row justify-between mx-2">

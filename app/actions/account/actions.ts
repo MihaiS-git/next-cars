@@ -15,8 +15,8 @@ export type State = {
 };
 
 export async function updateUser(prevState: State, formData: FormData) {
-    const email = formData.get('email');
-    const role = formData.get('role');
+    const email = formData.get('email') as string | null;
+    const role = formData.get('role') as string | null;
 
     const validatedFields = updateUserSchema.safeParse({
         name: formData.get('name'),
@@ -37,7 +37,6 @@ export async function updateUser(prevState: State, formData: FormData) {
 
     try {
         const db = await connectDB();
-
         const existentUser = await db.collection('users').findOne({ email });
 
         if (existentUser) {
@@ -51,6 +50,7 @@ export async function updateUser(prevState: State, formData: FormData) {
                         name,
                         phone,
                         role,
+                        bookings: [],
                         updatedAt: new Date(),
                     },
                 },
@@ -69,11 +69,13 @@ export async function updateUser(prevState: State, formData: FormData) {
                 name,
                 phone,
                 role: "CUSTOMER",
+                pictureUrl: '',
+                bookings: [],
                 createdAt: new Date(),
                 updatedAt: new Date()
             });
 
-            if (newUser) {
+            if (newUser.insertedId) {
                 return { message: 'User profile created successfully.' };
             } else {
                 return {message: 'Failed to create user profile.'}

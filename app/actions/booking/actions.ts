@@ -27,7 +27,7 @@ export async function bookCar(prevState: State, formData: FormData) {
     const customerId = customer?._id.toString();
 
     if (!carId || !driverId || !sDate || !daysNo || !customerId) {
-        return { message: "Missing required fields." };
+        return { message: 'Missing required fields. Please fill in your details first.'};
     }
 
     const startDate = new Date(sDate!);

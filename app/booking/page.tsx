@@ -8,9 +8,12 @@ import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import BookingCarousel from "@/components/ui/booking/booking-carousel";
 import { bookCar } from "../actions/booking/actions";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function BookingPage() {
-    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [startDate, setStartDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
     const [daysNo, setDaysNo] = useState(1);
     const [carId, setCarId] = useState("");
     const [driverId, setDriverId] = useState("");
@@ -204,6 +207,25 @@ export default function BookingPage() {
                         />
                     </p>
 
+                    <div
+                        id="general-error"
+                        className="text-center text-base text-red-600 my-8"
+                    >
+                        {formState?.message ? (
+                            formState.message.includes(
+                                "Please fill in your details first"
+                            ) && (
+                                <p>
+                                    Missing required fields.
+                                    <Link href="/account" className="underline">
+                                        Please fill in your details first.
+                                    </Link>
+                                </p>
+                            )
+                        ) : (
+                            <p>{formState.message}</p>
+                        )}
+                    </div>
                     <Button
                         type="submit"
                         variant="secondary"
@@ -212,12 +234,6 @@ export default function BookingPage() {
                     >
                         Confirm Selection
                     </Button>
-                    <div
-                        id="general-error"
-                        className="text-center text-base text-red-600"
-                    >
-                        {formState?.message && <p>{formState.message}</p>}
-                    </div>
                 </form>
                 <hr className="h-0.5 w-full pb-4" />
             </div>
