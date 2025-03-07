@@ -6,7 +6,7 @@ export const updateUserSchema = object({
     address: z.string({ required_error: "Address is required." })
         .min(1, "Address must be valid."),
     phone: z.string({ required_error: "Phone is required." })
-        .min(10, "Address must be at least 10 digits."),
+        .min(10, "Phone must be at least 10 digits."),
     dob: z.string()
         .refine((val) => !isNaN(Date.parse(val)), 'Invalid date format for dob.')
         .transform((val) => new Date(val))

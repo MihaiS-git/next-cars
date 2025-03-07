@@ -22,8 +22,8 @@ export async function updateUser(prevState: State, formData: FormData) {
         name: formData.get('name'),
         address: formData.get('address'),
         phone: formData.get('phone'),
-        dob: formData.get('dob') || undefined,
-        drivingSince: formData.get('drivingSince') || undefined
+        dob: formData.get('dob'),
+        drivingSince: formData.get('drivingSince')
     });
 
     if (!validatedFields.success) {
