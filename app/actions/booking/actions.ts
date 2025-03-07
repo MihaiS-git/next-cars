@@ -1,5 +1,6 @@
 "use server";
 
+import { log } from "console";
 import { getCarByIdWithBookings } from "../cars/actions";
 import { getDriverByIdWithBookings } from "../drivers/actions";
 import { connectDB } from "@/lib/mongoDb";
@@ -46,10 +47,17 @@ export async function bookCar(prevState: State, formData: FormData) {
             for (const booking of selectedCar.bookings) {
                 const bookedStart = new Date(booking.timeInterval.start);
                 const bookedEnd = new Date(booking.timeInterval.end);
+                console.log(bookedStart, bookedEnd, startDate, endDate);
+                
+
+                log('Checking Car availability...', startDate > bookedStart && startDate < bookedEnd ||
+                    endDate > bookedStart && endDate < bookedEnd ||
+                    startDate < bookedStart && endDate > bookedEnd);
                 if (startDate > bookedStart && startDate < bookedEnd ||
                     endDate > bookedStart && endDate < bookedEnd ||
                     startDate < bookedStart && endDate > bookedEnd
                 ) {
+                    log('Car is not available for the chosen interval.');
                     isCarAvailable = false;
                     break;
                 }
@@ -66,10 +74,15 @@ export async function bookCar(prevState: State, formData: FormData) {
                 const bookedStart = new Date(booking.timeInterval.start);
                 const bookedEnd = new Date(booking.timeInterval.end);
 
+                log('Checking driver availability', startDate > bookedStart && startDate < bookedEnd ||
+                    endDate > bookedStart && endDate < bookedEnd ||
+                    startDate < bookedStart && endDate > bookedEnd);
+
                 if (startDate > bookedStart && startDate < bookedEnd ||
                     endDate > bookedStart && endDate < bookedEnd ||
                     startDate < bookedStart && endDate > bookedEnd
                 ) {
+                    log('Driver is not available for the chosen interval.');
                     isDriverAvailable = false;
                     break;
                 }
@@ -77,6 +90,8 @@ export async function bookCar(prevState: State, formData: FormData) {
         }
         if (!isDriverAvailable) return { message: "The selected driver is not available for the chosen interval." }
 
+        console.log('Car and Driver are available!', isCarAvailable, isDriverAvailable);
+        
         // create new Booking
         const newBooking = {
             customer: new ObjectId(customerId!),

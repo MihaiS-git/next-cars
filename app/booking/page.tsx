@@ -207,7 +207,7 @@ export default function BookingPage() {
                         />
                     </p>
 
-                    <div
+                    {/* <div
                         id="general-error"
                         className="text-center text-base text-red-600 my-8"
                     >
@@ -225,6 +225,12 @@ export default function BookingPage() {
                         ) : (
                             <p>{formState.message}</p>
                         )}
+                    </div> */}
+                    <div
+                        id="general-error"
+                        className="text-center text-base text-red-600 my-8"
+                    >
+                        <p>{formState?.message}</p>
                     </div>
                     <Button
                         type="submit"
