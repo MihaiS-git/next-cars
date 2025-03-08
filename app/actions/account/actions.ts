@@ -50,7 +50,6 @@ export async function updateUser(prevState: State, formData: FormData) {
                         name,
                         phone,
                         role,
-                        bookings: [],
                         updatedAt: new Date(),
                     },
                 },
@@ -64,8 +63,8 @@ export async function updateUser(prevState: State, formData: FormData) {
             const newUser = await db.collection('users').insertOne({
                 email,
                 address,
-                dob: dob ? new Date(dob) : null,
-                drivingSince: dob ? new Date(drivingSince) : null,
+                dob: new Date(dob),
+                drivingSince: new Date(drivingSince),
                 name,
                 phone,
                 role: "CUSTOMER",

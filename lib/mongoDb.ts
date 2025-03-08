@@ -1,15 +1,14 @@
 import client from "@/db";
-import dotenv from 'dotenv';
-dotenv.config();
 
 const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME;
 
-let isConnected = false;
-
 export async function connectDB() {
-    if (!isConnected) {
+    try {
+        // Check if the client is already connected by attempting a ping
+        await client.db().admin().ping();
+    } catch (error) {
+        // If ping fails, reconnect
         await client.connect();
-        isConnected = true;
     }
     return client.db(MONGODB_DB_NAME);
 }
