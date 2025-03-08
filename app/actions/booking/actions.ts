@@ -23,22 +23,25 @@ export async function bookCar(prevState: State, formData: FormData) {
     const sDate = formData.get('startDate') as string | null;
     const daysNo = formData.get('daysNo') as string | null;
 
-    const db = await connectDB();
-    const customer = await db.collection('users').findOne({ email: customerEmail });
-    const customerId = customer?._id.toString();
-
-    if (!carId || !driverId || !sDate || !daysNo || !customerId) {
-        return { message: 'Missing required fields. Please fill in your details first.'};
-    }
-
-    const startDate = new Date(sDate!);
-    let endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + Number(daysNo));
-
-    let isCarAvailable = true;
-    let isDriverAvailable = true;
-
     try {
+        const db = await connectDB();
+        const customer = await db.collection('users').findOne({ email: customerEmail });
+        const customerId = customer?._id.toString();
+
+        if (!carId || !driverId || !sDate || !daysNo) {
+            return { message: 'Missing required fields.' };
+        }
+        if (!customerId) {
+            return { message: 'Please fill in your Account details first.' };
+        }
+
+        const startDate = new Date(sDate!);
+        let endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + Number(daysNo));
+
+        let isCarAvailable = true;
+        let isDriverAvailable = true;
+
         // check Car availability
         const selectedCar = await getCarByIdWithBookings(carId);
         if (!selectedCar) return { message: "Car not found." };
@@ -47,23 +50,18 @@ export async function bookCar(prevState: State, formData: FormData) {
             for (const booking of selectedCar.bookings) {
                 const bookedStart = new Date(booking.timeInterval.start);
                 const bookedEnd = new Date(booking.timeInterval.end);
-                console.log(bookedStart, bookedEnd, startDate, endDate);
-                
 
-                log('Checking Car availability...', startDate > bookedStart && startDate < bookedEnd ||
-                    endDate > bookedStart && endDate < bookedEnd ||
-                    startDate < bookedStart && endDate > bookedEnd);
-                if (startDate > bookedStart && startDate < bookedEnd ||
-                    endDate > bookedStart && endDate < bookedEnd ||
-                    startDate < bookedStart && endDate > bookedEnd
+                if (startDate >= bookedStart && startDate <= bookedEnd ||
+                    endDate >= bookedStart && endDate <= bookedEnd ||
+                    startDate <= bookedStart && endDate >= bookedEnd
                 ) {
-                    log('Car is not available for the chosen interval.');
                     isCarAvailable = false;
                     break;
                 }
             }
         }
         if (!isCarAvailable) return { message: "The selected car is not available for the chosen interval." }
+        
 
         // check Driver availability
         const selectedDriver = await getDriverByIdWithBookings(driverId);
@@ -74,15 +72,10 @@ export async function bookCar(prevState: State, formData: FormData) {
                 const bookedStart = new Date(booking.timeInterval.start);
                 const bookedEnd = new Date(booking.timeInterval.end);
 
-                log('Checking driver availability', startDate > bookedStart && startDate < bookedEnd ||
-                    endDate > bookedStart && endDate < bookedEnd ||
-                    startDate < bookedStart && endDate > bookedEnd);
-
-                if (startDate > bookedStart && startDate < bookedEnd ||
-                    endDate > bookedStart && endDate < bookedEnd ||
-                    startDate < bookedStart && endDate > bookedEnd
+                if (startDate >= bookedStart && startDate <= bookedEnd ||
+                    endDate >= bookedStart && endDate <= bookedEnd ||
+                    startDate <= bookedStart && endDate >= bookedEnd
                 ) {
-                    log('Driver is not available for the chosen interval.');
                     isDriverAvailable = false;
                     break;
                 }
@@ -90,8 +83,6 @@ export async function bookCar(prevState: State, formData: FormData) {
         }
         if (!isDriverAvailable) return { message: "The selected driver is not available for the chosen interval." }
 
-        console.log('Car and Driver are available!', isCarAvailable, isDriverAvailable);
-        
         // create new Booking
         const newBooking = {
             customer: new ObjectId(customerId!),
@@ -128,7 +119,7 @@ export async function bookCar(prevState: State, formData: FormData) {
 
         const lightCustomer = await db.collection('users').findOne({ _id: new ObjectId(customerId) }, { projection: { bookings: 1 } });
         if (lightCustomer) {
-            if(!lightCustomer.bookings) lightCustomer.bookings = [];
+            if (!lightCustomer.bookings) lightCustomer.bookings = [];
             const updatedBookingsOnCustomer = [...lightCustomer.bookings, new ObjectId(bookingId)];
             const customerResult = await db.collection('users').updateOne(
                 { _id: new ObjectId(customerId) },

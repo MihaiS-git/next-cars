@@ -9,6 +9,7 @@ import { ICar } from "@/lib/definitions";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { log } from "node:console";
 
 export default function AutoCarousel({ cars }: { cars: ICar[] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -49,11 +50,12 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
             car.carImagesAndDocuments &&
             typeof car.carImagesAndDocuments !== "string"
         ) {
-            imageUrls.push(car.carImagesAndDocuments.carImages[0]);
+            imageUrls.push(`${car.carImagesAndDocuments.carImages[0]}`);
         } else {
             imageUrls.push("/cars/default-image.webp");
         }
     });
+
 
     if (!imagesLoaded) {
         return <p className="text-zinc-400 mx-auto my-56">Loading images...</p>;
@@ -75,8 +77,8 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
                                 <Image
                                     src={`/845/${imageUrls[currentIndex]}`}
                                     alt="car image"
-                                    width={900}
-                                    height={450}
+                                    width={845}
+                                    height={475}
                                     quality={100}
                                     className="mb-8 mx-auto overflow-hidden shadow-red-500 shadow-sm"
                                     priority
