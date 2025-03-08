@@ -16,7 +16,16 @@ interface CarouselProps {
     dataAttribute: string;
 }
 
-export default function BookingCarousel({isLoading, error, carouselRef, carouselElements, elementTag, class_carousel_item, baseLink, dataAttribute}: CarouselProps) {
+export default function BookingCarousel({
+    isLoading,
+    error,
+    carouselRef,
+    carouselElements,
+    elementTag,
+    class_carousel_item,
+    baseLink,
+    dataAttribute,
+}: CarouselProps) {
     return (
         <>
             <div className="text-center">
@@ -26,7 +35,13 @@ export default function BookingCarousel({isLoading, error, carouselRef, carousel
                 <p className="text-sm text-red-600">
                     Swipe and click for more info
                 </p>
-                {isLoading && <p>Loading...</p>}
+                {isLoading && (
+                    <div className="flex items-center justify-center h-80">
+                        <p className="text-zinc-400 my-auto">
+                            Loading carousel...
+                        </p>
+                    </div>
+                )}
                 {error && <p>{`Failed to load elements. ${error}`}</p>}
                 <Carousel ref={carouselRef}>
                     <CarouselContent>
@@ -34,9 +49,11 @@ export default function BookingCarousel({isLoading, error, carouselRef, carousel
                             <CarouselItem
                                 key={element.elementId}
                                 {...{ [dataAttribute]: element.elementId }}
-                                className={`${ class_carousel_item } my-auto`}
+                                className={`${class_carousel_item} my-auto`}
                             >
-                                <Link href={`/${baseLink}/${element.elementId}`}>
+                                <Link
+                                    href={`/${baseLink}/${element.elementId}`}
+                                >
                                     <Image
                                         src={`/845/${element.elementPicture}`}
                                         alt="Element picture"

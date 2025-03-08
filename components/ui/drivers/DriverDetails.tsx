@@ -10,7 +10,7 @@ export default function CarDetails({ driver }: { driver: User }) {
     };
 
     return (
-        <div className="flex flex-col bg-zinc-800 text-zinc-50 w-full md:w-8/12 rounded-lg border border-red-600 mt-4 items-center lg:items-stretch">
+        <div>
             <div>
                 <Image
                     src={
@@ -28,12 +28,12 @@ export default function CarDetails({ driver }: { driver: User }) {
                 <em>{driver!.name}</em>
             </h1>
 
-            <div className="flex flex-col md:flex-row justify-evenly align-top items-start text-left gap-4 p-4 lg:p-8">
+            <div className="flex flex-col md:flex-row justify-evenly align-top items-center md:items-start text-left gap-4 p-4 lg:p-8">
                 <div>
                     <h4 className="text-left font-bold pb-2">Driver details</h4>
                     <p>DOB: {driver!.dob ? new Date(driver!.dob).getFullYear() : "N/A"}</p>
                     <p>
-                        Driving since:
+                        Driving since: {" "}
                         {driver!.drivingSince ? new Date(driver!.drivingSince).getFullYear() : "N/A"}
                     </p>
                 </div>

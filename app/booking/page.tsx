@@ -9,6 +9,8 @@ import BookingCarousel from "@/components/ui/booking/booking-carousel";
 import { bookCar } from "../actions/booking/actions";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { X } from "lucide-react";
 
 export default function BookingPage() {
     const [startDate, setStartDate] = useState(
@@ -145,103 +147,116 @@ export default function BookingPage() {
         }
     }, [drivers]);
 
+    const handleClose = () => {
+        redirect("/");
+    };
+
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8 lg:px-8 sm:mt-4 bg-zinc-800 text-zinc-50 rounded-lg border border-red-600 md:w-11/12">
-            <h3 className="lg:col-span-2 w-full mt-4 font-semibold text-xl lg:font-bold lg:text-2xl text-center text-red-600">
-                <em>Book Form</em>
-            </h3>
-            <BookingCarousel
-                isLoading={isLoadingCars}
-                error={errorCars ? errorCars.message : null}
-                carouselRef={carCarouselRef}
-                carouselElements={carouselCars}
-                elementTag="car"
-                class_carousel_item="car-carousel-item"
-                baseLink="cars"
-                dataAttribute="data-car-id"
-            />
-            <BookingCarousel
-                isLoading={isLoadingDrivers}
-                error={errorDrivers ? errorDrivers.message : null}
-                carouselRef={driverCarouselRef}
-                carouselElements={carouselDrivers}
-                elementTag="driver"
-                class_carousel_item="driver-carousel-item"
-                baseLink="drivers"
-                dataAttribute="data-driver-id"
-            />
+        <div className="flex flex-col">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8  mx-auto">
+                <h3 className="lg:col-span-2 w-full mt-4 font-semibold text-xl lg:font-bold lg:text-2xl text-center text-red-600">
+                    <em>Book Form</em>
+                </h3>
+                <BookingCarousel
+                    isLoading={isLoadingCars}
+                    error={errorCars ? errorCars.message : null}
+                    carouselRef={carCarouselRef}
+                    carouselElements={carouselCars}
+                    elementTag="car"
+                    class_carousel_item="car-carousel-item"
+                    baseLink="cars"
+                    dataAttribute="data-car-id"
+                />
+                <BookingCarousel
+                    isLoading={isLoadingDrivers}
+                    error={errorDrivers ? errorDrivers.message : null}
+                    carouselRef={driverCarouselRef}
+                    carouselElements={carouselDrivers}
+                    elementTag="driver"
+                    class_carousel_item="driver-carousel-item"
+                    baseLink="drivers"
+                    dataAttribute="data-driver-id"
+                />
 
-            <div className="lg:col-span-2 flex flex-col items-center m-auto w-full">
-                <hr className="h-0.5 w-full pb-4" />
-                <form
-                    action={formAction}
-                    className="flex flex-col justify-between align-middle pb-4 w-full lg:w-1/2"
-                >
-                    <input
-                        type="hidden"
-                        name="customerEmail"
-                        value={customerEmail || ""}
-                    />
-                    <input type="hidden" name="carId" value={carId} />
-                    <input type="hidden" name="driverId" value={driverId} />
-                    <p className="flex flex-row justify-between m-2">
-                        <label htmlFor="startDate">Start Date: </label>
+                <div className="lg:col-span-2 flex flex-col items-center m-auto w-full">
+                    <hr className="h-0.5 w-full pb-4" />
+                    <form
+                        action={formAction}
+                        className="flex flex-col justify-between align-middle pb-4 w-full lg:w-1/2"
+                    >
                         <input
-                            className="text-zinc-950 w-8/12 p-1 rounded-md"
-                            id="startDate"
-                            type="date"
-                            name="startDate"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
+                            type="hidden"
+                            name="customerEmail"
+                            value={customerEmail || ""}
                         />
-                    </p>
-                    <p className="flex flex-row justify-between m-2">
-                        <label htmlFor="daysNo">Days No.:</label>
-                        <input
-                            className="text-zinc-950 w-8/12 p-1 rounded-md"
-                            id="daysNo"
-                            type="number"
-                            name="daysNo"
-                            value={daysNo}
-                            onChange={(e) => setDaysNo(+e.target.value)}
-                        />
-                    </p>
+                        <input type="hidden" name="carId" value={carId} />
+                        <input type="hidden" name="driverId" value={driverId} />
+                        <p className="flex flex-row justify-between m-2">
+                            <label htmlFor="startDate">Start Date: </label>
+                            <input
+                                className="text-zinc-950 w-8/12 p-1 rounded-md"
+                                id="startDate"
+                                type="date"
+                                name="startDate"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                        </p>
+                        <p className="flex flex-row justify-between m-2">
+                            <label htmlFor="daysNo">Days No.:</label>
+                            <input
+                                className="text-zinc-950 w-8/12 p-1 rounded-md"
+                                id="daysNo"
+                                type="number"
+                                name="daysNo"
+                                value={daysNo}
+                                onChange={(e) => setDaysNo(+e.target.value)}
+                            />
+                        </p>
 
-                    {/* <div
-                        id="general-error"
-                        className="text-center text-base text-red-600 my-8"
-                    >
-                        {formState?.message ? (
-                            formState.message.includes(
-                                "Please fill in your details first"
-                            ) && (
-                                <p>
-                                    Missing required fields.
-                                    <Link href="/account" className="underline">
-                                        Please fill in your details first.
-                                    </Link>
-                                </p>
-                            )
-                        ) : (
-                            <p>{formState.message}</p>
-                        )}
-                    </div> */}
-                    <div
-                        id="general-error"
-                        className="text-center text-base text-red-600 my-8"
-                    >
-                        <p>{formState?.message}</p>
-                    </div>
-                    <Button
-                        type="submit"
-                        variant="secondary"
-                        size="lg"
-                        className="mx-auto w-1/2 md:w-1/3 px-2"
-                    >
-                        Confirm Selection
-                    </Button>
-                </form>
-                <hr className="h-0.5 w-full pb-4" />
+                        <div
+                            id="general-error"
+                            className="text-center text-base text-red-600"
+                        >
+                            {formState?.message ? (
+                                formState.message.includes(
+                                    "Please fill in your details first"
+                                ) && (
+                                    <p>
+                                        Missing required fields.
+                                        <Link
+                                            href="/account"
+                                            className="underline"
+                                        >
+                                            Please fill in your details first.
+                                        </Link>
+                                    </p>
+                                )
+                            ) : (
+                                <p>{formState.message}</p>
+                            )}
+                        </div>
+                        <div
+                            id="general-error"
+                            className="text-center text-base text-red-600 my-8"
+                        >
+                            <p>{formState?.message}</p>
+                        </div>
+                        <Button
+                            type="submit"
+                            variant="secondary"
+                            size="lg"
+                            className="mx-auto w-1/2 md:w-1/3 px-2"
+                        >
+                            Confirm Selection
+                        </Button>
+                    </form>
+                </div>
+            </div>
+            <div className="w-full flex flex-row justify-end pb-4 pe-4">
+                <Button variant="destructive" size="icon" onClick={handleClose}>
+                    <X />
+                </Button>
             </div>
         </div>
     );

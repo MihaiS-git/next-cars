@@ -12,6 +12,24 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function AutoCarousel({ cars }: { cars: ICar[] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [imagesLoaded, setImagesLoaded] = useState(false);
+
+    useEffect(() => {
+        const imagePromises = cars.map(car => {
+            return new Promise<void>((resolve, reject) => {
+                const img = new window.Image();
+                img.src = car.carImagesAndDocuments && typeof car.carImagesAndDocuments !== "string"
+                    ? car.carImagesAndDocuments.carImages[0]
+                    : "/cars/default-image.webp";
+                img.onload = () => resolve();
+                img.onerror = () => reject();
+            });
+        });
+
+        Promise.all(imagePromises)
+            .then(() => setImagesLoaded(true))
+            .catch(() => setImagesLoaded(true)); // Handle errors by setting imagesLoaded to true
+    }, [cars]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -20,7 +38,7 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
                     prevIndex === cars.length - 1 ? 0 : prevIndex + 1
                 );
             }, 500);
-        }, 5000);
+        }, 3000);
 
         return () => clearInterval(interval);
     }, [currentIndex]);
@@ -36,6 +54,10 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
             imageUrls.push("/cars/default-image.webp");
         }
     });
+
+    if (!imagesLoaded) {
+        return <p className="text-zinc-400 mx-auto my-56">Loading images...</p>;
+    }
 
     return (
         <Carousel className="mx-auto w-full lg:w-8/12 mb-8">
@@ -56,7 +78,7 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
                                     width={900}
                                     height={450}
                                     quality={100}
-                                    className="mb-8 mx-auto overflow-hidden rounded-md shadow-red-500 shadow-sm"
+                                    className="mb-8 mx-auto overflow-hidden shadow-red-500 shadow-sm"
                                     priority
                                 />
                             </div>

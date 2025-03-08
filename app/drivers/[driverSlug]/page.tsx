@@ -20,8 +20,8 @@ export default function DriverSlug({ params }: { params: Promise<{ driverSlug: s
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-40">
-                <p className="text-gray-500">Loading driver details...</p>
+            <div className="flex items-center justify-center h-80">
+                <p className="text-gray-400">Loading driver details...</p>
             </div>
         );
     }

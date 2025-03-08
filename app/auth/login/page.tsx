@@ -13,7 +13,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex flex-col bg-zinc-900 text-zinc-50 w-full md:w-10/12 lg:w-8/12 xl:w-6/12 2xl:w-4/12 rounded-lg border border-red-600 mt-4">
+        <div className="flex flex-col w-full">
             <header>
                 <h1 className="mb-4 mt-8 text-red-600 font-semibold text-2xl lg:font-bold lg:text-3xl text-center">
                     <em>Login Form</em>

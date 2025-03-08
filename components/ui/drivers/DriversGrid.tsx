@@ -54,9 +54,10 @@ export default function DriversGrid({
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-40">
-                <p className="text-gray-500">Loading drivers...</p>
+            <div className="flex items-center justify-center h-80">
+                <p className="text-zinc-400">Loading drivers...</p>
             </div>
+            
         );
     }
 
