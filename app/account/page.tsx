@@ -43,7 +43,7 @@ export default function AccountPage() {
                             name: user.name || "",
                             address: user.address || "",
                             phone: user.phone || "",
-                            role: user.role ? user.role : "CUSTOMER",
+                            role: user.role || "CUSTOMER",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
                             password: "",
@@ -103,6 +103,32 @@ export default function AccountPage() {
                 <p className="text-xl">
                     Hello {userData.name || session?.user?.name}!
                 </p>
+                <div className="flex flex-col w-full p-4 md:px-8">
+                    <div className="flex flex-row justify-between align-middle mx-2">
+                        <label
+                            htmlFor="name"
+                            className="w-3/12 xl:w-2/12 my-auto"
+                        >
+                            Email:
+                        </label>
+
+                        <p className="w-8/12 sm:w-9/12 p-1 my-auto rounded-md">
+                            {email}
+                        </p>
+                    </div>
+                    <div className="flex flex-row justify-between align-middle mx-2">
+                        <label
+                            htmlFor="name"
+                            className="w-3/12 xl:w-2/12 my-auto"
+                        >
+                            Role:
+                        </label>
+
+                        <p className="w-8/12 sm:w-9/12 p-1 my-auto rounded-md">
+                            {userData.role}
+                        </p>
+                    </div>
+                </div>
                 <form
                     action={() => {
                         const formData = new FormData();
@@ -208,47 +234,6 @@ export default function AccountPage() {
                                 <p key={error}>{error}</p>
                             ))}
                     </div>
-                    <p className="flex flex-row justify-between mx-2">
-                        <label
-                            htmlFor="email"
-                            className="w-3/12 xl:w-2/12 my-auto"
-                        >
-                            E-mail:
-                        </label>
-                        <input
-                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={userData.email || email || ""}
-                            readOnly
-                        />
-                    </p>
-                    <p className="flex flex-row justify-between mx-2 my-4">
-                        <label
-                            htmlFor="role"
-                            className="w-3/12 xl:w-2/12 my-auto"
-                        >
-                            Role:
-                        </label>
-                        <select
-                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
-                            name="role"
-                            id="role"
-                            value={user?.role || "CUSTOMER"}
-                            onChange={(e) =>
-                                setUserData((prev) => ({
-                                    ...prev,
-                                    [e.target.name]: e.target.value,
-                                }))
-                            }
-                            disabled={user?.role === "CUSTOMER"}
-                        >
-                            <option value="CUSTOMER">CUSTOMER</option>
-                            <option value="DRIVER">DRIVER</option>
-                            <option value="ADMIN">ADMIN</option>
-                        </select>
-                    </p>
                     <p className="flex flex-row justify-between mx-2">
                         <label
                             htmlFor="dob"
