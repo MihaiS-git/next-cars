@@ -51,7 +51,7 @@ export default function LoginForm() {
                 className="flex flex-col gap-4 justify-between align-middle w-full p-4 md:p-8"
             >
                 <p className="flex flex-row justify-between m-2">
-                    <label htmlFor="email" className="w-3/12 md:w-2/12">
+                    <label htmlFor="email" className="w-3/12 md:w-2/12 my-auto">
                         Email
                     </label>
                     <input
@@ -65,7 +65,7 @@ export default function LoginForm() {
                     />
                 </p>
                 <p className="flex flex-row justify-between m-2">
-                    <label htmlFor="password" className="w-3/12 md:w-2/12">
+                    <label htmlFor="password" className="w-3/12 md:w-2/12 my-auto">
                         Password
                     </label>
                     <input

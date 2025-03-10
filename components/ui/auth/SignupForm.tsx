@@ -28,7 +28,7 @@ export default function SignupForm() {
                 noValidate
             >
                 <p className="flex flex-row justify-between mx-2">
-                    <label htmlFor="email" className="w-3/12 xl:w-2/12">Email</label>
+                    <label htmlFor="email" className="w-3/12 xl:w-2/12 my-auto">Email</label>
                     <input
                         className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         type="email"
@@ -46,7 +46,7 @@ export default function SignupForm() {
                         ))}
                 </div>
                 <p className="flex flex-row justify-between mx-2">
-                    <label htmlFor="password" className="w-3/12 xl:w-2/12">Password</label>
+                    <label htmlFor="password" className="w-3/12 xl:w-2/12 my-auto">Password</label>
                     <input
                         className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         type="password"
@@ -64,7 +64,7 @@ export default function SignupForm() {
                         ))}
                 </div>
                 <p className="flex flex-row justify-between mx-2">
-                    <label htmlFor="confirmPassword" className="w-3/12 xl:w-2/12">Confirmation</label>
+                    <label htmlFor="confirmPassword" className="w-3/12 xl:w-2/12 my-auto">Confirmation</label>
                     <input
                         className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
                         type="password"

@@ -153,7 +153,7 @@ export default function BookingPage() {
 
     return (
         <div className="flex flex-col">
-            <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8  mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mx-auto px-4">
                 <h3 className="lg:col-span-2 w-full mt-4 font-semibold text-xl lg:font-bold lg:text-2xl text-center text-red-600">
                     <em>Book Form</em>
                 </h3>
@@ -179,10 +179,9 @@ export default function BookingPage() {
                 />
 
                 <div className="lg:col-span-2 flex flex-col items-center m-auto w-full">
-                    <hr className="h-0.5 w-full pb-4" />
                     <form
                         action={formAction}
-                        className="flex flex-col justify-between align-middle pb-4 w-full lg:w-1/2"
+                        className="flex flex-col justify-between align-middle pb-4 w-full lg:w-1/2 mt-4"
                     >
                         <input
                             type="hidden"
@@ -192,9 +191,9 @@ export default function BookingPage() {
                         <input type="hidden" name="carId" value={carId} />
                         <input type="hidden" name="driverId" value={driverId} />
                         <p className="flex flex-row justify-between m-2">
-                            <label htmlFor="startDate">Start Date: </label>
+                            <label htmlFor="startDate" className="w-3/12 xl:w-2/12 my-auto">Start Date: </label>
                             <input
-                                className="text-zinc-950 w-8/12 p-1 rounded-md"
+                                className="text-zinc-950 w-9/12 p-1 rounded-md"
                                 id="startDate"
                                 type="date"
                                 name="startDate"
@@ -205,7 +204,7 @@ export default function BookingPage() {
                         <p className="flex flex-row justify-between m-2">
                             <label htmlFor="daysNo">Days No.:</label>
                             <input
-                                className="text-zinc-950 w-8/12 p-1 rounded-md"
+                                className="text-zinc-950 w-9/12 p-1 rounded-md"
                                 id="daysNo"
                                 type="number"
                                 name="daysNo"
@@ -248,7 +247,7 @@ export default function BookingPage() {
                             size="lg"
                             className="mx-auto w-1/2 md:w-1/3 px-2"
                         >
-                            Confirm Selection
+                            Book Now
                         </Button>
                     </form>
                 </div>
