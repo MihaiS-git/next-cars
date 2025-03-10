@@ -149,7 +149,9 @@ export default function BookingPage() {
 
     useEffect(() => {
         const car = cars?.find((car) => car._id!.toString() === carId);
-        const driver = drivers?.find((driver) => driver._id!.toString() === driverId);
+        const driver = drivers?.find(
+            (driver) => driver._id!.toString() === driverId
+        );
 
         if (car || driver) {
             const title = car
@@ -210,7 +212,12 @@ export default function BookingPage() {
                         <input type="hidden" name="carId" value={carId} />
                         <input type="hidden" name="driverId" value={driverId} />
                         <p className="flex flex-row justify-between m-2">
-                            <label htmlFor="startDate" className="w-3/12 xl:w-2/12 my-auto">Start Date: </label>
+                            <label
+                                htmlFor="startDate"
+                                className="w-3/12 xl:w-2/12 my-auto"
+                            >
+                                Start Date:{" "}
+                            </label>
                             <input
                                 className="text-zinc-950 w-9/12 p-1 rounded-md"
                                 id="startDate"
@@ -232,14 +239,14 @@ export default function BookingPage() {
                             />
                         </p>
 
-                        <div
-                            id="general-error"
-                            className="text-center text-base text-red-600"
-                        >
-                            {formState?.message ? (
-                                formState.message.includes(
+                        {formState?.message && (
+                            <div
+                                id="general-error"
+                                className="text-center text-base text-red-600 py-8"
+                            >
+                                {formState.message.includes(
                                     "Please fill in your details first"
-                                ) && (
+                                ) ? (
                                     <p>
                                         Missing required fields.
                                         <Link
@@ -249,17 +256,11 @@ export default function BookingPage() {
                                             Please fill in your details first.
                                         </Link>
                                     </p>
-                                )
-                            ) : (
-                                <p>{formState.message}</p>
-                            )}
-                        </div>
-                        <div
-                            id="general-error"
-                            className="text-center text-base text-red-600 my-8"
-                        >
-                            <p>{formState?.message}</p>
-                        </div>
+                                ) : (
+                                    <p>{formState.message}</p>
+                                )}
+                            </div>
+                        )}
                         <Button
                             type="submit"
                             variant="secondary"
