@@ -112,14 +112,16 @@ async function transformBookings(bookings: any[]): Promise<IBooking[]> {
   }));
 }
 
-export async function getPastRentalsByUserEmail(email: string): Promise<User | null> {
+async function getRentalsByUserEmail(email: string, filter: (booking: any) => boolean): Promise<User | null> {
   const fetchedUser = await fetchUserByEmail(email);
   if (!fetchedUser) return null;
+
   const bookings = await fetchBookingsByIds(fetchedUser.bookings);
   if (bookings?.length === 0) return null;
-  const pastBookings = bookings!.filter((booking: any) => booking.timeInterval.end < new Date());
 
-  const transformedBookings = await transformBookings(pastBookings);
+  const filteredBookings = bookings!.filter(filter);
+
+  const transformedBookings = await transformBookings(filteredBookings);
 
   const transformedUser: User = {
     ...fetchedUser,
@@ -134,31 +136,15 @@ export async function getPastRentalsByUserEmail(email: string): Promise<User | n
   return transformedUser;
 }
 
+export async function getPastRentalsByUserEmail(email: string): Promise<User | null> {
+  return getRentalsByUserEmail(email, (booking) => booking.timeInterval.end < new Date());
+}
+
 export async function getUpcomingRentalsByUserEmail(email: string): Promise<User | null> {
-  const fetchedUser = await fetchUserByEmail(email);
-  if (!fetchedUser) return null;
-
-  const bookings = await fetchBookingsByIds(fetchedUser.bookings);
-  if (bookings?.length === 0) return null;
-
-  const upcomingBookings = bookings!.filter((booking: any) =>
+  return getRentalsByUserEmail(email, (booking) =>
     booking.timeInterval.start > new Date() ||
     (booking.timeInterval.start < new Date() && booking.timeInterval.end > new Date())
   );
-
-  const transformedBookings = await transformBookings(upcomingBookings);
-
-  const transformedUser: User = {
-    ...fetchedUser,
-    _id: fetchedUser._id.toString(),
-    email: fetchedUser.email,
-    password: "",
-    dob: fetchedUser.dob.toISOString().split('T')[0] || null,
-    drivingSince: fetchedUser.drivingSince.toISOString().split('T')[0] || null,
-    bookings: transformedBookings,
-  };
-
-  return transformedUser;
 }
 
 export async function createNewUser(email: string, password: string) {
