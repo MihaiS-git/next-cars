@@ -99,6 +99,8 @@ export default function AccountPage() {
                     width={200}
                     height={200}
                     quality={80}
+                    priority
+                    className="rounded-full"
                 />
                 <p className="text-xl">
                     Hello {userData.name || session?.user?.name}!
@@ -149,7 +151,7 @@ export default function AccountPage() {
                             Full Name:
                         </label>
                         <input
-                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
+                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 px-2 rounded-md"
                             id="name"
                             name="name"
                             type="text"
@@ -180,7 +182,7 @@ export default function AccountPage() {
                             Address:
                         </label>
                         <input
-                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
+                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 px-2 rounded-md"
                             id="address"
                             name="address"
                             type="text"
@@ -211,7 +213,7 @@ export default function AccountPage() {
                             Phone:
                         </label>
                         <input
-                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
+                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 px-2 rounded-md"
                             id="phone"
                             name="phone"
                             type="text"
@@ -242,7 +244,7 @@ export default function AccountPage() {
                             Date of birth:
                         </label>
                         <input
-                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
+                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 px-2 rounded-md"
                             id="dob"
                             name="dob"
                             type="date"
@@ -279,7 +281,7 @@ export default function AccountPage() {
                             Driving since:{" "}
                         </label>
                         <input
-                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 rounded-md"
+                            className="text-zinc-950 w-8/12 sm:w-9/12 p-1 px-2 rounded-md"
                             id="drivingSince"
                             name="drivingSince"
                             type="date"

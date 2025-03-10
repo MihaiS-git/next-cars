@@ -89,6 +89,8 @@ export async function getAllCarsWithPictures() {
                     car: booking.car?.toString(),
                     driver: booking.driver?.toString(),
                     timeInterval: booking.timeInterval,
+                    status: booking.status,
+                    totalAmount: booking.totalAmount,
                 }))
                 : []
         }));
@@ -190,6 +192,8 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
                     car: booking.car?.toString(),
                     driver: booking.driver?.toString(),
                     timeInterval: booking.timeInterval,
+                    status: booking.status,
+                    totalAmount: booking.totalAmount,
                 }))
                 : []
         }));
@@ -477,6 +481,8 @@ export const getCarByIdWithBookings = async (id: string) => {
                     car: booking.car?.toString(),
                     driver: booking.driver?.toString(),
                     timeInterval: booking.timeInterval,
+                    status: booking.status,
+                    totalAmount: booking.totalAmount,
                 }))
                 : []
         });

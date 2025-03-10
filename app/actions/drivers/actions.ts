@@ -153,7 +153,9 @@ export async function getDriverByIdWithBookings(id: string) {
                 customer: booking.customer?.toString(),
                 car: booking.car?.toString(),
                 driver: booking.driver?.toString(),
-                timeInterval: { start: booking.timeInterval.start.toString(), end: booking.timeInterval.end.toString() }
+                timeInterval: { start: booking.timeInterval.start.toString(), end: booking.timeInterval.end.toString() },
+                status: booking.status,
+                totalAmount: booking.totalAmount,
             })) : [],
         }
 

@@ -5,6 +5,7 @@ import { getCarByIdWithBookings } from "../cars/actions";
 import { getDriverByIdWithBookings } from "../drivers/actions";
 import { connectDB } from "@/lib/mongoDb";
 import { ObjectId } from "mongodb";
+import { ICarRentalDetails } from "@/lib/definitions";
 
 export type State = {
     errors?: {
@@ -83,12 +84,17 @@ export async function bookCar(prevState: State, formData: FormData) {
         }
         if (!isDriverAvailable) return { message: "The selected driver is not available for the chosen interval." }
 
+        const carRentalDetails = selectedCar.carRentalDetails as ICarRentalDetails;
+        const totalAmount = +carRentalDetails.rentalPricePerDay * Number(daysNo);
+
         // create new Booking
         const newBooking = {
             customer: new ObjectId(customerId!),
             car: new ObjectId(carId),
             driver: new ObjectId(driverId),
             timeInterval: { start: startDate, end: endDate },
+            status: 'Pending',
+            totalAmount: totalAmount,
         };
 
         const bookingResult = await db.collection('bookings').insertOne(newBooking);

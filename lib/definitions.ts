@@ -70,8 +70,10 @@ export interface IDatesInterval {
 
 export interface IBooking {
     _id?: string;
-    customer: string | null;
-    car: string | null;
-    driver: string | null;
+    customer: string | User | null;
+    car: string | ICar | null;
+    driver: string | User | null;
     timeInterval: IDatesInterval;
+    status: 'Pending' | 'Confirmed' | 'Cancelled' | 'Completed';
+    totalAmount: number;
 }

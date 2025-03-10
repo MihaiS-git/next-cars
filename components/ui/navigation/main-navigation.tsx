@@ -22,6 +22,9 @@ export default function MainNavigation() {
                     <Link href="/booking">Booking</Link>
                 </li>
                 <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
+                    <Link href="/dashboard">Dashboard</Link>
+                </li>
+                <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
                     <Link href="/account">Account</Link>
                 </li>
                 <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
