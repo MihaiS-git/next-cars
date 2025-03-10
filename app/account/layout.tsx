@@ -1,3 +1,12 @@
+export const metadata = {
+    title: 'Next Cars - Account Details',
+    description: 'Manage your account data',
+    keywords: 'Next Cars, Account, User Details, Manage Account',
+    author: 'Next Cars Team',
+    robots: 'index, follow',
+    charset: 'UTF-8',
+}
+
 export default function CarsPageLayout({
     children,
 }: {

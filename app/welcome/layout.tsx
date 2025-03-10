@@ -1,3 +1,12 @@
+export const metadata = {
+    title: "Next Cars -Welcome",
+    description: "Next Cars - Welcome to our car rental service",
+    keywords: "Next Cars, car rental, car hire, car rental service",
+    author: 'Next Cars Team',
+    robots: 'index, follow',
+    charset: 'UTF-8',
+};
+
 export default function CarsPageLayout({
     children,
 }: {

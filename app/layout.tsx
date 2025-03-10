@@ -29,9 +29,14 @@ export default function RootLayout({
     return (
         <QueryClientProvider client={queryClient}>
             <html lang="en" className="min-w-screen min-h-screen top-0 left-0">
-                <head>
+            <head>
                     <title>{String(metadata.title) || "Next Cars"}</title>
                     <meta name="description" content={metadata.description ?? undefined} />
+                    <meta name="keywords" content={Array.isArray(metadata.keywords) ? metadata.keywords.join(", ") : metadata.keywords ?? undefined} />
+                    <meta name="author" content={Array.isArray(metadata.authors) ? metadata.authors.join(", ") : typeof metadata.authors === 'string' ? metadata.authors : undefined} />
+                    <meta name="robots" content={typeof metadata.robots === 'string' ? metadata.robots : undefined} />
+                    <meta charSet="utf-8" />
+                    <meta name="language" content="en-US" />
                 </head>
                 <body
                     className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}

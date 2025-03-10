@@ -147,6 +147,25 @@ export default function BookingPage() {
         }
     }, [drivers]);
 
+    useEffect(() => {
+        const car = cars?.find((car) => car._id!.toString() === carId);
+        const driver = drivers?.find((driver) => driver._id!.toString() === driverId);
+
+        if (car || driver) {
+            const title = car
+                ? `Next Cars - Book ${car.make} ${car.carModel}`
+                : `Next Cars - Book Driver ${driver?.name}`;
+            const description = car
+                ? `Book a ${car.make} ${car.carModel} from Next Cars`
+                : `Book driver ${driver?.name} from Next Cars`;
+
+            document.title = title;
+            document
+                .querySelector('meta[name="description"]')
+                ?.setAttribute("content", description);
+        }
+    }, [carId, driverId, cars, drivers]);
+
     const handleClose = () => {
         redirect("/");
     };

@@ -1,3 +1,12 @@
+export const metadata = {
+    title: 'Next Cars - Contact',
+    description: 'Contact Next Cars for more information about our services and products',
+    keywords: 'Next Cars, Book a Car, Next Cars Contact, Available Cars',
+    author: 'Next Cars Team',
+    robots: 'index, follow',
+    charset: 'UTF-8',
+};
+
 export default function ContactPageLayout({
     children,
 }: {

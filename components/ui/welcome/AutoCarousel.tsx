@@ -7,29 +7,33 @@ import {
 } from "@/components/ui/carousel";
 import { ICar } from "@/lib/definitions";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { log } from "node:console";
 
 export default function AutoCarousel({ cars }: { cars: ICar[] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [imagesLoaded, setImagesLoaded] = useState(false);
 
     useEffect(() => {
-        const imagePromises = cars.map(car => {
+        const imagePromises = cars.map((car) => {
             return new Promise<void>((resolve, reject) => {
                 const img = new window.Image();
-                img.src = car.carImagesAndDocuments && typeof car.carImagesAndDocuments !== "string"
-                    ? car.carImagesAndDocuments.carImages[0]
-                    : "/cars/default-image.webp";
+                img.src =
+                    `${car.carImagesAndDocuments}` &&
+                    typeof car.carImagesAndDocuments !== "string"
+                        ? `/845/${car.carImagesAndDocuments!.carImages[0]}`
+                        : "/845/cars/default-image.webp";
                 img.onload = () => resolve();
                 img.onerror = () => reject();
             });
         });
-
+        
         Promise.all(imagePromises)
             .then(() => setImagesLoaded(true))
-            .catch(() => setImagesLoaded(true)); // Handle errors by setting imagesLoaded to true
+            .catch((error) => {
+                console.error("Error loading images:", error);
+                setImagesLoaded(true);
+            });
     }, [cars]);
 
     useEffect(() => {
@@ -44,18 +48,18 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
         return () => clearInterval(interval);
     }, [currentIndex]);
 
-    const imageUrls: string[] = [];
-    cars.forEach((car) => {
-        if (
-            car.carImagesAndDocuments &&
-            typeof car.carImagesAndDocuments !== "string"
-        ) {
-            imageUrls.push(`${car.carImagesAndDocuments.carImages[0]}`);
-        } else {
-            imageUrls.push("/cars/default-image.webp");
-        }
-    });
-
+    const imageUrls: string[] = useMemo(() => {        
+        return cars.map((car) => {
+            if (
+                car.carImagesAndDocuments &&
+                typeof car.carImagesAndDocuments !== "string"
+            ) {
+                return car.carImagesAndDocuments.carImages[0];
+            } else {
+                return "/cars/default-image.webp";
+            }
+        });
+    }, [cars]);
 
     if (!imagesLoaded) {
         return <p className="text-zinc-400 mx-auto my-56">Loading images...</p>;
