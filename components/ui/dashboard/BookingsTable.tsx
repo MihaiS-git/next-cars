@@ -11,6 +11,7 @@ export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ 
             <table className="w-full mt-4 table-fixed">
                 <thead>
                     <tr className="bg-zinc-800 text-zinc-50">
+                        <th className="table-header border border-red-600 overflow-hidden">Crt.no.</th>
                         <th className="table-header border border-red-600 overflow-hidden">Car</th>
                         <th className="table-header border border-red-600 overflow-hidden">Driver</th>
                         <th className="table-header border border-red-600 overflow-hidden">Start Date</th>
@@ -20,8 +21,9 @@ export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ 
                     </tr>
                 </thead>
                 <tbody>
-                    {userData.bookings!.map((booking: IBooking) => (
+                    {userData.bookings!.map((booking: IBooking, index) => (
                         <tr key={booking._id}>
+                            <td className="border border-zinc-600 ps-2 overflow-hidden text-center">{index + 1}</td>
                             <td className="border border-zinc-600 ps-2 overflow-hidden">{typeof booking.car !== 'string' ? booking.car!.make : 'N/A'} {typeof booking.car !== 'string' ? booking.car!.carModel : 'N/A'}</td>
                             <td className="border border-zinc-600 ps-2 overflow-hidden">{typeof booking.driver !== 'string' ? booking.driver!.name : 'N/A'}</td>
                             <td className="text-center border border-zinc-600 overflow-hidden">

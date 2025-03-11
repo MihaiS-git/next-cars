@@ -10,6 +10,9 @@ export interface User {
     drivingSince?: string;
     pictureUrl?: string;
     bookings?: IBooking[];
+    invoices?: IInvoice[];
+    createdAt?: Date;
+    updatedAt?: Date;
 };
 
 export interface ICarRentalDetails {
@@ -49,17 +52,17 @@ export interface ICar {
     _id?: string;
     make: string;
     carModel: string;
-    year: number;
-    category: 'Classic' | 'Sport' | 'Sedan' | 'SUV';
-    seats: number;
-    doors: number;
-    transmission: 'Manual' | 'Automatic';
-    fuelType: 'Gasoline' | 'Diesel' | 'Electric' | 'Hybrid';
-    mileage: number;
-    carRentalDetails: string | ICarRentalDetails | null;
-    carFeaturesAndSpecifications: string | ICarFeaturesAndSpecifications | null;
-    carImagesAndDocuments: string | ICarImagesAndDocuments | null;
-    rentalAgencyDetails: string | IRentalAgencyDetails | null;
+    year?: number;
+    category?: 'Classic' | 'Sport' | 'Sedan' | 'SUV';
+    seats?: number;
+    doors?: number;
+    transmission?: 'Manual' | 'Automatic';
+    fuelType?: 'Gasoline' | 'Diesel' | 'Electric' | 'Hybrid';
+    mileage?: number;
+    carRentalDetails?: string | ICarRentalDetails | null;
+    carFeaturesAndSpecifications?: string | ICarFeaturesAndSpecifications | null;
+    carImagesAndDocuments?: string | ICarImagesAndDocuments | null;
+    rentalAgencyDetails?: string | IRentalAgencyDetails | null;
     bookings?: IBooking[];
 }
 
@@ -76,4 +79,18 @@ export interface IBooking {
     timeInterval: IDatesInterval;
     status: 'Pending' | 'Confirmed' | 'Cancelled' | 'Completed';
     totalAmount: number;
+}
+
+export interface IInvoice {
+    _id?: string;
+    customer: string | User | null;
+    booking: string | IBooking | null;
+    issueDate: string | Date;
+    dueDate: string | Date;
+    baseAmountDue: number;
+    VAT: number;
+    totalAmountDue: number;
+    status: 'Paid' | 'Unpaid' | 'Overdue';
+    paymentMethod: 'Credit Card' | 'Debit Card' | 'PayPal' | 'Bank Transfer';
+    notes?: string;
 }

@@ -1,11 +1,12 @@
 "use server";
 
-import { log } from "console";
 import { getCarByIdWithBookings } from "../cars/actions";
 import { getDriverByIdWithBookings } from "../drivers/actions";
 import { connectDB } from "@/lib/mongoDb";
 import { ObjectId } from "mongodb";
 import { ICarRentalDetails } from "@/lib/definitions";
+import { createInvoice } from "../invoice/actions";
+import { create } from "domain";
 
 export type State = {
     errors?: {
@@ -62,7 +63,7 @@ export async function bookCar(prevState: State, formData: FormData) {
             }
         }
         if (!isCarAvailable) return { message: "The selected car is not available for the chosen interval." }
-        
+
 
         // check Driver availability
         const selectedDriver = await getDriverByIdWithBookings(driverId);
@@ -133,8 +134,94 @@ export async function bookCar(prevState: State, formData: FormData) {
             );
         }
 
+        // create & save invoice object
+        createInvoice(customerId, bookingId.toString(), totalAmount);
+
         return { message: "Booking saved successfully!" };
     } catch (error: any) {
         return { message: `Something wrong happened: ${error}` };
+    }
+}
+
+export async function getBookingById(bookingId: string) {
+    try {
+        const db = await connectDB();
+        const fetchedBooking = await db.collection('bookings').aggregate([
+            { $match: { _id: new ObjectId(bookingId) } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'customer',
+                    foreignField: '_id',
+                    as: 'customer'
+                }
+            },
+            { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'driver',
+                    foreignField: '_id',
+                    as: 'driver'
+                }
+            },
+            { $unwind: { path: "$driver", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'cars',
+                    localField: 'car',
+                    foreignField: '_id',
+                    as: 'car'
+                }
+            },
+            { $unwind: { path: "$car", preserveNullAndEmptyArrays: true } },
+        ]).toArray();
+
+        if (fetchedBooking.length === 0) return null;
+
+        const booking = fetchedBooking[0];
+
+        const formattedBooking = {
+            _id: booking._id.toString(),
+            customer: booking.customer ? {
+                ...booking.customer,
+                _id: booking.customer._id.toString(),
+                dob: booking.customer.dob ? new Date(booking.customer.dob).toISOString().split("T")[0] : null,
+                drivingSince: booking.customer.drivingSince ? new Date(booking.customer.drivingSince).toISOString().split("T")[0] : null,
+                bookings: booking.customer.bookings ? booking.customer.bookings.map((booking: any) => booking.toString()) : [],
+                invoices: booking.customer.invoices ? booking.customer.invoices.map((invoice: any) => invoice.toString()) : [],
+                createdAt: booking.customer.createdAt ? new Date(booking.customer.createdAt).toISOString().split("T")[0] : null,
+                updatedAt: booking.customer.updatedAt ? new Date(booking.customer.updatedAt).toISOString().split("T")[0] : null,
+            } : null,
+            car: booking.car ? {
+                ...booking.car,
+                _id: booking.car._id.toString(),
+                carRentalDetails: booking.car.carRentalDetails ? booking.car.carRentalDetails.toString() : null,
+                carFeaturesAndSpecifications: booking.car.carFeaturesAndSpecifications ? booking.car.carFeaturesAndSpecifications.toString() : null,
+                carImagesAndDocuments: booking.car.carImagesAndDocuments ? booking.car.carImagesAndDocuments.toString() : null,
+                rentalAgencyDetails: booking.car.rentalAgencyDetails ? booking.car.rentalAgencyDetails.toString() : null,
+                bookings: booking.car.bookings ? booking.car.bookings.map((booking: any) => booking.toString()) : [],
+            } : null,
+            driver: booking.driver ? {
+                ...booking.driver,
+                _id: booking.driver._id.toString(),
+                dob: booking.driver.dob ? new Date(booking.driver.dob).toISOString().split("T")[0] : null,
+                drivingSince: booking.driver.drivingSince ? new Date(booking.driver.drivingSince).toISOString().split("T")[0] : null,
+                bookings: booking.driver.bookings ? booking.driver.bookings.map((booking: any) => booking.toString()) : [],
+                invoices: booking.driver.invoices ? booking.driver.invoices.map((invoice: any) => invoice.toString()) : [],
+                createdAt: booking.driver.createdAt ? new Date(booking.driver.createdAt).toISOString().split("T")[0] : null,
+                updatedAt: booking.driver.updatedAt ? new Date(booking.driver.updatedAt).toISOString().split("T")[0] : null,
+            } : null,
+            timeInterval: {
+                start: new Date(booking.timeInterval.start).toISOString().split("T")[0],
+                end: new Date(booking.timeInterval.end).toISOString().split("T")[0],
+            },
+            status: booking.status,
+            totalAmount: booking.totalAmount,
+        };
+
+        return formattedBooking;
+    } catch (error: any) {
+        throw new Error(`Failed to fetch booking: ${error.message}`);
     }
 }
