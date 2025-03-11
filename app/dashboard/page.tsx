@@ -97,12 +97,12 @@ export default function DashboardPage() {
     }
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Loading dashboard...</div>}>
             <h1 className="mb-4 mt-8 text-red-600 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
                 <em>Dashboard</em>
             </h1>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
-                <div className="bg-zinc-700 text-zinc-200 rounded-lg p-4 border border-red-600 ">
+                <div className="bg-zinc-700 text-zinc-200 rounded-md p-4 border border-red-600 ">
                     <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
                         Upcoming & Ongoing Rentals
                     </h3>
@@ -116,7 +116,7 @@ export default function DashboardPage() {
                     )}
                 </div>
 
-                <div className="bg-zinc-700 text-zinc-50 rounded-lg p-4 border border-red-600">
+                <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600">
                     <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
                         Past Rentals
                     </h3>
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                     )}
                 </div>
 
-                <div className="bg-zinc-700 text-zinc-50 rounded-lg p-4 border border-red-600 xl:col-span-2">
+                <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600 xl:col-span-2">
                     <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
                         Payment & Invoices
                     </h3>
