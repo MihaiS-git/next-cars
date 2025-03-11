@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IBooking, ICar, IInvoice, User } from "@/lib/definitions";
 import { getUserById } from "@/lib/queries/users-queries";
 import { formatCurrency } from "@/lib/util/format-currency";
-import { use, useEffect, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 
 export default function InvoicePage({
     params,
@@ -56,7 +56,11 @@ export default function InvoicePage({
     }, [params]);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return (
+            <div className="flex items-center justify-center h-80">
+                <p className="text-zinc-400">Loading invoice...</p>
+            </div>
+        );
     }
 
     const printInvoice = () => {
@@ -71,7 +75,7 @@ export default function InvoicePage({
     };
 
     return (
-        <div className="bg-zinc-800 w-full md:w-8/12 rounded-lg border border-red-600 mt-4 mx-auto">
+        <Suspense fallback={<div>Loading...</div>}>
             <div
                 className="border border-black w-full text-black p-8 lg:p-24"
                 id="invoice"
@@ -142,9 +146,13 @@ export default function InvoicePage({
                     <div className="w-full">
                         <strong>Services: </strong>
                         <br />
-                        <p className="ps-4 overflow-hidden">Car rented with driver</p>
+                        <p className="ps-4 overflow-hidden">
+                            Car rented with driver
+                        </p>
                         <strong>Booking ID:</strong> <br />
-                        <p className="ps-4 overflow-hidden">{invoice?.booking!.toString()}</p>
+                        <p className="ps-4 overflow-hidden">
+                            {invoice?.booking!.toString()}
+                        </p>
                     </div>
                     <div className="w-full">
                         <strong>Invoice Details: </strong>
@@ -152,8 +160,12 @@ export default function InvoicePage({
                             <p className="overflow-hidden">
                                 Car: {car?.make} {car?.carModel} ({car?.year})
                             </p>
-                            <p className="overflow-hidden">Mileage: {car?.mileage} km</p>
-                            <p className="overflow-hidden">Driver: {driver?.name}</p>
+                            <p className="overflow-hidden">
+                                Mileage: {car?.mileage} km
+                            </p>
+                            <p className="overflow-hidden">
+                                Driver: {driver?.name}
+                            </p>
                             <p className="overflow-hidden">
                                 Starting date:{" "}
                                 {booking
@@ -194,6 +206,6 @@ export default function InvoicePage({
                     Print Invoice
                 </Button>
             </div>
-        </div>
+        </Suspense>
     );
 }
