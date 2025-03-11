@@ -79,7 +79,7 @@ async function fetchBookingsByIds(bookingIds: any[]) {
   const db = await connectDB();
   const fetchedBookings = await db.collection('bookings').find({ _id: { $in: bookingIds } }).toArray();
   if (fetchedBookings.length === 0)
-    return null;
+    return [];
   return fetchedBookings;
 }
 
