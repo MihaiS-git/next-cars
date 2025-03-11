@@ -5,7 +5,6 @@ import { withDb } from "@/lib/util/db-helper";
 import { connectDB } from "../mongoDb";
 import { getCarByIdWithBookings } from "@/app/actions/cars/actions";
 import { ObjectId } from "mongodb";
-import { create } from "domain";
 
 export async function getUserByEmail(email: string): Promise<User | null> {
   const user = withDb('users', async (collection) => {

@@ -1,6 +1,7 @@
 import { IInvoice } from "@/lib/definitions";
 import { Button } from "../button";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/lib/util/format-currency";
 
 interface DashboardInvoicesTableProps {
     invoicesData: IInvoice[];
@@ -52,13 +53,13 @@ export default function DashboardInvoicesTable({ invoicesData }: DashboardInvoic
                                     {invoice.status}
                                 </td>
                                 <td className="text-center border border-zinc-600 overflow-hidden">
-                                    {invoice.totalAmountDue}
+                                    {formatCurrency(invoice.totalAmountDue)}
                                 </td>
                                 <td className="text-center border border-zinc-600 overflow-hidden">
                                     <Button
                                         variant="secondary"
                                         size="sm"
-                                        className="mr-2"
+                                        className="my-1 text-sm"
                                         onClick={() => router.push(`/invoice/${invoice._id}`)}
                                     >
                                         View

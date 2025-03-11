@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function InvoicePageLayout({ children }: { children: React.ReactNode }) { 
     return (
-        <div className="bg-zinc-800 w-full md:w-11/12 lg:w-10/12 rounded-lg border border-red-600 mt-4 mx-auto pt-4 lg:p-16">
+        <div className="bg-zinc-800 w-full md:w-11/12 lg:w-10/12 rounded-lg border border-red-600 mt-4 mx-auto pt-4 lg:px-16 lg:pt-16">
             {children}
         </div>
     );

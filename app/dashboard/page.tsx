@@ -11,6 +11,9 @@ import { getInvoicesByUser } from "../actions/invoice/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { Suspense, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
     const [customerId, setCustomerId] = useState<string | null>(null);
@@ -64,6 +67,10 @@ export default function DashboardPage() {
         enabled: !!customerId,
     });
 
+    const handleClose = () => {
+        redirect("/");
+    };
+
     if (isLoadingUpcomingBookingsData || isLoadingPastBookingsData) {
         return (
             <div className="flex items-center justify-center h-80">
@@ -97,48 +104,57 @@ export default function DashboardPage() {
     }
 
     return (
-        <Suspense fallback={<div>Loading dashboard...</div>}>
-            <h1 className="mb-4 mt-8 text-red-600 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
-                <em>Dashboard</em>
-            </h1>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
-                <div className="bg-zinc-700 text-zinc-200 rounded-md p-4 border border-red-600 ">
-                    <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
-                        Upcoming & Ongoing Rentals
-                    </h3>
-                    {upcomingBookingsData?.bookings &&
-                    upcomingBookingsData.bookings.length > 0 ? (
-                        <DashboardBookingsTable
-                            userData={upcomingBookingsData}
-                        />
-                    ) : (
-                        <p>No bookings found.</p>
-                    )}
-                </div>
+        <>
+            <Suspense fallback={<div>Loading dashboard...</div>}>
+                <h1 className="mb-4 mt-8 text-red-600 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
+                    <em>Dashboard</em>
+                </h1>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
+                    <div className="bg-zinc-700 text-zinc-200 rounded-md p-4 border border-red-600 ">
+                        <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
+                            Upcoming & Ongoing Rentals
+                        </h3>
+                        {upcomingBookingsData?.bookings &&
+                        upcomingBookingsData.bookings.length > 0 ? (
+                            <DashboardBookingsTable
+                                userData={upcomingBookingsData}
+                            />
+                        ) : (
+                            <p>No bookings found.</p>
+                        )}
+                    </div>
 
-                <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600">
-                    <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
-                        Past Rentals
-                    </h3>
-                    {pastBookingsData?.bookings &&
-                    pastBookingsData.bookings.length > 0 ? (
-                        <DashboardBookingsTable userData={pastBookingsData} />
-                    ) : (
-                        <p>No bookings found.</p>
-                    )}
-                </div>
+                    <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600">
+                        <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
+                            Past Rentals
+                        </h3>
+                        {pastBookingsData?.bookings &&
+                        pastBookingsData.bookings.length > 0 ? (
+                            <DashboardBookingsTable
+                                userData={pastBookingsData}
+                            />
+                        ) : (
+                            <p>No bookings found.</p>
+                        )}
+                    </div>
 
-                <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600 xl:col-span-2">
-                    <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
-                        Payment & Invoices
-                    </h3>
-                    {invoices && invoices.length > 0 ? (
-                        <DashboardInvoicesTable invoicesData={invoices} />
-                    ) : (
-                        <p>No invoices found.</p>
-                    )}
+                    <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600 xl:col-span-2">
+                        <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
+                            Payment & Invoices
+                        </h3>
+                        {invoices && invoices.length > 0 ? (
+                            <DashboardInvoicesTable invoicesData={invoices} />
+                        ) : (
+                            <p>No invoices found.</p>
+                        )}
+                    </div>
                 </div>
+            </Suspense>
+            <div className="w-full flex flex-row justify-end pb-4 pe-4">
+                <Button variant="destructive" size="icon" onClick={handleClose}>
+                    <X />
+                </Button>
             </div>
-        </Suspense>
+        </>
     );
 }
