@@ -173,9 +173,9 @@ export default function BookingPage() {
     return (
         <div className="flex flex-col">
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mx-auto px-4">
-                <h3 className="lg:col-span-2 w-full mt-4 font-semibold text-xl lg:font-bold lg:text-2xl text-center text-red-600">
+                <h1 className="lg:col-span-2 w-full mt-4 font-semibold text-xl lg:font-bold lg:text-2xl text-center text-zinc-200">
                     <em>Book Form</em>
-                </h3>
+                </h1>
                 <BookingCarousel
                     isLoading={isLoadingCars}
                     error={errorCars ? errorCars.message : null}
@@ -217,7 +217,7 @@ export default function BookingPage() {
                                 Start Date:{" "}
                             </label>
                             <input
-                                className="text-zinc-950 w-9/12 p-1 rounded-md"
+                                className="text-zinc-950 w-9/12 p-1 ps-4 rounded-md"
                                 id="startDate"
                                 type="date"
                                 name="startDate"
@@ -228,7 +228,7 @@ export default function BookingPage() {
                         <p className="flex flex-row justify-between m-2">
                             <label htmlFor="daysNo">Days No.:</label>
                             <input
-                                className="text-zinc-950 w-9/12 p-1 rounded-md"
+                                className="text-zinc-950 w-9/12 p-1 ps-4 rounded-md"
                                 id="daysNo"
                                 type="number"
                                 name="daysNo"

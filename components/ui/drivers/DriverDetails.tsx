@@ -2,25 +2,27 @@ import Image from "next/image";
 import { User } from "@/lib/definitions";
 import { Button } from "../button";
 import { X } from "lucide-react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useMediaQuery } from "usehooks-ts";
 
 export default function CarDetails({ driver }: { driver: User }) {
+    const isLargeScreen = useMediaQuery("(min-width: 1024px)");
+    const router = useRouter();
+    
     const handleClose = () => {
-        redirect("/drivers");
+        router.push("/drivers");
     };
 
     return (
         <div>
             <div>
                 <Image
-                    src={
-                        `/845/${driver.pictureUrl}` ||
-                        "/drivers/nc_default_user.png"
-                    }
+                    src={driver.pictureUrl || "/drivers/nc_default_user.png"}
                     alt={driver!.name || "Driver picture"}
-                    width={900}
-                    height={600}
-                    quality={100}
+                    width={845}
+                    height={475}
+                    sizes="(max-width: 1024px) 335px, 845px"
+                    quality={80}
                     className="mx-auto mt-8 overflow-hidden"
                     priority
                 />
@@ -31,7 +33,7 @@ export default function CarDetails({ driver }: { driver: User }) {
 
             <div className="flex flex-col md:flex-row justify-evenly align-top items-center md:items-start text-left gap-4 p-4 lg:p-8">
                 <div>
-                    <h4 className="text-left font-bold pb-2">Driver details</h4>
+                    <h2 className="text-left font-bold pb-2">Driver details</h2>
                     <p>DOB: {driver!.dob ? new Date(driver!.dob).getFullYear() : "N/A"}</p>
                     <p>
                         Driving since: {" "}
@@ -39,7 +41,7 @@ export default function CarDetails({ driver }: { driver: User }) {
                     </p>
                 </div>
                 <div className="flex flex-col text-left">
-                    <h4 className="text-left font-bold pb-2">Contact</h4>
+                    <h2 className="text-left font-bold pb-2">Contact</h2>
                     <p>Email: {driver!.email}</p>
                     <p>Phone: {driver!.phone}</p>
                     <p>Address: {driver!.address}</p>

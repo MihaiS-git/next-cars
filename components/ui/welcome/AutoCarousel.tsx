@@ -21,13 +21,13 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
                 img.src =
                     `${car.carImagesAndDocuments}` &&
                     typeof car.carImagesAndDocuments !== "string"
-                        ? `/845/${car.carImagesAndDocuments!.carImages[0]}`
-                        : "/845/cars/default-image.webp";
+                        ? `${car.carImagesAndDocuments!.carImages[0]}`
+                        : "/cars/default-image.webp";
                 img.onload = () => resolve();
                 img.onerror = () => reject();
             });
         });
-        
+
         Promise.all(imagePromises)
             .then(() => setImagesLoaded(true))
             .catch((error) => {
@@ -46,9 +46,9 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
         }, 3000);
 
         return () => clearInterval(interval);
-    }, [currentIndex]);
+    }, [cars.length]);
 
-    const imageUrls: string[] = useMemo(() => {        
+    const imageUrls: string[] = useMemo(() => {
         return cars.map((car) => {
             if (
                 car.carImagesAndDocuments &&
@@ -77,13 +77,17 @@ export default function AutoCarousel({ cars }: { cars: ICar[] }) {
                             exit={{ opacity: 0, x: -50 }}
                             transition={{ duration: 0.5, ease: "easeInOut" }}
                         >
-                            <div className="h-[300px] md:h-[450px] lg:h-[450px]">
+                            <div className="h-[300px] md:h-[450px]">
                                 <Image
-                                    src={`/845/${imageUrls[currentIndex]}`}
+                                    src={
+                                        `${imageUrls[currentIndex]}` ||
+                                        "/cars/default-image.webp"
+                                    }
                                     alt="car image"
                                     width={845}
                                     height={475}
                                     quality={100}
+                                    sizes="(max-width: 1024px) 335px, 845px"
                                     className="mb-8 mx-auto overflow-hidden shadow-red-500 shadow-sm"
                                     priority
                                 />

@@ -29,10 +29,10 @@ export default function BookingCarousel({
     return (
         <>
             <div className="text-center">
-                <h4 className="text-zinc-50 font-semibold text-lg lg:font-bold text-center">
+                <h2 className="text-zinc-50 font-semibold text-lg lg:font-bold text-center">
                     Choose a {elementTag}
-                </h4>
-                <p className="text-sm text-red-600">
+                </h2>
+                <p className="text-sm text-zinc-200">
                     Swipe and click for more info
                 </p>
                 {isLoading && (
@@ -55,13 +55,14 @@ export default function BookingCarousel({
                                     href={`/${baseLink}/${element.elementId}`}
                                 >
                                     <Image
-                                        src={`/845${element.elementPicture}`}
+                                        src={element.elementPicture}
                                         alt="Element picture"
-                                        width={640}
-                                        height={480}
-                                        quality={80}
+                                        width={845}
+                                        height={475}
+                                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                                        quality={100}
                                         className="border border-red-600 mx-auto"
-                                        priority
+                                        loading="lazy"
                                     />
                                 </Link>
                             </CarouselItem>

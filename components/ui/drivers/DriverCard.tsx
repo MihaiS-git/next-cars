@@ -28,7 +28,7 @@ export default function DriverCard({
                 <CardContent className="pb-4">
                     <Image
                         src={
-                            `/335/${driver.pictureUrl}` ||
+                            `${driver.pictureUrl}` ||
                             "/drivers/nc_default_user.png"
                         }
                         alt={`${driver.name}`}

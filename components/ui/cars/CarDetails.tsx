@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Carousel,
     CarouselContent,
@@ -9,11 +11,30 @@ import Image from "next/image";
 import { ICar } from "@/lib/definitions";
 import { Button } from "../button";
 import { X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 
 export default function CarDetails({ car }: { car: ICar }) {
+    const [carImages, setCarImages] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => { 
+        if (typeof car?.carImagesAndDocuments === "object") {
+            setCarImages([...car?.carImagesAndDocuments!.carImages]);
+            setIsLoading(false);
+        }
+    },[]);
+
+    if (isLoading) { 
+        return (
+            <div className="flex items-center justify-center h-80">
+                <p className="text-zinc-400 my-auto">Loading carousel...</p>
+            </div>
+        );
+    }
+
     const handleClose = () => {
-        redirect("/");
+        redirect("/cars");
     };
 
     return (
@@ -21,32 +42,20 @@ export default function CarDetails({ car }: { car: ICar }) {
             <div>
                 <Carousel className="mx-auto w-full lg:w-8/12 lg:pt-8">
                     <CarouselContent>
-                        {typeof car?.carImagesAndDocuments === "object" &&
-                            car?.carImagesAndDocuments?.carImages.map(
+                        {carImages.map(
                                 (image: string, index) => {
                                     return (
                                         <CarouselItem key={index}>
-                                            {index === 0 ? (
-                                                <Image
-                                                src={`/845${image}`}
-                                                alt={`${car!.make} ${car!.carModel} `}
+                                            <Image
+                                                src={`${image}`}
+                                                alt={`${car!.make} ${ car!.carModel} `}
                                                 width={845}
                                                 height={475}
-                                                quality={80}
-                                                className="mx-auto overflow-hidden"
-                                                priority
-                                                />
-                                            ) : (
-                                                <Image
-                                                src={`/845${image}`}
-                                                alt={`${car!.make} ${car!.carModel} `}
-                                                width={845}
-                                                height={475}
-                                                quality={80}
+                                                quality={75}
+                                                sizes="(max-width: 1024px) 335px, 845px"
                                                 className="mx-auto overflow-hidden"
                                                 loading="lazy"
-                                                />
-                                                )}
+                                            />
                                         </CarouselItem>
                                     );
                                 }
@@ -64,9 +73,9 @@ export default function CarDetails({ car }: { car: ICar }) {
 
             <div className="flex flex-col md:flex-row justify-around align-top items-start text-left gap-4 p-4 lg:p-8">
                 <div>
-                    <h4 className="text-left font-bold pb-2">
+                    <h2 className="text-left font-bold pb-2">
                         Car Specifications
-                    </h4>
+                    </h2>
                     <p>Category: {car!.category}</p>
                     <p>Year: {car!.year}</p>
                     <p>Seats: {car!.seats}</p>
@@ -76,9 +85,9 @@ export default function CarDetails({ car }: { car: ICar }) {
                     <p>Mileage: {car!.mileage} km</p>
                 </div>
                 <div className="flex flex-col text-left">
-                    <h4 className="text-left font-bold pb-2">
+                    <h2 className="text-left font-bold pb-2">
                         Features & Specifications
-                    </h4>
+                    </h2>
                     <p>
                         Air Conditioning:
                         {typeof car!.carFeaturesAndSpecifications ===
@@ -110,9 +119,9 @@ export default function CarDetails({ car }: { car: ICar }) {
                             car?.carFeaturesAndSpecifications?.insuranceIncluded.toString()}
                     </p>
                     <div className="pt-0">
-                        <h5 className="text-left font-semibold">
+                        <h3 className="text-left font-semibold">
                             Additional Features:
-                        </h5>
+                        </h3>
                         <ul className="list-disc ps-5">
                             {typeof car!.carFeaturesAndSpecifications ===
                                 "object" &&
@@ -154,9 +163,9 @@ export default function CarDetails({ car }: { car: ICar }) {
                         days
                     </p>
                     <div className="pt-0">
-                        <h4 className="text-left font-semibold pb-0">
+                        <h3 className="text-left font-semibold pb-0">
                             Documents:
-                        </h4>
+                        </h3>
                         <p>
                             <span>Registration No: </span>
                             {typeof car!.carImagesAndDocuments === "object" &&
@@ -170,9 +179,9 @@ export default function CarDetails({ car }: { car: ICar }) {
                         </p>
                     </div>
                     <div className="pt-0">
-                        <h5 className="text-left font-semibold pb-0">
+                        <h3 className="text-left font-semibold pb-0">
                             Agency Details:
-                        </h5>
+                        </h3>
                         <p>
                             Agency:{" "}
                             {typeof car!.rentalAgencyDetails === "object" &&
