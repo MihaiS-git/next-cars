@@ -22,6 +22,7 @@ export default function CarDetails({ driver }: { driver: User }) {
                     height={600}
                     quality={100}
                     className="mx-auto mt-8 overflow-hidden"
+                    priority
                 />
             </div>
             <h1 className="mb-4 mt-4 text-red-600 font-semibold text-2xl lg:font-bold lg:text-3xl text-center">

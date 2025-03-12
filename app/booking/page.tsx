@@ -13,9 +13,7 @@ import { redirect } from "next/navigation";
 import { X } from "lucide-react";
 
 export default function BookingPage() {
-    const [startDate, setStartDate] = useState(
-        new Date().toISOString().split("T")[0]
-    );
+    const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
     const [daysNo, setDaysNo] = useState(1);
     const [carId, setCarId] = useState("");
     const [driverId, setDriverId] = useState("");

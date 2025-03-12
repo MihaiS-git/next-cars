@@ -23,19 +23,30 @@ export default function CarDetails({ car }: { car: ICar }) {
                     <CarouselContent>
                         {typeof car?.carImagesAndDocuments === "object" &&
                             car?.carImagesAndDocuments?.carImages.map(
-                                (image: string) => {
+                                (image: string, index) => {
                                     return (
-                                        <CarouselItem key={image}>
-                                            <Image
-                                                src={`/845/${image}`}
-                                                alt={`${car!.make} ${
-                                                    car!.carModel
-                                                } `}
+                                        <CarouselItem key={index}>
+                                            {index === 0 ? (
+                                                <Image
+                                                src={`/845${image}`}
+                                                alt={`${car!.make} ${car!.carModel} `}
                                                 width={845}
                                                 height={475}
                                                 quality={80}
                                                 className="mx-auto overflow-hidden"
-                                            />
+                                                priority
+                                                />
+                                            ) : (
+                                                <Image
+                                                src={`/845${image}`}
+                                                alt={`${car!.make} ${car!.carModel} `}
+                                                width={845}
+                                                height={475}
+                                                quality={80}
+                                                className="mx-auto overflow-hidden"
+                                                loading="lazy"
+                                                />
+                                                )}
                                         </CarouselItem>
                                     );
                                 }

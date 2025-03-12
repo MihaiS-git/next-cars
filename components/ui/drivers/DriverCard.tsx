@@ -35,6 +35,7 @@ export default function DriverCard({
                         width={335}
                         height={190}
                         className="w-full"
+                        priority
                     />
                 </CardContent>
                 <CardFooter className="flex flex-col items-start">
