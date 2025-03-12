@@ -164,3 +164,49 @@ export async function getDriverByIdWithBookings(id: string) {
         throw new Error(`Something wrong happened: ${error.message}`);
     }
 }
+
+export async function getDriverDataForBooking(id: string) {
+    try {
+        const db = await connectDB();
+        const result = await db.collection('users').aggregate([
+            { $match: { _id: new ObjectId(id) } },
+            {
+                $lookup: {
+                    from: 'bookings',
+                    localField: 'bookings',
+                    foreignField: '_id',
+                    as: 'bookings'
+                }
+            },
+            {
+                $project: {
+                    bookings: {
+                        $map: {
+                            input: "$bookings",
+                            as: "booking",
+                            in: {
+                                timeInterval: {
+                                    start: "$$booking.timeInterval.start",
+                                    end: "$$booking.timeInterval.end"
+                                }
+                            }
+                        }
+                    },
+                }
+            }
+        ]).toArray();
+
+        if (!result[0]) return null;
+
+        const mappedDriver = {
+            _id: result[0]._id.toString(),
+            bookings: result[0].bookings ? result[0].bookings.map((booking: IBooking) => ({
+                timeInterval: { start: booking.timeInterval.start.toISOString().split('T')[0], end: booking.timeInterval.end.toISOString().split('T')[0] },
+            })) : [],
+        }
+
+        return mappedDriver;
+    } catch (error: any) {
+        throw new Error(`Something wrong happened: ${error.message}`);
+    }
+}

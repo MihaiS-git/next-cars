@@ -1,7 +1,6 @@
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -19,7 +18,7 @@ export default function DriverCard({
 }) {
     return (
         <Link href={`/drivers/${slug}`} className="hover:animate-pulse">
-            <Card className="bg-zinc-900 text-red-500 border border-red-600 shadow-lg shadow-red-200/50 py-4">
+            <Card className="bg-zinc-900 text-zinc-200 border border-red-600 shadow-lg shadow-red-200/50 py-4">
                 <CardHeader>
                     <CardTitle className="text-xl font-bold">
                         {driver.name}
@@ -39,7 +38,7 @@ export default function DriverCard({
                     />
                 </CardContent>
                 <CardFooter className="flex flex-col items-start">
-                    <h5 className="font-semibold text-lg underline">Contact</h5>
+                    <h2 className="font-semibold text-lg underline">Contact</h2>
                     <p>Email: {driver.email}</p>
                     <p>Phone: {driver.phone}</p>
                     <p>Address: {driver.address}</p>

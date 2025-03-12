@@ -2,19 +2,18 @@
 
 import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { getFullUserByEmail } from "@/lib/queries/users-queries";
+import { getUserDataForAccountUpdate } from "@/lib/queries/users-queries";
 import { useActionState, useEffect, useState } from "react";
 import { User } from "@/lib/definitions";
-import { useRouter } from "next/navigation";
 import { updateUser } from "@/app/actions/account/actions";
+import Link from "next/link";
 
 export default function AccountPage() {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<User>();
-    const [userData, setUserData] = useState<User>({
+    const [userData, setUserData] = useState<any>({
         name: "",
         address: "",
         phone: "",
@@ -22,18 +21,15 @@ export default function AccountPage() {
         role: "CUSTOMER",
         dob: "",
         drivingSince: "",
-        password: "",
     });
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
-    const router = useRouter();
     const email = session?.user?.email;
 
     useEffect(() => {
         if (status === "authenticated" && email) {
             const fetchUser = async () => {
                 try {
-                    const userData = await getFullUserByEmail(email);
+                    const userData = await getUserDataForAccountUpdate(email);
                     const user = userData as User;
 
                     if (user) {
@@ -46,19 +42,16 @@ export default function AccountPage() {
                             role: user.role || "CUSTOMER",
                             dob: user.dob || "",
                             drivingSince: user.drivingSince || "",
-                            password: "",
                             pictureUrl: user.pictureUrl || "",
                         });
                     } else {
-                        setUserData((prev) => ({
+                        setUserData((prev: any) => ({
                             ...prev,
                             email: email,
                         }));
                     }
                 } catch (err) {
                     setError("Error fetching user data");
-                } finally {
-                    setLoading(false);
                 }
             };
             fetchUser();
@@ -67,19 +60,6 @@ export default function AccountPage() {
 
     const initialState = { message: "", errors: {} };
     const [formState, formAction] = useActionState(updateUser, initialState);
-
-    const handleClose = () => {
-        router.push("/");
-    };
-
-    if (status === "loading" || loading)
-        return (
-            <div className="flex items-center justify-center h-80">
-                <p className="text-zinc-400 my-auto">
-                    Loading account details...
-                </p>
-            </div>
-        );
 
     if (status === "unauthenticated")
         return <p>You must be logged in to see this.</p>;
@@ -90,9 +70,9 @@ export default function AccountPage() {
     return (
         <div className="flex flex-col w-full">
             <div className="flex flex-col items-center w-full sm:w-11/12 md:w-10/12 mx-auto">
-                <h3 className="my-8 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
+                <h1 className="my-8 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
                     <em>Account details</em>
-                </h3>
+                </h1>
                 <Image
                     src={user?.pictureUrl || "/customers/nc_default_user.png"}
                     alt="user image"
@@ -157,7 +137,7 @@ export default function AccountPage() {
                             type="text"
                             value={userData.name}
                             onChange={(e) =>
-                                setUserData((prev) => ({
+                                setUserData((prev: any) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -188,7 +168,7 @@ export default function AccountPage() {
                             type="text"
                             value={userData.address}
                             onChange={(e) =>
-                                setUserData((prev) => ({
+                                setUserData((prev: any) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -219,7 +199,7 @@ export default function AccountPage() {
                             type="text"
                             value={userData.phone}
                             onChange={(e) =>
-                                setUserData((prev) => ({
+                                setUserData((prev: any) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -256,7 +236,7 @@ export default function AccountPage() {
                                     : ""
                             }
                             onChange={(e) =>
-                                setUserData((prev) => ({
+                                setUserData((prev: any) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -293,7 +273,7 @@ export default function AccountPage() {
                                     : ""
                             }
                             onChange={(e) =>
-                                setUserData((prev) => ({
+                                setUserData((prev: any) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -325,9 +305,14 @@ export default function AccountPage() {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end pb-4 pe-4">
-                <Button variant="destructive" size="icon" onClick={handleClose}>
-                    <X />
-                </Button>
+            <Link href="/">
+                    <button
+                        type="button"
+                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
+                    >
+                        Close
+                    </button>
+                </Link>
             </div>
         </div>
     );

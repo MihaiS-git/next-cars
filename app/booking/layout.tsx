@@ -7,14 +7,17 @@ export const metadata = {
     charset: 'UTF-8',
 };
 
-export default function ContactPageLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+import { getAllCarsWithPictures } from "../actions/cars/actions";
+import { getAllDrivers } from "../actions/drivers/actions";
+import BookingPage from "./page";
+
+export default async function BookingPageLayout() {
+    const cars = await getAllCarsWithPictures();
+    const drivers = await getAllDrivers();
+
     return (
         <div className="flex flex-col bg-zinc-800 text-zinc-200 w-full md:w-11/12 rounded-lg border border-red-600 mt-4">
-            {children}
+            <BookingPage cars={cars} drivers={drivers} />
         </div>
     );
 }

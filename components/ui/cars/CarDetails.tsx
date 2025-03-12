@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
     Carousel,
@@ -9,46 +9,24 @@ import {
 } from "../carousel";
 import Image from "next/image";
 import { ICar } from "@/lib/definitions";
-import { Button } from "../button";
-import { X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default function CarDetails({ car }: { car: ICar }) {
-    const [carImages, setCarImages] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => { 
-        if (typeof car?.carImagesAndDocuments === "object") {
-            setCarImages([...car?.carImagesAndDocuments!.carImages]);
-            setIsLoading(false);
-        }
-    },[]);
-
-    if (isLoading) { 
-        return (
-            <div className="flex items-center justify-center h-80">
-                <p className="text-zinc-400 my-auto">Loading carousel...</p>
-            </div>
-        );
-    }
-
-    const handleClose = () => {
-        redirect("/cars");
-    };
-
     return (
         <div>
             <div>
                 <Carousel className="mx-auto w-full lg:w-8/12 lg:pt-8">
                     <CarouselContent>
-                        {carImages.map(
+                        {typeof car?.carImagesAndDocuments === "object" &&
+                            car?.carImagesAndDocuments!.carImages.map(
                                 (image: string, index) => {
                                     return (
                                         <CarouselItem key={index}>
                                             <Image
                                                 src={`${image}`}
-                                                alt={`${car!.make} ${ car!.carModel} `}
+                                                alt={`${car!.make} ${
+                                                    car!.carModel
+                                                } `}
                                                 width={845}
                                                 height={475}
                                                 quality={75}
@@ -196,9 +174,14 @@ export default function CarDetails({ car }: { car: ICar }) {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end p-4">
-                <Button variant="destructive" size="icon" onClick={handleClose}>
-                    <X />
-                </Button>
+                <Link href="/cars">
+                    <button
+                        type="button"
+                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
+                    >
+                        Close
+                    </button>
+                </Link>
             </div>
         </div>
     );

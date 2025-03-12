@@ -1,19 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { getAllCarsWithPictures } from "../actions/cars/actions";
-import { getAllDrivers } from "../actions/drivers/actions";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import BookingCarousel from "@/components/ui/booking/booking-carousel";
 import { bookCar } from "../actions/booking/actions";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { X } from "lucide-react";
+import { ICar, User } from "@/lib/definitions";
 
-export default function BookingPage() {
-    const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
+export default function BookingPage({ cars, drivers }: { cars: ICar[], drivers: User[] }) {
+    const [startDate, setStartDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
     const [daysNo, setDaysNo] = useState(1);
     const [carId, setCarId] = useState("");
     const [driverId, setDriverId] = useState("");
@@ -37,7 +35,6 @@ export default function BookingPage() {
                 const id = visibleEntry.target.getAttribute(attribute);
                 if (id) {
                     setId(id);
-                    localStorage.setItem(attribute, id);
                 }
             }
         };
@@ -54,24 +51,6 @@ export default function BookingPage() {
             items?.forEach((item) => observer.unobserve(item));
         };
     };
-
-    const {
-        data: cars,
-        isLoading: isLoadingCars,
-        error: errorCars,
-    } = useQuery({
-        queryKey: ["cars"],
-        queryFn: () => getAllCarsWithPictures(),
-    });
-
-    const {
-        data: drivers,
-        isLoading: isLoadingDrivers,
-        error: errorDrivers,
-    } = useQuery({
-        queryKey: ["drivers"],
-        queryFn: () => getAllDrivers(),
-    });
 
     const carouselCars = useMemo(() => {
         const carsArray: { elementId: string; elementPicture: string }[] = [];
@@ -105,23 +84,6 @@ export default function BookingPage() {
         });
         return driversArray;
     }, [drivers]);
-
-    useEffect(() => {
-        const storedCarId = localStorage.getItem("data-car-id");
-        const storedDriverId = localStorage.getItem("data-driver-id");
-
-        if (storedCarId) {
-            setCarId(storedCarId);
-        } else if (carouselCars.length > 0) {
-            setCarId(carouselCars[0].elementId);
-        }
-
-        if (storedDriverId) {
-            setDriverId(storedDriverId);
-        } else if (carouselDrivers.length > 0) {
-            setDriverId(carouselDrivers[0].elementId);
-        }
-    }, [carouselCars, carouselDrivers]);
 
     useEffect(() => {
         if (cars && cars.length > 0) {
@@ -166,10 +128,6 @@ export default function BookingPage() {
         }
     }, [carId, driverId, cars, drivers]);
 
-    const handleClose = () => {
-        redirect("/");
-    };
-
     return (
         <div className="flex flex-col">
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mx-auto px-4">
@@ -177,8 +135,6 @@ export default function BookingPage() {
                     <em>Book Form</em>
                 </h1>
                 <BookingCarousel
-                    isLoading={isLoadingCars}
-                    error={errorCars ? errorCars.message : null}
                     carouselRef={carCarouselRef}
                     carouselElements={carouselCars}
                     elementTag="car"
@@ -187,8 +143,6 @@ export default function BookingPage() {
                     dataAttribute="data-car-id"
                 />
                 <BookingCarousel
-                    isLoading={isLoadingDrivers}
-                    error={errorDrivers ? errorDrivers.message : null}
                     carouselRef={driverCarouselRef}
                     carouselElements={carouselDrivers}
                     elementTag="driver"
@@ -271,9 +225,14 @@ export default function BookingPage() {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end pb-4 pe-4">
-                <Button variant="destructive" size="icon" onClick={handleClose}>
-                    <X />
-                </Button>
+                <Link href="/">
+                    <button
+                        type="button"
+                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
+                    >
+                        Close
+                    </button>
+                </Link>
             </div>
         </div>
     );

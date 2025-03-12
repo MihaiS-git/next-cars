@@ -65,6 +65,28 @@ export async function getFullUserByEmail(email: string): Promise<User | null> {
   return user;
 }
 
+export async function getUserDataForAccountUpdate(email: string): Promise<User | null> {
+  const user = withDb('users', async (collection) => {
+    const user = await collection.findOne({ email });
+    if (!user) return null;
+
+    const mappedUser = {
+      _id: user._id?.toString(),
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      address: user.address,
+      phone: user.phone,
+      dob: user.dob,
+      drivingSince: user.drivingSince,
+      pictureUrl: user.pictureUrl,
+    };
+
+    return mappedUser;
+  });
+  return user;
+}
+
 async function fetchUserByEmail(email: string) {
   const db = await connectDB();
   const fetchedUser = await db.collection('users').find({

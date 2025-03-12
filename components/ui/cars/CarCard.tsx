@@ -13,10 +13,10 @@ import Link from "next/link";
 export default function CarCard({ car, slug }: { car: ICar; slug: string }) {
     return (
         <Link href={`/cars/${slug}`} className="hover:animate-pulse">
-            <Card className="bg-zinc-900 text-red-500 border border-red-600 shadow-lg shadow-red-200/50">
+            <Card className="bg-zinc-900 text-zinc-200 border border-red-600 shadow-lg shadow-red-200/50">
                 <CardHeader>
                     <CardTitle>{car.make}</CardTitle>
-                    <CardDescription className="text-red-600">
+                    <CardDescription className="text-zinc-200">
                         {car.carModel} ({car.year})
                     </CardDescription>
                 </CardHeader>

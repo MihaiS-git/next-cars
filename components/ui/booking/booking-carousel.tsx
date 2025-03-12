@@ -3,8 +3,6 @@ import { Carousel, CarouselContent, CarouselItem } from "../carousel";
 import Image from "next/image";
 
 interface CarouselProps {
-    isLoading: boolean;
-    error: string | null;
     carouselRef: React.RefObject<HTMLDivElement | null>;
     carouselElements: Array<{
         elementId: string;
@@ -17,8 +15,6 @@ interface CarouselProps {
 }
 
 export default function BookingCarousel({
-    isLoading,
-    error,
     carouselRef,
     carouselElements,
     elementTag,
@@ -35,14 +31,6 @@ export default function BookingCarousel({
                 <p className="text-sm text-zinc-200">
                     Swipe and click for more info
                 </p>
-                {isLoading && (
-                    <div className="flex items-center justify-center h-80">
-                        <p className="text-zinc-400 my-auto">
-                            Loading carousel...
-                        </p>
-                    </div>
-                )}
-                {error && <p>{`Failed to load elements. ${error}`}</p>}
                 <Carousel ref={carouselRef}>
                     <CarouselContent>
                         {carouselElements.map((element) => (

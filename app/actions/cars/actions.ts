@@ -19,7 +19,7 @@ export async function getAllCarsWithPictures() {
             { $unwind: '$carImagesAndDocuments' },
         ]).toArray();
 
-        if (!cars[0]) return [];
+        if (!cars[0]) return [];        
 
         const mappedCars: ICar[] = cars.map(car => ({
             make: car.make,
@@ -96,6 +96,36 @@ export async function getAllCarsWithPictures() {
         }));
 
         return mappedCars;
+    } catch (error: any) {
+        throw new Error(`Something wrong happened: ${error.message}`);
+    }
+}
+
+export async function getCarsImagesForWelcomeCarousel() {
+    try {
+        const db = await connectDB();
+        const carImages = await db.collection('cars').aggregate([
+            {
+                $lookup: {
+                    from: 'carimagesanddocuments',
+                    localField: 'carImagesAndDocuments',
+                    foreignField: '_id',
+                    as: 'carImagesAndDocuments'
+                },
+            },
+            { $unwind: '$carImagesAndDocuments' },
+            {
+                $project: {
+                    firstImageUrl: { $arrayElemAt: ["$carImagesAndDocuments.carImages", 0] },
+                }
+            }
+        ]).toArray();
+
+        if (!carImages[0]) return [];
+
+        const mappedCarImages: string[] = carImages.map(car => car.firstImageUrl);
+        
+        return mappedCarImages;
     } catch (error: any) {
         throw new Error(`Something wrong happened: ${error.message}`);
     }
@@ -483,6 +513,59 @@ export const getCarByIdWithBookings = async (id: string) => {
                     timeInterval: booking.timeInterval,
                     status: booking.status,
                     totalAmount: booking.totalAmount,
+                }))
+                : []
+        });
+
+        return mappedCar;
+    } catch (error: any) {
+        throw new Error(`Something wrong happened: ${error.message}`);
+    }
+};
+
+export const getCarByIdWithBookingsAndPrice = async (id: string) => {
+    try {
+        const db = await connectDB();
+        const car = await db.collection('cars').aggregate([
+            { $match: { _id: new ObjectId(id) } },
+            {
+                $lookup: {
+                    from: 'carrentaldetails',
+                    localField: 'carRentalDetails',
+                    foreignField: '_id',
+                    as: 'carRentalDetails'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'bookings',
+                    localField: 'bookings',
+                    foreignField: '_id',
+                    as: 'bookings'
+                }
+            },
+            {
+                $project: {
+                    carRentalDetails: { $arrayElemAt: ["$carRentalDetails", 0] },
+                    bookings: 1,
+                }
+            }
+        ]).toArray();
+
+        if (!car[0]) return null;
+
+        const mappedCar = ({
+            _id: car[0]._id.toString(),
+            carRentalDetails: car[0].carRentalDetails
+                ? car[0].carRentalDetails._id
+                    ? {
+                        rentalPricePerDay: car[0].carRentalDetails.rentalPricePerDay,
+                    }
+                    : car[0].carRentalDetails.toString()
+                : null,
+            bookings: car[0].bookings
+                ? car[0].bookings.map((booking: IBooking) => ({
+                    timeInterval: booking.timeInterval,
                 }))
                 : []
         });

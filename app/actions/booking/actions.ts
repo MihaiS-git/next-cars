@@ -1,7 +1,7 @@
 "use server";
 
-import { getCarByIdWithBookings } from "../cars/actions";
-import { getDriverByIdWithBookings } from "../drivers/actions";
+import { getCarByIdWithBookings, getCarByIdWithBookingsAndPrice } from "../cars/actions";
+import { getDriverByIdWithBookings, getDriverDataForBooking } from "../drivers/actions";
 import { connectDB } from "@/lib/mongoDb";
 import { ObjectId } from "mongodb";
 import { ICarRentalDetails } from "@/lib/definitions";
@@ -45,7 +45,7 @@ export async function bookCar(prevState: State, formData: FormData) {
         let isDriverAvailable = true;
 
         // check Car availability
-        const selectedCar = await getCarByIdWithBookings(carId);
+        const selectedCar = await getCarByIdWithBookingsAndPrice(carId);
         if (!selectedCar) return { message: "Car not found." };
 
         if (selectedCar.bookings && selectedCar.bookings.length > 0) {
@@ -66,7 +66,7 @@ export async function bookCar(prevState: State, formData: FormData) {
 
 
         // check Driver availability
-        const selectedDriver = await getDriverByIdWithBookings(driverId);
+        const selectedDriver = await getDriverDataForBooking(driverId);
         if (!selectedDriver) return { message: "Driver not found." };
 
         if (selectedDriver.bookings && selectedDriver.bookings.length > 0) {

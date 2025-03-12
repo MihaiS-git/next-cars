@@ -1,18 +1,8 @@
 import Image from "next/image";
 import { User } from "@/lib/definitions";
-import { Button } from "../button";
-import { X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useMediaQuery } from "usehooks-ts";
+import Link from "next/link";
 
 export default function CarDetails({ driver }: { driver: User }) {
-    const isLargeScreen = useMediaQuery("(min-width: 1024px)");
-    const router = useRouter();
-    
-    const handleClose = () => {
-        router.push("/drivers");
-    };
-
     return (
         <div>
             <div>
@@ -34,10 +24,17 @@ export default function CarDetails({ driver }: { driver: User }) {
             <div className="flex flex-col md:flex-row justify-evenly align-top items-center md:items-start text-left gap-4 p-4 lg:p-8">
                 <div>
                     <h2 className="text-left font-bold pb-2">Driver details</h2>
-                    <p>DOB: {driver!.dob ? new Date(driver!.dob).getFullYear() : "N/A"}</p>
                     <p>
-                        Driving since: {" "}
-                        {driver!.drivingSince ? new Date(driver!.drivingSince).getFullYear() : "N/A"}
+                        DOB:{" "}
+                        {driver!.dob
+                            ? new Date(driver!.dob).getFullYear()
+                            : "N/A"}
+                    </p>
+                    <p>
+                        Driving since:{" "}
+                        {driver!.drivingSince
+                            ? new Date(driver!.drivingSince).getFullYear()
+                            : "N/A"}
                     </p>
                 </div>
                 <div className="flex flex-col text-left">
@@ -48,9 +45,14 @@ export default function CarDetails({ driver }: { driver: User }) {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end p-4">
-                <Button variant="destructive" size="icon" onClick={handleClose}>
-                    <X />
-                </Button>
+                <Link href="/drivers">
+                    <button
+                        type="button"
+                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
+                    >
+                        Close
+                    </button>
+                </Link>
             </div>
         </div>
     );

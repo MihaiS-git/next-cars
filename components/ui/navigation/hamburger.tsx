@@ -34,14 +34,14 @@ export default function Hamburger() {
             >
                 {memoizedMenu}
                 <div className="flex-grow"></div>
-                <div className="w-full pb-12 text-right">
+                <div className="w-full pb-1 pe-1 text-right">
                     <Button
+                        className="w-16 h-8"
                         variant="destructive"
                         size="icon"
-                        
                         onClick={toggleOpenState}
                     >
-                        <X />
+                        Close
                     </Button>
                 </div>
             </div>
