@@ -57,7 +57,7 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (status === "authenticated" && customer) {
-            const fetchCustomer = async () => {
+            const fetchData = async () => {
                 const bookingIds = customer.bookings;
 
                 const upcomingBookingsData = await getUpcomingRentals(
@@ -77,7 +77,7 @@ export default function DashboardPage() {
                 setUpcomingBookingsData(upcomingBookingsData);
                 setIsLoadingUpcomingBookings(false);
             };
-            fetchCustomer();
+            fetchData();
         }
     }, [customer]);
 
