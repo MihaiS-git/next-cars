@@ -101,6 +101,39 @@ export async function getAllCarsWithPictures() {
     }
 }
 
+export async function getAllCarsWithOnePicture() {
+    try {
+        const db = await connectDB();
+        const cars = await db.collection('cars').aggregate([
+            {
+                $lookup: {
+                    from: 'carimagesanddocuments',
+                    localField: 'carImagesAndDocuments',
+                    foreignField: '_id',
+                    as: 'carImagesAndDocuments'
+                },
+            },
+            { $unwind: '$carImagesAndDocuments' },
+            {
+                $project: {
+                    firstImageUrl: { $arrayElemAt: ["$carImagesAndDocuments.carImages", 0] },
+                }
+            }
+        ]).toArray();
+
+        if (!cars[0]) return []; 
+        
+        const mappedCars = cars.map(car => ({
+            elementId: car._id.toString(),
+            elementPicture: car.firstImageUrl,
+        }));
+
+        return mappedCars;
+    } catch (error: any) {
+        throw new Error(`Something wrong happened: ${error.message}`);
+    }
+}
+
 export async function getCarsImagesForWelcomeCarousel() {
     try {
         const db = await connectDB();
@@ -233,7 +266,6 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
         throw new Error(`Something wrong happened: ${error.message}`);
     }
 }
-
 
 export const getCarBySlug = async (slug: string) => {
     try {

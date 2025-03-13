@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 
 import dynamic from "next/dynamic";
+import CloseButton from "@/components/ui/CloseButton";
 
 const Map = dynamic(() => import("@/components/ui/map"), { ssr: false });
 
@@ -28,14 +29,7 @@ export default function ContactPage() {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end pb-4 pe-4">
-                <Link href="/">
-                    <button
-                        type="button"
-                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
-                    >
-                        Close
-                    </button>
-                </Link>
+                <CloseButton target="/" />
             </div>
         </div>
     );

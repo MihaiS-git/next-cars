@@ -3,6 +3,7 @@
 import { getBookingById } from "@/app/actions/booking/actions";
 import { getInvoiceById } from "@/app/actions/invoice/actions";
 import { Button } from "@/components/ui/button";
+import CloseButton from "@/components/ui/CloseButton";
 import { IBooking, ICar, IInvoice, User } from "@/lib/definitions";
 import { getUserById } from "@/lib/queries/users-queries";
 import { formatCurrency } from "@/lib/util/format-currency";
@@ -64,10 +65,6 @@ export default function InvoicePage({
             </div>
         );
     }
-
-    const handleClose = () => {
-        redirect("/dashboard");
-    };
 
     const printInvoice = () => {
         const printContents = document.getElementById("invoice")!.innerHTML;
@@ -217,9 +214,7 @@ export default function InvoicePage({
                 </div>
             </Suspense>
             <div className="w-full flex flex-row justify-end pb-4 pe-4 lg:pe-0">
-                <Button variant="destructive" size="icon" onClick={handleClose}>
-                    <X />
-                </Button>
+                <CloseButton target="/dashboard" />
             </div>
         </>
     );

@@ -45,10 +45,10 @@ export default function BookingCarousel({
                                     <Image
                                         src={element.elementPicture}
                                         alt="Element picture"
-                                        width={845}
-                                        height={475}
+                                        width={640}
+                                        height={480}
                                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                                        quality={100}
+                                        quality={75}
                                         className="border border-red-600 mx-auto"
                                         loading="lazy"
                                     />

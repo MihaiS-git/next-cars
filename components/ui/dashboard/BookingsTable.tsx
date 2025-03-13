@@ -1,11 +1,11 @@
-import { IBooking, User } from "@/lib/definitions";
+import { IBooking } from "@/lib/definitions";
 import { formatCurrency } from "@/lib/util/format-currency";
 
 interface DashboardBookingsTableProps {
-    userData: User;
+    bookingsData: IBooking[];
 }
   
-export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ userData}: {userData: User}) => {
+export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ bookingsData}: {bookingsData: IBooking[]}) => {
     return (
         <div className="w-full overflow-x-auto">
             <table className="w-full mt-4 table-fixed">
@@ -21,7 +21,7 @@ export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ 
                     </tr>
                 </thead>
                 <tbody>
-                    {userData.bookings!.map((booking: IBooking, index) => (
+                    {bookingsData.map((booking: IBooking, index) => (
                         <tr key={booking._id}>
                             <td className="border border-zinc-600 ps-2 overflow-hidden text-center">{index + 1}</td>
                             <td className="border border-zinc-600 ps-2 overflow-hidden">{typeof booking.car !== 'string' ? booking.car!.make : 'N/A'} {typeof booking.car !== 'string' ? booking.car!.carModel : 'N/A'}</td>

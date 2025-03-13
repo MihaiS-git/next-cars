@@ -1,3 +1,4 @@
+import CloseButton from "@/components/ui/CloseButton";
 import Link from "next/link";
 
 export const metadata = {
@@ -30,14 +31,7 @@ export default function CarsPageLayout({
                 quisquam iste voluptatibus possimus earum.
             </p>
             <div className="w-full flex flex-row justify-end p-4">
-                <Link href="/">
-                    <button
-                        type="button"
-                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
-                    >
-                        Close
-                    </button>
-                </Link>
+                <CloseButton target="/" />
             </div>
         </div>
     );

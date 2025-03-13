@@ -2,21 +2,39 @@
 
 import { DashboardBookingsTable } from "@/components/ui/dashboard/BookingsTable";
 import DashboardInvoicesTable from "@/components/ui/dashboard/InvoicesTable";
-import {
-    getUpcomingRentalsByUserEmail,
-    getPastRentalsByUserEmail,
-    getUserByEmail,
-} from "@/lib/queries/users-queries";
+import { getFullUserByEmail } from "@/lib/queries/users-queries";
 import { getInvoicesByUser } from "../actions/invoice/actions";
-import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { Suspense, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import { redirect } from "next/navigation";
+import CloseButton from "@/components/ui/CloseButton";
+import { User } from "@/lib/definitions";
+import { IBooking, IInvoice } from "@/lib/definitions";
+import { getPastRentals, getUpcomingRentals } from "@/lib/db/bookings";
 
 export default function DashboardPage() {
     const [customerId, setCustomerId] = useState<string | null>(null);
+    const [customer, setCustomer] = useState<User | null>(null);
+    const [upcomingBookingsData, setUpcomingBookingsData] = useState<
+        IBooking[] | null
+    >(null);
+    const [isLoadingUpcomingBookings, setIsLoadingUpcomingBookings] =
+        useState<boolean>(true);
+    const [errorUpcomingBookings, setErrorUpcomingBookings] =
+        useState<string>("");
+
+    const [pastBookingsData, setPastBookingsData] = useState<IBooking[] | null>(
+        null
+    );
+    const [isLoadingPastBookings, setIsLoadingPastBookings] =
+        useState<boolean>(true);
+    const [errorPastBookings, setErrorPastBookings] = useState<string>("");
+
+    const [invoices, setInvoices] = useState<IInvoice[] | null>(null);
+    const [isLoadingInvoices, setIsLoadingInvoices] = useState<boolean>(true);
+    const [errorInvoices, setErrorInvoices] = useState<string>("");
+
+    const [error, setError] = useState<string>("");
+
     const { data: session, status } = useSession();
     const email = session?.user?.email;
 
@@ -24,136 +42,155 @@ export default function DashboardPage() {
         if (status === "authenticated" && email) {
             const fetchCustomer = async () => {
                 try {
-                    const fetchedCustomer = await getUserByEmail(email!);
+                    const fetchedCustomer = await getFullUserByEmail(email!);
                     if (fetchedCustomer) {
                         setCustomerId(fetchedCustomer._id!.toString());
+                        setCustomer(fetchedCustomer);
                     }
-                } catch (error) {
-                    console.error("Failed to fetch user details", error);
+                } catch (error: any) {
+                    setError(`Failed to fetch user details: ${error.message}`);
                 }
             };
-
             fetchCustomer();
         }
     }, [status, email]);
 
-    const {
-        data: upcomingBookingsData,
-        isLoading: isLoadingUpcomingBookingsData,
-        isError: isUpcomingBookingsDataError,
-    } = useQuery({
-        queryKey: ["upcomingBookingsData", email],
-        queryFn: () => getUpcomingRentalsByUserEmail(email as string),
-        enabled: !!email,
-    });
+    useEffect(() => {
+        if (status === "authenticated" && customer) {
+            const fetchCustomer = async () => {
+                const bookingIds = customer.bookings;
 
-    const {
-        data: pastBookingsData,
-        isLoading: isLoadingPastBookingsData,
-        isError: isPastBookingsDataError,
-    } = useQuery({
-        queryKey: ["pastBookingsData", email],
-        queryFn: () => getPastRentalsByUserEmail(email as string),
-        enabled: !!email,
-    });
+                const upcomingBookingsData = await getUpcomingRentals(
+                    bookingIds!
+                );
 
-    const {
-        data: invoices,
-        isLoading: isLoadingInvoices,
-        isError: isInvoicesError,
-    } = useQuery({
-        queryKey: ["invoices", customerId],
-        queryFn: () => getInvoicesByUser(customerId!),
-        enabled: !!customerId,
-    });
+                if (
+                    !upcomingBookingsData ||
+                    upcomingBookingsData.length === 0
+                ) {
+                    setErrorUpcomingBookings(
+                        "No upcoming bookings data found."
+                    );
+                    setIsLoadingUpcomingBookings(false);
+                    return;
+                }
+                setUpcomingBookingsData(upcomingBookingsData);
+                setIsLoadingUpcomingBookings(false);
+            };
+            fetchCustomer();
+        }
+    }, [customer]);
 
-    const handleClose = () => {
-        redirect("/");
-    };
+    useEffect(() => {
+        if (status === "authenticated" && customer) {
+            const fetchData = async () => {
+                const bookingIds = customer.bookings;
+                const pastBookingsData = await getPastRentals(bookingIds!);
+                if (!pastBookingsData || pastBookingsData.length === 0) {
+                    setErrorPastBookings("No past bookings data found.");
+                    setIsLoadingPastBookings(false);
+                    return;
+                }
+                setPastBookingsData(pastBookingsData);
+                setIsLoadingPastBookings(false);
+            };
+            fetchData();
+        }
+    }, [customer]);
 
-    if (isLoadingUpcomingBookingsData || isLoadingPastBookingsData) {
-        return (
-            <div className="flex items-center justify-center h-80">
-                <p className="text-zinc-400">Loading bookings details...</p>
-            </div>
-        );
-    }
-
-    if (isUpcomingBookingsDataError || isPastBookingsDataError) {
-        return (
-            <div className="text-center text-red-500">
-                <p>Failed to load bookings details. Please try again.</p>
-            </div>
-        );
-    }
-
-    if (isLoadingInvoices) {
-        return (
-            <div className="flex items-center justify-center h-80">
-                <p className="text-zinc-400">Loading invoices...</p>
-            </div>
-        );
-    }
-
-    if (isInvoicesError) {
-        return (
-            <div className="text-center text-red-500">
-                <p>Failed to load invoices. Please try again.</p>
-            </div>
-        );
-    }
+    useEffect(() => {
+        if (status === "authenticated" && customerId) {
+            const fetchData = async () => {
+                const invoicesData = await getInvoicesByUser(customerId!);
+                if (!invoicesData || invoicesData.length === 0) {
+                    setErrorInvoices("No invoices found.");
+                    setIsLoadingInvoices(false);
+                    return;
+                }
+                setInvoices(invoicesData);
+                setIsLoadingInvoices(false);
+            };
+            fetchData();
+        }
+    }, [customerId]);
 
     return (
         <>
-            <Suspense fallback={<div>Loading dashboard...</div>}>
-                <h1 className="mb-4 mt-8 text-red-600 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
-                    <em>Dashboard</em>
-                </h1>
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
-                    <div className="bg-zinc-700 text-zinc-200 rounded-md p-4 border border-red-600 ">
-                        <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
-                            Upcoming & Ongoing Rentals
-                        </h3>
-                        {upcomingBookingsData?.bookings &&
-                        upcomingBookingsData.bookings.length > 0 ? (
-                            <DashboardBookingsTable
-                                userData={upcomingBookingsData}
-                            />
-                        ) : (
-                            <p>No bookings found.</p>
-                        )}
-                    </div>
-
-                    <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600">
-                        <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
-                            Past Rentals
-                        </h3>
-                        {pastBookingsData?.bookings &&
-                        pastBookingsData.bookings.length > 0 ? (
-                            <DashboardBookingsTable
-                                userData={pastBookingsData}
-                            />
-                        ) : (
-                            <p>No bookings found.</p>
-                        )}
-                    </div>
-
-                    <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600 xl:col-span-2">
-                        <h3 className="font-semibold text-base lg:font-bold lg:text-lg">
-                            Payment & Invoices
-                        </h3>
-                        {invoices && invoices.length > 0 ? (
-                            <DashboardInvoicesTable invoicesData={invoices} />
-                        ) : (
-                            <p>No invoices found.</p>
-                        )}
-                    </div>
+            {error ? (
+                <div className="text-center h-80 flex items-center justify-center">
+                    <p>{error}</p>
                 </div>
-            </Suspense>
+            ) : (
+                <Suspense fallback={<div>Loading dashboard...</div>}>
+                    <h1 className="mb-4 mt-8 text-zinc-200 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
+                        <em>Dashboard</em>
+                    </h1>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
+                        <div className="bg-zinc-700 text-zinc-200 rounded-md p-4 border border-red-600 ">
+                            <h2 className="font-semibold text-base lg:font-bold lg:text-lg">
+                                Upcoming & Ongoing Rentals
+                            </h2>
+                            {isLoadingUpcomingBookings && (
+                                <div className="text-center h-80 flex items-center justify-center">
+                                    <p>Loading upcoming bookings...</p>
+                                </div>
+                            )}
+                            {upcomingBookingsData &&
+                            upcomingBookingsData.length > 0 ? (
+                                <DashboardBookingsTable
+                                    bookingsData={upcomingBookingsData}
+                                />
+                            ) : (
+                                <div className="text-center h-80 flex items-center justify-center">
+                                    <p>{errorUpcomingBookings}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600">
+                            <h2 className="font-semibold text-base lg:font-bold lg:text-lg">
+                                Past Rentals
+                            </h2>
+                            {isLoadingPastBookings && (
+                                <div className="text-center h-80 flex items-center justify-center">
+                                    <p>Loading past bookings...</p>
+                                </div>
+                            )}
+                            {pastBookingsData && pastBookingsData.length > 0 ? (
+                                <DashboardBookingsTable
+                                    bookingsData={pastBookingsData}
+                                />
+                            ) : (
+                                <div className="text-center h-80 flex items-center justify-center">
+                                    <p>{errorPastBookings}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600 xl:col-span-2">
+                            <h2 className="font-semibold text-base lg:font-bold lg:text-lg">
+                                Payment & Invoices
+                            </h2>
+                            {isLoadingInvoices && (
+                                <div className="text-center h-80 flex items-center justify-center">
+                                    <p>Loading invoices...</p>
+                                </div>
+                            )}
+                            {invoices && invoices.length > 0 ? (
+                                <DashboardInvoicesTable
+                                    invoicesData={invoices}
+                                />
+                            ) : (
+                                <div className="text-center h-80 flex items-center justify-center">
+                                    <p>{errorInvoices}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </Suspense>
+            )}
             <div className="w-full flex flex-row justify-end pb-4 pe-4">
-                <Button variant="destructive" size="icon" onClick={handleClose}>
-                    <X />
-                </Button>
+                <CloseButton target="/" />
             </div>
         </>
     );

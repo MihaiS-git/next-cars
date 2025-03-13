@@ -2,6 +2,7 @@ import { ICar } from "@/lib/definitions";
 import CarCard from "./CarCard";
 import Link from "next/link";
 import PaginationControls from "../navigation/PaginationControls";
+import CloseButton from "../CloseButton";
 
 export default function CarsGrid({
     initialCars,
@@ -25,14 +26,7 @@ export default function CarsGrid({
             </ul>
             <PaginationControls searchParams={{ currentPage, totalPages }} />
             <div className="flex flex-row justify-end">
-                <Link href="/">
-                    <button
-                        type="button"
-                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
-                    >
-                        Close
-                    </button>
-                </Link>
+               <CloseButton target="/" />
             </div>
         </div>
     );

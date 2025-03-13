@@ -9,6 +9,7 @@ import { useActionState, useEffect, useState } from "react";
 import { User } from "@/lib/definitions";
 import { updateUser } from "@/app/actions/account/actions";
 import Link from "next/link";
+import CloseButton from "@/components/ui/CloseButton";
 
 export default function AccountPage() {
     const { data: session, status } = useSession();
@@ -305,14 +306,7 @@ export default function AccountPage() {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end pb-4 pe-4">
-            <Link href="/">
-                    <button
-                        type="button"
-                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
-                    >
-                        Close
-                    </button>
-                </Link>
+                <CloseButton target="/" />
             </div>
         </div>
     );

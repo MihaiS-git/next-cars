@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { User } from "@/lib/definitions";
 import Link from "next/link";
+import CloseButton from "../CloseButton";
 
 export default function CarDetails({ driver }: { driver: User }) {
     return (
@@ -45,14 +46,7 @@ export default function CarDetails({ driver }: { driver: User }) {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end p-4">
-                <Link href="/drivers">
-                    <button
-                        type="button"
-                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
-                    >
-                        Close
-                    </button>
-                </Link>
+                <CloseButton target="/drivers" />
             </div>
         </div>
     );

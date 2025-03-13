@@ -2,6 +2,7 @@ import { User } from "@/lib/definitions";
 import DriverCard from "@/components/ui/drivers/DriverCard";
 import Link from "next/link";
 import PaginationControls from "../navigation/PaginationControls";
+import CloseButton from "../CloseButton";
 
 export default function DriversGrid({
     initialDrivers,
@@ -28,14 +29,7 @@ export default function DriversGrid({
             </ul>
             <PaginationControls searchParams={{ currentPage, totalPages }} />
             <div className="flex flex-row justify-end">
-                <Link href="/">
-                    <button
-                        type="button"
-                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
-                    >
-                        Close
-                    </button>
-                </Link>
+                <CloseButton target="/" />
             </div>
         </div>
     );

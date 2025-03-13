@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import { ICar } from "@/lib/definitions";
 import Link from "next/link";
+import CloseButton from "../CloseButton";
 
 export default function CarDetails({ car }: { car: ICar }) {
     return (
@@ -174,14 +175,7 @@ export default function CarDetails({ car }: { car: ICar }) {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end p-4">
-                <Link href="/cars">
-                    <button
-                        type="button"
-                        className="bg-red-600 text-zinc-50 px-2 rounded-sm"
-                    >
-                        Close
-                    </button>
-                </Link>
+                <CloseButton target="/cars" />
             </div>
         </div>
     );
