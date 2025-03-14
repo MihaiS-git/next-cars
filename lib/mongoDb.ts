@@ -4,11 +4,14 @@ const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME;
 
 export async function connectDB() {
     try {
-        // Check if the client is already connected by attempting a ping
+        // Try pinging the database to check if the connection is active
         await client.db().admin().ping();
-    } catch (error) {
-        // If ping fails, reconnect
-        await client.connect();
+    } catch {
+        try {
+            await client.connect();
+        } catch (connectError) {
+            throw new Error(`Database connection failed: ${connectError}`);
+        }
     }
     return client.db(MONGODB_DB_NAME);
 }

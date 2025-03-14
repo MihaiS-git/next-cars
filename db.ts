@@ -14,7 +14,6 @@ const options = {
 };
 
 let client: MongoClient;
-let isConnected = false;
 
 if (process.env.NODE_ENV === "development") {
   let globalWithMongo = global as typeof globalThis & {

@@ -4,7 +4,8 @@ import { signIn } from '@/auth';
 import { AuthError } from "next-auth";
 import { signUpSchema } from '@/lib/validators/auth-zod';
 import { saltAndHashPassword } from '@/lib/util/password';
-import { createNewUser, getUserByEmail } from '@/lib/queries/users-queries';
+import { getUserByEmail } from '@/lib/db/users';
+import { createNewUser } from '../user/actions';
 
 export async function authenticate(prevState: string | undefined, formData: FormData, provider: 'google' | 'credentials') {
     try {

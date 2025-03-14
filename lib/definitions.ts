@@ -1,13 +1,15 @@
+import { ObjectId } from "mongodb";
+
 export interface User {
     _id?: string;
-    email: string;
-    password: string;
+    email?: string;
+    password?: string;
     name?: string;
     role?: 'ADMIN' | 'CUSTOMER' | 'DRIVER';
     address?: string;
     phone?: string;
-    dob?: string;
-    drivingSince?: string;
+    dob?: Date;
+    drivingSince?: Date;
     pictureUrl?: string;
     bookings?: IBooking[];
     invoices?: IInvoice[];
@@ -37,9 +39,9 @@ export interface ICarFeaturesAndSpecifications {
 
 export interface ICarImagesAndDocuments {
     _id?: string;
-    carImages: string[],
-    registrationNumber: string,
-    insurancePolicyNumber: string,
+    carImages: string[];
+    registrationNumber: string;
+    insurancePolicyNumber: string;
 }
 
 export interface IRentalAgencyDetails {
@@ -59,11 +61,13 @@ export interface ICar {
     transmission?: 'Manual' | 'Automatic';
     fuelType?: 'Gasoline' | 'Diesel' | 'Electric' | 'Hybrid';
     mileage?: number;
-    carRentalDetails?: string | ICarRentalDetails | null;
-    carFeaturesAndSpecifications?: string | ICarFeaturesAndSpecifications | null;
-    carImagesAndDocuments?: string | ICarImagesAndDocuments | null;
-    rentalAgencyDetails?: string | IRentalAgencyDetails | null;
+    carRentalDetails?: string | ICarRentalDetails;
+    carFeaturesAndSpecifications?: string | ICarFeaturesAndSpecifications;
+    carImagesAndDocuments?: string | ICarImagesAndDocuments;
+    rentalAgencyDetails?: string | IRentalAgencyDetails;
     bookings?: IBooking[];
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface IDatesInterval {
@@ -73,24 +77,31 @@ export interface IDatesInterval {
 
 export interface IBooking {
     _id?: string;
-    customer: string | User | null;
-    car: string | ICar | null;
-    driver: string | User | null;
+    customer: string | User;
+    car: string | ICar;
+    driver: string | User;
     timeInterval: IDatesInterval;
     status: 'Pending' | 'Confirmed' | 'Cancelled' | 'Completed';
     totalAmount: number;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface IInvoice {
-    _id?: string;
-    customer: string | User | null;
-    booking: string | IBooking | null;
-    issueDate: string | Date;
-    dueDate: string | Date;
+    _id?: string | ObjectId | undefined;
+    customer: string | User | ObjectId;
+    booking: string | IBooking | ObjectId;
+    issueDate: Date | string;
+    dueDate: Date | string;
     baseAmountDue: number;
     VAT: number;
     totalAmountDue: number;
     status: 'Paid' | 'Unpaid' | 'Overdue';
     paymentMethod: 'Credit Card' | 'Debit Card' | 'PayPal' | 'Bank Transfer';
     notes?: string;
+}
+
+export interface IPicture { 
+    elementId: string;
+    elementPicture: string;
 }

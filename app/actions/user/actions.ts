@@ -1,7 +1,17 @@
 'use server';
 
 import { connectDB } from "@/lib/mongoDb";
+import { withDb } from "@/lib/util/db-helper";
 import { updateUserSchema } from "@/lib/validators/user-zod";
+
+
+export async function createNewUser(email: string, password: string) {
+  return withDb('users', async (collection) => {
+    const result = await collection.insertOne({ email, password });
+    if (!result.acknowledged) return null;
+    return { _id: result.insertedId, email };
+  })
+}
 
 export type State = {
     errors?: {
@@ -81,7 +91,7 @@ export async function updateUser(prevState: State, formData: FormData) {
             }
 
         }
-    } catch (error: any) {
-        return { message: `Database error: ${error.message}` };
+    } catch (error) {
+        return { message: `Database error: ${error}` };
     }
 }

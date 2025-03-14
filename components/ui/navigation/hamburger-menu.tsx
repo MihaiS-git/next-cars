@@ -3,12 +3,11 @@ import Link from "next/link";
 import LogoutButton from "../auth/LogoutButton";
 
 interface HamburgerMenuProps {
-    openState: boolean;
     handleClose: () => void;
 }
 
-export default function HamburgerMenu({ openState, handleClose }: HamburgerMenuProps) {
-    const { data: session, status } = useSession();
+export default function HamburgerMenu({ handleClose }: HamburgerMenuProps) {
+    const { status } = useSession();
     
     if (status === "loading") return <p className="text-zinc-50">Loading...</p>;
 

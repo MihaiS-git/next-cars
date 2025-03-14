@@ -1,7 +1,10 @@
-export default function CarsListLoading() {
+export default function ContactPageLoading() {
     return (
-        <div className="flex items-center justify-center h-80">
-            <p className="text-zinc-400 my-auto">Loading contact details...</p>
+        <div className="flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-red-600 m-8 mx-auto mt-48 mb-8"></div>
+            <div className="text-zinc-400 mb-48">
+                Loading contact details...
+            </div>
         </div>
     );
 }

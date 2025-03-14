@@ -39,7 +39,7 @@ export default function DashboardInvoicesTable({ invoicesData }: DashboardInvoic
                 <tbody>
                     {invoicesData.map(
                         (invoice: IInvoice, index: number) => (
-                            <tr key={invoice._id}>
+                            <tr key={index}>
                                 <td className="border border-zinc-600 ps-2 overflow-hidden text-center">
                                     {index + 1}
                                 </td>

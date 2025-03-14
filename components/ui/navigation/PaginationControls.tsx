@@ -1,8 +1,7 @@
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../pagination";
 
-export default async function PaginationControls({ searchParams }: { searchParams: { currentPage: number; totalPages: number } }) {
-    const params = await searchParams;
-    const { currentPage, totalPages } = params;
+export default function PaginationControls({ searchParams }: { searchParams: { currentPage: number; totalPages: number } }) {
+    const { currentPage, totalPages } = searchParams;
 
     return (
         <>

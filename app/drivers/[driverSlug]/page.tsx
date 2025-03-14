@@ -1,4 +1,4 @@
-import { getDriverBySlug } from "@/app/actions/drivers/actions";
+import { getDriverBySlug } from "@/lib/db/drivers";
 import DriverDetails from "@/components/ui/drivers/DriverDetails";
 
 export default async function DriverSlug({ params }: { params: Promise<{ driverSlug: string }> }) {

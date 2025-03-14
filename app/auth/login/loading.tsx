@@ -1,7 +1,8 @@
 export default function LoginPageLoading() {
     return (
-        <div className="flex items-center justify-center w-100 h-100">
-            <p className="text-zinc-400 my-56">Loading auth form...</p>
+        <div className="flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-red-600 m-8 mx-auto mt-48 mb-8"></div>
+            <div className="text-zinc-400 mb-48">Loading login form...</div>
         </div>
     );
 }

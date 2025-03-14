@@ -22,6 +22,7 @@
       "@/*": ["./*"]
     }
   },
+  "strict": false,
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/cars/route.ts.old", "app/api/cars/route"],
   "exclude": ["node_modules"]
 }

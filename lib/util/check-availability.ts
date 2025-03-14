@@ -13,5 +13,6 @@ export function isAvailableForBooking(bookings: IBooking[], startDate: Date, end
             break;
         }
     }
+
     return isAvailable;
 }

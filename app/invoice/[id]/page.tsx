@@ -1,14 +1,12 @@
 "use client";
 
-import { getBookingById } from "@/app/actions/booking/actions";
-import { getInvoiceById } from "@/app/actions/invoice/actions";
+import { getBookingById } from "@/lib/db/bookings";
+import { getInvoiceById } from "@/lib/db/invoices";
 import { Button } from "@/components/ui/button";
 import CloseButton from "@/components/ui/CloseButton";
 import { IBooking, ICar, IInvoice, User } from "@/lib/definitions";
-import { getUserById } from "@/lib/queries/users-queries";
+import { getUserById } from "@/lib/db/users";
 import { formatCurrency } from "@/lib/util/format-currency";
-import { X } from "lucide-react";
-import { redirect } from "next/navigation";
 import { Suspense, use, useEffect, useState } from "react";
 
 export default function InvoicePage({
@@ -56,12 +54,13 @@ export default function InvoicePage({
             setLoading(false);
         }
         fetchInvoiceData();
-    }, [params]);
+    }, [params, id]);
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-80">
-                <p className="text-zinc-400">Loading invoice...</p>
+            <div className="flex flex-col items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-red-600 m-8 mx-auto mt-48 mb-8"></div>
+                <div className="text-zinc-400 mb-48">Loading invoice...</div>
             </div>
         );
     }
@@ -189,15 +188,17 @@ export default function InvoicePage({
                     <div className="grid grid-cols-3 gap-0 mt-2">
                         <p className="border border-zinc-400 p-2 text-left overflow-hidden">
                             <strong>Base Amount:</strong>{" "}
-                            {formatCurrency(invoice?.baseAmountDue!)}
+                            {invoice && formatCurrency(invoice.baseAmountDue!)}
                         </p>
                         <p className="border border-zinc-400 p-2 text-center overflow-hidden">
                             <strong>VAT:</strong>{" "}
-                            {formatCurrency(invoice?.VAT!)}
+                            {invoice ? formatCurrency(invoice.VAT!) : "N/A"}
                         </p>
                         <p className="border border-zinc-400 p-2 text-center overflow-hidden">
                             <strong>Total Amount:</strong>{" "}
-                            {formatCurrency(invoice?.totalAmountDue!)}
+                            {invoice
+                                ? formatCurrency(invoice.totalAmountDue!)
+                                : "N/A"}
                         </p>
                     </div>
                     <p className="text-center text-sm mt-64 overflow-hidden">

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { User } from "@/lib/definitions";
-import Link from "next/link";
 import CloseButton from "../CloseButton";
 
 export default function CarDetails({ driver }: { driver: User }) {

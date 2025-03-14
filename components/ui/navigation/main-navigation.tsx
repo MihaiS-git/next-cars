@@ -7,7 +7,7 @@ import LogoutButton from "@/components/ui/auth/LogoutButton";
 import { Button } from "../button";
 
 export default function MainNavigation() {
-    const { data: session, status } = useSession();
+    const { status } = useSession();
 
     return (
         <nav className="hidden lg:flex w-8/12 items-center text-xl me-4">
@@ -31,11 +31,11 @@ export default function MainNavigation() {
                     <Link href="/contact">Contact</Link>
                 </li>
                 {status === "authenticated" ? (
-                    <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
+                    <li className="px-4 my-auto hover:animate-pulse">
                         <LogoutButton />
                     </li>
                 ) : (
-                    <li className="px-4 my-auto hover:animate-pulse hover:text-red-600">
+                    <li className="px-4 my-auto hover:animate-pulse">
                         <Button
                             variant="outline"
                             size="lg"

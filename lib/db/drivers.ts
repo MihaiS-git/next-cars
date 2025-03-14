@@ -1,40 +1,26 @@
 'use server';
 
-import { IBooking, User } from "@/lib/definitions";
-import { connectDB } from "@/lib/mongoDb";
 import { ObjectId } from "mongodb";
+import { IBooking, IPicture, User } from "../definitions";
+import { connectDB } from "../mongoDb";
 
-export async function getAllDrivers() {
+export async function getAllDriversSummary(): Promise<IPicture[]> {
     try {
         const db = await connectDB();
+        const drivers = await db.collection('users').find({ role: 'DRIVER' }).toArray();
 
-        const drivers = await db.collection('users')
-            .find({ role: 'DRIVER' })
-            .toArray();
-
-        if (!drivers[0]) return [];
-
-        const mappedDrivers: User[] = drivers.map(driver => ({
-            _id: driver._id.toString(),
-            email: driver.email,
-            password: '',
-            name: driver.name,
-            role: driver.role,
-            address: driver.address,
-            phone: driver.phone,
-            dob: driver.dob,
-            drivingSince: driver.drivingSince,
-            pictureUrl: driver.pictureUrl,
-            bookings: driver.bookings ? driver.bookings.map((booking: ObjectId) => booking.toString()) : [],
+        const mappedDrivers: IPicture[] = drivers.map(driver => ({
+            elementId: driver._id.toString(),
+            elementPicture: driver.pictureUrl,
         }));
 
         return mappedDrivers;
-    } catch (error: any) {
-        throw new Error(`Something wrong happened: ${error.message}`);
+    } catch (error) {
+        throw new Error(`Something wrong happened: ${error}`);
     }
 }
 
-export async function getAllDriversPaginated(page: number = 1, limit: number = 10) {
+export async function getAllDriversPaginated(page: number = 1, limit: number = 10): Promise<{ drivers: User[], totalCount: number } | null> {
     try {
         const db = await connectDB();
         const skip = (page - 1) * limit;
@@ -65,12 +51,12 @@ export async function getAllDriversPaginated(page: number = 1, limit: number = 1
 
 
         return { drivers: mappedDrivers, totalCount };
-    } catch (error: any) {
-        throw new Error(`Something wrong happened: ${error.message}`);
+    } catch (error) {
+        throw new Error(`Something wrong happened: ${error}`);
     }
 }
 
-export async function getDriverBySlug(slug: string) {
+export async function getDriverBySlug(slug: string): Promise<User | null> {
     try {
         const db = await connectDB();
         const result = await db.collection('users').find({ _id: new ObjectId(slug) }).toArray();
@@ -92,8 +78,8 @@ export async function getDriverBySlug(slug: string) {
         }
 
         return mappedDriver;
-    } catch (error: any) {
-        throw new Error(`Something wrong happened: ${error.message}`);
+    } catch (error) {
+        throw new Error(`Something wrong happened: ${error}`);
     }
 }
 
@@ -160,53 +146,7 @@ export async function getDriverByIdWithBookings(id: string) {
         }
 
         return mappedDriver;
-    } catch (error: any) {
-        throw new Error(`Something wrong happened: ${error.message}`);
-    }
-}
-
-export async function getDriverDataForBooking(id: string) {
-    try {
-        const db = await connectDB();
-        const result = await db.collection('users').aggregate([
-            { $match: { _id: new ObjectId(id) } },
-            {
-                $lookup: {
-                    from: 'bookings',
-                    localField: 'bookings',
-                    foreignField: '_id',
-                    as: 'bookings'
-                }
-            },
-            {
-                $project: {
-                    bookings: {
-                        $map: {
-                            input: "$bookings",
-                            as: "booking",
-                            in: {
-                                timeInterval: {
-                                    start: "$$booking.timeInterval.start",
-                                    end: "$$booking.timeInterval.end"
-                                }
-                            }
-                        }
-                    },
-                }
-            }
-        ]).toArray();
-
-        if (!result[0]) return null;
-
-        const mappedDriver = {
-            _id: result[0]._id.toString(),
-            bookings: result[0].bookings ? result[0].bookings.map((booking: IBooking) => ({
-                timeInterval: { start: booking.timeInterval.start.toISOString().split('T')[0], end: booking.timeInterval.end.toISOString().split('T')[0] },
-            })) : [],
-        }
-
-        return mappedDriver;
-    } catch (error: any) {
-        throw new Error(`Something wrong happened: ${error.message}`);
+    } catch (error) {
+        throw new Error(`Something wrong happened: ${error}`);
     }
 }

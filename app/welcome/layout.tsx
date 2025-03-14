@@ -1,5 +1,4 @@
 import CloseButton from "@/components/ui/CloseButton";
-import Link from "next/link";
 
 export const metadata = {
     title: "Next Cars -Welcome",

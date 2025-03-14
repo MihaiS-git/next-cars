@@ -9,7 +9,6 @@ import {
 } from "../carousel";
 import Image from "next/image";
 import { ICar } from "@/lib/definitions";
-import Link from "next/link";
 import CloseButton from "../CloseButton";
 
 export default function CarDetails({ car }: { car: ICar }) {

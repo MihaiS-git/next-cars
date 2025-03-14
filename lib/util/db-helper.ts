@@ -1,7 +1,7 @@
 import client from "@/db";
 import { Db, Collection } from "mongodb";
 
-export async function withDb(collectionName: string, callback: (collection: Collection) => Promise<any>) {
+export async function withDb<T>(collectionName: string, callback: (collection: Collection) => Promise<T>): Promise<T> {
   try {
     await client.connect();
     const db: Db = client.db(process.env.MONGODB_DB_NAME);

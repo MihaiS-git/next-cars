@@ -4,17 +4,27 @@ import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { getUserDataForAccountUpdate } from "@/lib/queries/users-queries";
+import { getUserByEmail } from "@/lib/db/users";
 import { useActionState, useEffect, useState } from "react";
 import { User } from "@/lib/definitions";
-import { updateUser } from "@/app/actions/account/actions";
-import Link from "next/link";
+import { updateUser } from "@/app/actions/user/actions";
 import CloseButton from "@/components/ui/CloseButton";
+
+interface UserData {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    role: string;
+    dob: string | Date;
+    drivingSince: string | Date;
+    pictureUrl?: string;
+}
 
 export default function AccountPage() {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<User>();
-    const [userData, setUserData] = useState<any>({
+    const [userData, setUserData] = useState<UserData>({
         name: "",
         address: "",
         phone: "",
@@ -30,7 +40,7 @@ export default function AccountPage() {
         if (status === "authenticated" && email) {
             const fetchUser = async () => {
                 try {
-                    const userData = await getUserDataForAccountUpdate(email);
+                    const userData = await getUserByEmail(email);
                     const user = userData as User;
 
                     if (user) {
@@ -46,13 +56,13 @@ export default function AccountPage() {
                             pictureUrl: user.pictureUrl || "",
                         });
                     } else {
-                        setUserData((prev: any) => ({
+                        setUserData((prev: UserData) => ({
                             ...prev,
                             email: email,
                         }));
                     }
                 } catch (err) {
-                    setError("Error fetching user data");
+                    setError(`Error fetching user data: ${err}`);
                 }
             };
             fetchUser();
@@ -138,7 +148,7 @@ export default function AccountPage() {
                             type="text"
                             value={userData.name}
                             onChange={(e) =>
-                                setUserData((prev: any) => ({
+                                setUserData((prev: UserData) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -169,7 +179,7 @@ export default function AccountPage() {
                             type="text"
                             value={userData.address}
                             onChange={(e) =>
-                                setUserData((prev: any) => ({
+                                setUserData((prev: UserData) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -200,7 +210,7 @@ export default function AccountPage() {
                             type="text"
                             value={userData.phone}
                             onChange={(e) =>
-                                setUserData((prev: any) => ({
+                                setUserData((prev: UserData) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -237,7 +247,7 @@ export default function AccountPage() {
                                     : ""
                             }
                             onChange={(e) =>
-                                setUserData((prev: any) => ({
+                                setUserData((prev: UserData) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))
@@ -274,7 +284,7 @@ export default function AccountPage() {
                                     : ""
                             }
                             onChange={(e) =>
-                                setUserData((prev: any) => ({
+                                setUserData((prev: UserData) => ({
                                     ...prev,
                                     [e.target.name]: e.target.value,
                                 }))

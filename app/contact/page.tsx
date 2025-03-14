@@ -1,7 +1,6 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import Link from "next/link";
 
 import dynamic from "next/dynamic";
 import CloseButton from "@/components/ui/CloseButton";

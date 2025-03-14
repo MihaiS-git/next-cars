@@ -1,11 +1,9 @@
 "use client";
 
-import { DashboardBookingsTable } from "@/components/ui/dashboard/BookingsTable";
-import DashboardInvoicesTable from "@/components/ui/dashboard/InvoicesTable";
-import { getFullUserByEmail } from "@/lib/queries/users-queries";
-import { getInvoicesByUser } from "../actions/invoice/actions";
+import { getUserByEmail } from "@/lib/db/users";
+import { getInvoicesByUser } from "@/lib/db/invoices";
 import { useSession } from "next-auth/react";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CloseButton from "@/components/ui/CloseButton";
 import { IBooking, IInvoice } from "@/lib/definitions";
 import { getPastRentals, getUpcomingRentals } from "@/lib/db/bookings";
@@ -30,15 +28,23 @@ export default function DashboardPage() {
         if (status === "authenticated" && email) {
             const fetchData = async () => {
                 try {
-                    const fetchedCustomer = await getFullUserByEmail(email!);
+                    const fetchedCustomer = await getUserByEmail(email);
+                    if (!fetchedCustomer) {
+                        setError("User not found");
+                        return;
+                    }
+                    const fetchedCustomerBookings = fetchedCustomer.bookings ? fetchedCustomer.bookings!.map(
+                        (booking) => booking.toString()
+                    ) : [];
+                    
                     if (fetchedCustomer) {
                         const [
                             upcomingBookingsData,
                             pastBookingsData,
                             invoicesData,
                         ] = await Promise.all([
-                            getUpcomingRentals(fetchedCustomer.bookings!),
-                            getPastRentals(fetchedCustomer.bookings!),
+                            getUpcomingRentals(fetchedCustomerBookings),
+                            getPastRentals(fetchedCustomerBookings),
                             getInvoicesByUser(fetchedCustomer._id!.toString()),
                         ]);
 
@@ -46,8 +52,8 @@ export default function DashboardPage() {
                         setPastBookingsData(pastBookingsData);
                         setInvoices(invoicesData);
                     }
-                } catch (error: any) {
-                    setError(`Failed to fetch data: ${error.message}`);
+                } catch (error) {
+                    setError(`Failed to fetch data: ${error}`);
                 } finally {
                     setIsLoading(false);
                 }
@@ -71,10 +77,12 @@ export default function DashboardPage() {
                         <DashboardRentalsSlice
                             isLoading={isLoading}
                             bookingsData={upcomingBookingsData}
+                            sliceTitle="Upcoming Rentals"
                         />
                         <DashboardRentalsSlice
                             isLoading={isLoading}
                             bookingsData={pastBookingsData}
+                            sliceTitle="Past Rentals"
                         />
                         <DashboardInvoicesSlice
                             isLoading={isLoading}

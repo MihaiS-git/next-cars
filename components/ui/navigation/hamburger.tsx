@@ -3,16 +3,15 @@
 import { useCallback, useMemo, useState } from "react";
 import HamburgerMenu from "@/components/ui/navigation/hamburger-menu";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 
 export default function Hamburger() {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleOpenState = useCallback(() => {
         setIsOpen((prev) => !prev);
-    }, [isOpen]);
+    }, []);
     
-    const memoizedMenu = useMemo(() => <HamburgerMenu openState={isOpen} handleClose={toggleOpenState} />, [isOpen, toggleOpenState]);
+    const memoizedMenu = useMemo(() => <HamburgerMenu handleClose={toggleOpenState} />, [toggleOpenState]);
 
     return (
         <>

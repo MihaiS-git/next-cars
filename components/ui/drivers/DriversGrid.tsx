@@ -1,6 +1,5 @@
 import { User } from "@/lib/definitions";
 import DriverCard from "@/components/ui/drivers/DriverCard";
-import Link from "next/link";
 import PaginationControls from "../navigation/PaginationControls";
 import CloseButton from "../CloseButton";
 

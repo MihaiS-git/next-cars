@@ -18,7 +18,7 @@ export default function SignupForm() {
         if (formState.redirectTo) {
             router.push(formState.redirectTo);
         }
-    }, [formState.redirectTo]);
+    }, [formState.redirectTo, router]);
 
     return (
         <>

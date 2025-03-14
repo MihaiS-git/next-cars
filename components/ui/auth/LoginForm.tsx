@@ -14,14 +14,14 @@ export default function LoginForm() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [emailTouched, setEmailTouched] = useState(false);
     const [passwordTouched, setPasswordTouched] = useState(false);
-    const { data: session, status, update } = useSession();
+    const {status, update } = useSession();
     const router = useRouter();
 
     useEffect(() => {
         if (status === "authenticated") {
             router.push(callbackUrl);
         }
-    }, [status]);
+    }, [status, callbackUrl, router]);
 
     const handleFormSubmit = async (
         event: React.FormEvent<HTMLFormElement>

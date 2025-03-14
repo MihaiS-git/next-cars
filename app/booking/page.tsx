@@ -1,36 +1,65 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useActionState, useEffect, useRef, useState } from "react";
-import BookingCarousel from "@/components/ui/booking/booking-carousel";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { bookCar } from "../actions/booking/actions";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { User } from "@/lib/definitions";
-import BookingForm from "@/components/ui/booking/BookingForm";
-import CloseButton from "@/components/ui/CloseButton";
+import { IPicture } from "@/lib/definitions";
+import { getAllCarsWithOnePicture } from "@/lib/db/cars";
+import { getAllDriversSummary } from "@/lib/db/drivers";
 
-export default function BookingPage({
-    cars,
-    drivers,
-}: {
-    cars: any[];
-    drivers: User[];
-}) {
-    const [startDate, setStartDate] = useState(
-        new Date().toISOString().split("T")[0]
-    );
-    const [daysNo, setDaysNo] = useState(1);
+// Dynamically import components
+const BookingCarousel = dynamic(() => import("@/components/ui/booking/booking-carousel"));
+const BookingForm = dynamic(() => import("@/components/ui/booking/BookingForm"));
+const CloseButton = dynamic(() => import("@/components/ui/CloseButton"));
+
+export default function BookingPage() {
     const [carId, setCarId] = useState("");
     const [driverId, setDriverId] = useState("");
+    const [cars, setCars] = useState<IPicture[]>([]);
+    const [isLoadingCars, setIsLoadingCars] = useState(true);
+    const [errorCars, setErrorCars] = useState("");
+    const [drivers, setDrivers] = useState<IPicture[]>([]);
+    const [isLoadingDrivers, setIsLoadingDrivers] = useState(true);
+    const [errorDrivers, setErrorDrivers] = useState("");
     const carCarouselRef = useRef<HTMLDivElement | null>(null);
     const driverCarouselRef = useRef<HTMLDivElement>(null);
-    const initialState = { message: "", errors: {} };
+    const initialState = { message: "" };
     const [formState, formAction] = useActionState(bookCar, initialState);
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
 
+    const getCarCarouselsData = useMemo(() => async () => {
+        const carsData = await getAllCarsWithOnePicture();
+        if (!carsData || carsData.length === 0) {
+            setIsLoadingCars(false);
+            setErrorCars("No cars found");
+            return;
+        }
+        setCars(carsData);
+        setIsLoadingCars(false);
+    }, []);
+
+    const getDriverCarouselsData = useMemo(() => async () => {
+        const driversData = await getAllDriversSummary();
+        if (!driversData || driversData.length === 0) {
+            setIsLoadingDrivers(false);
+            setErrorDrivers("No drivers found");
+            return;
+        }
+        setDrivers(driversData);
+        setIsLoadingDrivers(false);
+    }, []);
+
+    useEffect(() => {
+        getCarCarouselsData();
+    }, [getCarCarouselsData]);
+
+    useEffect(() => {
+        getDriverCarouselsData();
+    }, [getDriverCarouselsData]);
+    
     const customerEmail = session?.user?.email;
-
+    
     const setupIntersectionObserver = (
         ref: React.RefObject<HTMLDivElement | null>,
         className: string,
@@ -46,28 +75,20 @@ export default function BookingPage({
                 }
             }
         };
-
+        
         const observer = new IntersectionObserver(handleIntersection, {
             root: ref.current,
             threshold: 0.7,
         });
-
+        
         const items = ref.current?.querySelectorAll(className);
         items?.forEach((item) => observer.observe(item));
-
+        
         return () => {
             items?.forEach((item) => observer.unobserve(item));
         };
     };
-
-    const carouselDrivers: { elementId: string; elementPicture: string }[] = [];
-    drivers.forEach((driver) => {
-        carouselDrivers.push({
-            elementId: driver._id!.toString(),
-            elementPicture: driver.pictureUrl!,
-        });
-    });
-
+    
     useEffect(() => {
         if (cars && cars.length > 0) {
             setupIntersectionObserver(
@@ -97,6 +118,8 @@ export default function BookingPage({
                     <em>Book Form</em>
                 </h1>
                 <BookingCarousel
+                    isLoading={isLoadingCars}
+                    error={errorCars}
                     carouselRef={carCarouselRef}
                     carouselElements={cars}
                     elementTag="car"
@@ -105,15 +128,23 @@ export default function BookingPage({
                     dataAttribute="data-car-id"
                 />
                 <BookingCarousel
+                    isLoading={isLoadingDrivers}
+                    error={errorDrivers}
                     carouselRef={driverCarouselRef}
-                    carouselElements={carouselDrivers}
+                    carouselElements={drivers}
                     elementTag="driver"
                     class_carousel_item="driver-carousel-item"
                     baseLink="drivers"
                     dataAttribute="data-driver-id"
                 />
                 <div className="lg:col-span-2 flex flex-col items-center m-auto w-full">
-                    <BookingForm formAction={formAction} formState={formState} customerEmail={customerEmail ?? ""} carId={carId} driverId={driverId} />
+                    <BookingForm
+                        formAction={formAction}
+                        formState={formState}
+                        customerEmail={customerEmail ?? ""}
+                        carId={carId}
+                        driverId={driverId}
+                    />
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end pb-4 pe-4">

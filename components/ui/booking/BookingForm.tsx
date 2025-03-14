@@ -12,16 +12,16 @@ export default function BookingForm({
     driverId,
 }: {
     formAction: (payload: FormData) => void;
-    formState: any;
+    formState: { message: string };
     customerEmail: string;
     carId: string;
     driverId: string;
 }) {
     const [startDate, setStartDate] = useState(
-        new Date().toISOString().split("T")[0]
+        (new Date()).toISOString().split("T")[0]
     );
     const [daysNo, setDaysNo] = useState(1);
-    
+
     return (
         <>
             <form

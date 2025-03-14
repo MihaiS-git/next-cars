@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { connectDB } from "../mongoDb";
-import { IDatesInterval } from "../definitions";
+import { ICar, IDatesInterval, User } from "../definitions";
 
 export async function createBooking(customerId: string, carId: string, driverId: string, timeInterval: IDatesInterval, status: string, totalAmount: number): Promise<string> {
     const newBooking = {
@@ -18,17 +18,19 @@ export async function createBooking(customerId: string, carId: string, driverId:
     return bookingResult.insertedId.toString();
 }
 
-export async function saveBookingInRelatedDocument(document: any, bookingId: string, collection: string) {
+export async function saveBookingInRelatedDocument(document: ICar | User, bookingId: string, collection: string) {
     if (!document.bookings) document.bookings = [];
     const updatedBookingsOnDocument = [...document.bookings, new ObjectId(bookingId)];
     const db = await connectDB();
+    if (!document._id) throw new Error("Document ID is undefined");
     const result = await db.collection(collection).updateOne(
         { _id: new ObjectId(document._id.toString()) },
         { $set: { bookings: updatedBookingsOnDocument } }
     );
+    if (!result) throw new Error("Failed to save the booking in the related document");
 }
 
-export function validateBookCarInputdata(carId: string, driverId: string, sDate: string, daysNo: number) {
+export function validateBookCarInputData(carId: string, driverId: string, sDate: string, daysNo: number) {
     if (!carId || !driverId || !sDate || !daysNo) {
         return { message: 'Missing required fields.' };
     }

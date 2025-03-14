@@ -1,10 +1,11 @@
-import { getCarBySlug } from "@/app/actions/cars/actions";
+import { getCarBySlug } from "@/lib/db/cars";
 import CarDetails from "@/components/ui/cars/CarDetails";
 import Head from "next/head";
 
-export default async function CarSlug({ params }: { params: { carSlug: string } }) {
+export default async function CarSlug({ params }: { params: Promise<{ carSlug: string }> }) {
     const param = await params;
-    const car = await getCarBySlug(param.carSlug);
+    const carSlug = param.carSlug;
+    const car = await getCarBySlug(carSlug);
 
     if (!car) {
         return (
