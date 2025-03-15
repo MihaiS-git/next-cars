@@ -7,7 +7,6 @@ import { isAvailableForBooking } from "@/lib/util/check-availability";
 import { createBooking, saveBookingInRelatedDocument, validateBookCarInputData } from "@/lib/helpers/booking-helpers";
 import { getUserByEmail } from "@/lib/db/users";
 import { ICar, User } from "@/lib/definitions";
-import Link from "next/link";
 
 export type State = {
     errors?: {
