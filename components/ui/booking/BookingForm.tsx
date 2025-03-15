@@ -18,7 +18,7 @@ export default function BookingForm({
     driverId: string;
 }) {
     const [startDate, setStartDate] = useState(
-        (new Date()).toISOString().split("T")[0]
+        new Date().toISOString().split("T")[0]
     );
     const [daysNo, setDaysNo] = useState(1);
 
@@ -71,13 +71,10 @@ export default function BookingForm({
                         className="text-center text-base text-red-600 py-4"
                     >
                         {formState.message.includes(
-                            "Please fill in your details first"
+                            "Please fill in your Account details first."
                         ) ? (
                             <p>
-                                Missing required fields.
-                                <Link href="/account" className="underline">
-                                    Please fill in your details first.
-                                </Link>
+                                Please fill in your{" "}<a href="/account" className="underline">Account</a>{" "}details first.
                             </p>
                         ) : (
                             <p>{formState.message}</p>

@@ -33,10 +33,12 @@ export default function DashboardPage() {
                         setError("User not found");
                         return;
                     }
-                    const fetchedCustomerBookings = fetchedCustomer.bookings ? fetchedCustomer.bookings!.map(
-                        (booking) => booking.toString()
-                    ) : [];
-                    
+                    const fetchedCustomerBookings = fetchedCustomer.bookings
+                        ? fetchedCustomer.bookings!.map((booking) =>
+                              booking.toString()
+                          )
+                        : [];
+
                     if (fetchedCustomer) {
                         const [
                             upcomingBookingsData,
@@ -66,7 +68,19 @@ export default function DashboardPage() {
         <>
             {error ? (
                 <div className="text-center h-80 flex items-center justify-center">
-                    <p>{error}</p>
+                    {error.includes(
+                        "User not found"
+                    ) ? (
+                        <p>
+                            Please fill in your{" "}
+                            <a href="/account" className="underline">
+                                Account
+                            </a>{" "}
+                            details first.
+                        </p>
+                    ) : (
+                        <p>{error}</p>
+                    )}
                 </div>
             ) : (
                 <>
