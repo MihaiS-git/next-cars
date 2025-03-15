@@ -1,11 +1,7 @@
-"use client";
-
 import "leaflet/dist/leaflet.css";
 
-import dynamic from "next/dynamic";
 import CloseButton from "@/components/ui/CloseButton";
-
-const Map = dynamic(() => import("@/components/ui/map"), { ssr: false });
+import Map from "@/components/ui/map";
 
 export default function ContactPage() {
     return (
