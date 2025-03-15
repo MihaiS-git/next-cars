@@ -1,10 +1,31 @@
+import { Metadata } from "next";
 import { getCarBySlug } from "@/lib/db/cars";
 import CarDetails from "@/components/ui/cars/CarDetails";
-import Head from "next/head";
 
-export default async function CarSlug({ params }: { params: Promise<{ carSlug: string }> }) {
-    const param = await params;
-    const carSlug = param.carSlug;
+export async function generateMetadata({ params }: { params: Promise<{ carSlug: string }> }): Promise<Metadata> {
+    const { carSlug } = await params;
+    const car = await getCarBySlug(carSlug);
+
+    if (!car) {
+        return {
+            title: "Car not found",
+            description: "The requested car could not be found.",
+        };
+    }
+
+    return {
+        title: `Next Cars - ${car.make} ${car.carModel}`,
+        description: `View details of the ${car.make} ${car.carModel} available at Next Cars.`,
+        keywords: `Next Cars, ${car.make}, ${car.carModel}, ${car.category} rental, ${car.transmission} rental`,
+        authors: [{ name: "Next Cars Team" }],
+        robots: "index, follow",
+    };
+}
+
+
+export default async function CarSlug({params, searchParams,}: {params: Promise<{ carSlug: string }>; searchParams: Promise<{ page: number }>;}) {
+    const { carSlug } = await params;
+    const { page } = await searchParams;
     const car = await getCarBySlug(carSlug);
 
     if (!car) {
@@ -15,17 +36,5 @@ export default async function CarSlug({ params }: { params: Promise<{ carSlug: s
         );
     }
 
-    return (
-        <>
-            <Head>
-                <title>Next Cars - {car.make} {car.carModel}</title>
-                <meta name="description" content={`View details of the ${car.make} ${car.carModel} available at Next Cars.`}/>
-                <meta name="keywords" content={`Next Cars, ${car.make}, ${car.carModel}`} />
-                <meta name="author" content="Next Cars Team" />
-                <meta name="robots" content="index, follow" />
-                <meta charSet="UTF-8" />
-            </Head>
-            <CarDetails car={car}/>
-        </>
-    );
+    return <CarDetails car={car} page={page} />;
 }

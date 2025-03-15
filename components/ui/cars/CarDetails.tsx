@@ -1,47 +1,12 @@
-"use client";
-
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "../carousel";
-import Image from "next/image";
 import { ICar } from "@/lib/definitions";
 import CloseButton from "../CloseButton";
+import CarDetailsCarousel from "./CarDetailsCarousel";
 
-export default function CarDetails({ car }: { car: ICar }) {
+export default function CarDetails({ car, page }: { car: ICar; page: number }) {
     return (
         <div>
             <div>
-                <Carousel className="mx-auto w-full lg:w-8/12 lg:pt-8">
-                    <CarouselContent>
-                        {typeof car?.carImagesAndDocuments === "object" &&
-                            car?.carImagesAndDocuments!.carImages.map(
-                                (image: string, index) => {
-                                    return (
-                                        <CarouselItem key={index}>
-                                            <Image
-                                                src={`${image}`}
-                                                alt={`${car!.make} ${
-                                                    car!.carModel
-                                                } `}
-                                                width={845}
-                                                height={475}
-                                                quality={75}
-                                                sizes="(max-width: 1024px) 335px, 845px"
-                                                className="mx-auto overflow-hidden"
-                                                loading="lazy"
-                                            />
-                                        </CarouselItem>
-                                    );
-                                }
-                            )}
-                    </CarouselContent>
-                    <CarouselPrevious className="hidden lg:block" />
-                    <CarouselNext className="hidden lg:block" />
-                </Carousel>
+                <CarDetailsCarousel car={car} />
             </div>
             <h1 className="mb-4 mt-4 text-red-600 font-semibold text-2xl lg:font-bold lg:text-3xl text-center">
                 <em>
@@ -174,7 +139,7 @@ export default function CarDetails({ car }: { car: ICar }) {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end p-4">
-                <CloseButton target="/cars" />
+                <CloseButton target={`/cars?page=${page}`} />
             </div>
         </div>
     );
