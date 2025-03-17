@@ -56,7 +56,7 @@ export default async function CarsPage({
                     totalPages: Math.ceil(totalCount / 10),
                 }}
             />
-            <div className="flex flex-row justify-end">
+            <div className="flex flex-row justify-end w-full pe-4 pb-4">
                 <CloseButton target="/" />
             </div>
         </Suspense>
