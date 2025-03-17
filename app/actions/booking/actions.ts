@@ -7,6 +7,8 @@ import { isAvailableForBooking } from "@/lib/util/check-availability";
 import { createBooking, saveBookingInRelatedDocument, validateBookCarInputData } from "@/lib/helpers/booking-helpers";
 import { getUserByEmail } from "@/lib/db/users";
 import { IBooking, ICar, User } from "@/lib/definitions";
+import { connectDB } from "@/lib/mongoDb";
+import { ObjectId } from "mongodb";
 
 export type State = {
     errors?: {
@@ -104,5 +106,18 @@ export async function bookCar(prevState: State, formData: FormData) {
         return { message: "Booking saved successfully!" };
     } catch (error) {
         return { message: `Failed to create booking: ${error}` };
+    }
+}
+
+export async function updateBookingStatus(id: string, newStatus: string) {
+    try {
+        const db = await connectDB();
+        const result = await db.collection('bookings').updateOne({ _id: new ObjectId(id) }, { $set: { status: newStatus } });
+        if(result.modifiedCount === 0) {
+            return { message: "Booking status not updated." };
+        }
+        return { message: "Booking status updated successfully!" };
+    } catch (error) {
+        return { message: `Failed to update booking status: ${error}` };
     }
 }

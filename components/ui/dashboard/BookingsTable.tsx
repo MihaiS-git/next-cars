@@ -1,3 +1,4 @@
+import { updateBookingStatus } from "@/app/actions/booking/actions";
 import { IBooking, User } from "@/lib/definitions";
 import { formatCurrency } from "@/lib/util/format-currency";
 import { memo } from "react";
@@ -6,8 +7,22 @@ interface DashboardBookingsTableProps {
     bookingsData: IBooking[];
     user: User;
 }
-  
-const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ bookingsData, user}: {bookingsData: IBooking[], user: User}) => {
+
+const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ bookingsData, user }: { bookingsData: IBooking[], user: User }) => {
+
+    const handleStatusChange = async (bookingId: string, newStatus: string) => {
+        try {
+            await updateBookingStatus(bookingId, newStatus);
+
+            const bookingElement = document.getElementById(`booking-status-${bookingId}`);
+            if (bookingElement) {
+                (bookingElement as HTMLSelectElement).value = newStatus;
+            }
+        } catch (error) {
+            console.error("Failed to update booking status", error);
+        }
+    };
+
     return (
         <div className="w-full overflow-x-auto">
             <table className="w-full mt-4 table-fixed">
@@ -35,20 +50,26 @@ const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ booking
                             <td className="text-center border border-zinc-600 overflow-hidden">
                                 {(user.role === 'CUSTOMER' || user.role === 'ADMIN') && booking.status}
                                 {user.role === 'DRIVER' && (
-                                    <select name="booking_status" id="booking_status" value={ booking.status} onChange={(e) => console.log(e.target.value)}>
-                                        <option value="Pending" selected={booking.status === 'Pending'}>Pending</option>
-                                        <option value="Confirmed" selected={booking.status === 'Confirmed'}>Confirmed</option>
-                                        <option value="Cancelled" selected={booking.status === 'Cancelled'}>Cancelled</option>
-                                        <option value="Completed" selected={booking.status === 'Completed'}>Completed</option>
+                                    <select
+                                        id={`booking-status-${booking._id}`}
+                                        name="booking_status"
+                                        value={booking.status || ""}
+                                        onChange={(e) => handleStatusChange(booking._id!, e.target.value)}
+                                        className="bg-zinc-600 text-zinc-50"
+                                    >
+                                        <option value="Pending">Pending</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Completed">Completed</option>
                                     </select>
-                                ) }
+                                )}
                             </td>
-                            <td className="text-center border border-zinc-600 overflow-hidden">{ booking.totalAmount ? formatCurrency(+booking.totalAmount) : null}</td>
+                            <td className="text-center border border-zinc-600 overflow-hidden">{booking.totalAmount ? formatCurrency(+booking.totalAmount) : null}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-        </div>               
+        </div>
     );
 }
 
