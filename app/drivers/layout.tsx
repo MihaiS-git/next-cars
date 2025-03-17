@@ -2,7 +2,7 @@ export const metadata = {
     title: 'Next Cars - Drivers List',
     description: 'Browse the list of available drivers at Next Cars and book your favorite one.',
     keywords: 'Next Cars, Book a Car, Book a Driver, Available Drivers',
-    author: 'Next Cars Team',
+    authors: [{name: 'Next Cars Team'}],
     robots: 'index, follow',
     charset: 'UTF-8',
 };

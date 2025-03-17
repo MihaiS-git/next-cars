@@ -2,7 +2,7 @@ import Image from "next/image";
 import { User } from "@/lib/definitions";
 import CloseButton from "../CloseButton";
 
-export default function CarDetails({ driver }: { driver: User }) {
+export default function CarDetails({ driver, page }: { driver: User, page: string }) {
     return (
         <div>
             <div>
@@ -45,7 +45,7 @@ export default function CarDetails({ driver }: { driver: User }) {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end p-4">
-                <CloseButton target="/drivers" />
+                <CloseButton target={`/drivers?page=${page}`} />
             </div>
         </div>
     );
