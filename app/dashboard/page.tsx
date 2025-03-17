@@ -9,7 +9,6 @@ import { IBooking, IInvoice, User } from "@/lib/definitions";
 import { getPastRentals, getUpcomingRentals } from "@/lib/db/bookings";
 import DashboardRentalsSlice from "@/components/ui/dashboard/DashboardRentalsSlice";
 import DashboardInvoicesSlice from "@/components/ui/dashboard/DashboardInvoicesSlice";
-import { set } from "zod";
 
 export default function DashboardPage() {
     const [user, setUser] = useState<User | null>(null);
