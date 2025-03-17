@@ -19,15 +19,23 @@ export async function createBooking(customerId: string, carId: string, driverId:
 }
 
 export async function saveBookingInRelatedDocument(document: ICar | User, bookingId: string, collection: string) {
-    if (!document.bookings) document.bookings = [];
-    const updatedBookingsOnDocument = [...document.bookings, new ObjectId(bookingId)];
-    const db = await connectDB();
+    if (!document.bookings) {
+        document.bookings = [];
+    } else {
+        document.bookings = document.bookings.map(booking => 
+            typeof booking === 'string' ? new ObjectId(booking) : new ObjectId(booking.toString())
+        );
+    }
+    
+    const updatedBookingsOnDocument = [...(document.bookings || []), new ObjectId(bookingId)];
+    
     if (!document._id) throw new Error("Document ID is undefined");
+    const db = await connectDB();
     const result = await db.collection(collection).updateOne(
         { _id: new ObjectId(document._id.toString()) },
         { $set: { bookings: updatedBookingsOnDocument } }
     );
-    if (!result) throw new Error("Failed to save the booking in the related document");
+    if (!result) throw new Error(`Failed to save the booking in the related ${document}.`);
 }
 
 export function validateBookCarInputData(carId: string, driverId: string, sDate: string, daysNo: number) {

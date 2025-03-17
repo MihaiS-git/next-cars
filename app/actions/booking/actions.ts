@@ -1,12 +1,12 @@
 "use server";
 
-import { getCarById } from "@/lib/db/cars";
-import { getDriverByIdWithBookings } from "@/lib/db/drivers";
+import { getCarById, getCarSummaryById } from "@/lib/db/cars";
+import { getDriverByIdWithBookings, getDriverSummaryById } from "@/lib/db/drivers";
 import { createInvoice } from "../invoice/actions";
 import { isAvailableForBooking } from "@/lib/util/check-availability";
 import { createBooking, saveBookingInRelatedDocument, validateBookCarInputData } from "@/lib/helpers/booking-helpers";
 import { getUserByEmail } from "@/lib/db/users";
-import { ICar, User } from "@/lib/definitions";
+import { IBooking, ICar, User } from "@/lib/definitions";
 
 export type State = {
     errors?: {
@@ -54,7 +54,7 @@ export async function bookCar(prevState: State, formData: FormData) {
             selectedCar = await getCarById(carId);
             if (!selectedCar) return { message: "Car not found." };
             if (selectedCar.bookings && selectedCar.bookings.length > 0) {
-                isCarAvailable = isAvailableForBooking(selectedCar.bookings, startDate, endDate);
+                isCarAvailable = isAvailableForBooking(selectedCar.bookings.filter(booking => typeof booking !== 'string') as IBooking[], startDate, endDate);
             }
             if (!isCarAvailable) return { message: "The selected car is not available for the chosen interval." }
         } catch (error) {
@@ -68,7 +68,7 @@ export async function bookCar(prevState: State, formData: FormData) {
             selectedDriver = await getDriverByIdWithBookings(driverId);
             if (!selectedDriver) return { message: "Driver not found." }
             if (selectedDriver.bookings && selectedDriver.bookings.length > 0) {
-                isDriverAvailable = isAvailableForBooking(selectedDriver.bookings, startDate, endDate);
+                isDriverAvailable = isAvailableForBooking(selectedDriver.bookings.filter(booking => typeof booking !== 'string') as IBooking[], startDate, endDate);
             }
             if (!isDriverAvailable) return { message: "The selected driver is not available for the chosen interval." }
         } catch (error) {
@@ -87,10 +87,15 @@ export async function bookCar(prevState: State, formData: FormData) {
 
         // create new Booking
         const bookingId = (await createBooking(customerId, carId, driverId, { start: startDate, end: endDate }, 'Pending', totalAmount)).toString();
+        
+        const carToUpdate = await getCarSummaryById(carId);
+        if(!carToUpdate) return { message: "Car not found." };
+        const driverToUpdate = await getDriverSummaryById(driverId);
+        if(!driverToUpdate) return { message: "Driver not found." };
 
         // save the bookingId in the related documents
-        saveBookingInRelatedDocument(selectedCar, bookingId, 'cars');
-        saveBookingInRelatedDocument(selectedDriver, bookingId, 'users');
+        saveBookingInRelatedDocument(carToUpdate, bookingId, 'cars');
+        saveBookingInRelatedDocument(driverToUpdate, bookingId, 'users');
         saveBookingInRelatedDocument(customer, bookingId, 'users');
 
         // create & save invoice object

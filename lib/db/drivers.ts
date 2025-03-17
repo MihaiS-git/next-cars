@@ -150,3 +150,24 @@ export async function getDriverByIdWithBookings(id: string) {
         throw new Error(`Something wrong happened: ${error}`);
     }
 }
+
+export async function getDriverSummaryById(id: string) {
+    const db = await connectDB();
+    const driver = await db.collection('users').findOne({ _id: new ObjectId(id) });
+    if (!driver) return null;
+
+    const mappedDriver: User = {
+        _id: driver._id.toString(),
+        email: driver.email,
+        password: "",
+        name: driver.name,
+        role: driver.role,
+        address: driver.address,
+        phone: driver.phone,
+        dob: driver.dob,
+        drivingSince: driver.drivingSince,
+        pictureUrl: driver.pictureUrl,
+        bookings: driver.bookings ? driver.bookings.map((booking: ObjectId) => booking.toString()) : [],
+    }
+    return mappedDriver;
+}

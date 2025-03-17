@@ -1,11 +1,13 @@
-import { IBooking } from "@/lib/definitions";
+import { IBooking, User } from "@/lib/definitions";
 import { formatCurrency } from "@/lib/util/format-currency";
+import { memo } from "react";
 
 interface DashboardBookingsTableProps {
     bookingsData: IBooking[];
+    user: User;
 }
   
-export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ bookingsData}: {bookingsData: IBooking[]}) => {
+const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ bookingsData, user}: {bookingsData: IBooking[], user: User}) => {
     return (
         <div className="w-full overflow-x-auto">
             <table className="w-full mt-4 table-fixed">
@@ -30,7 +32,17 @@ export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ 
                                 {booking.timeInterval.start.toISOString().split('T')[0]}
                             </td>
                             <td className="text-center border border-zinc-600 overflow-hidden">{booking.timeInterval.end.toISOString().split('T')[0]}</td>
-                            <td className="text-center border border-zinc-600 overflow-hidden">{ booking.status}</td>
+                            <td className="text-center border border-zinc-600 overflow-hidden">
+                                {(user.role === 'CUSTOMER' || user.role === 'ADMIN') && booking.status}
+                                {user.role === 'DRIVER' && (
+                                    <select name="booking_status" id="booking_status" value={ booking.status} onChange={(e) => console.log(e.target.value)}>
+                                        <option value="Pending" selected={booking.status === 'Pending'}>Pending</option>
+                                        <option value="Confirmed" selected={booking.status === 'Confirmed'}>Confirmed</option>
+                                        <option value="Cancelled" selected={booking.status === 'Cancelled'}>Cancelled</option>
+                                        <option value="Completed" selected={booking.status === 'Completed'}>Completed</option>
+                                    </select>
+                                ) }
+                            </td>
                             <td className="text-center border border-zinc-600 overflow-hidden">{ booking.totalAmount ? formatCurrency(+booking.totalAmount) : null}</td>
                         </tr>
                     ))}
@@ -39,3 +51,5 @@ export const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ 
         </div>               
     );
 }
+
+export default memo(DashboardBookingsTable);

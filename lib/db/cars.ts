@@ -487,3 +487,29 @@ export const getCarById = async (id: string) => {
         throw new Error(`Something wrong happened: ${error}`);
     }
 };
+
+export async function getCarSummaryById(id: string) {
+    try {
+        const db = await connectDB();
+        const car = await db.collection('cars').findOne({ _id: new ObjectId(id) });
+
+        if (!car) return null;
+
+        const mappedCar: ICar = ({
+            ...car,
+            _id: car._id.toString(),
+            make: car.make,
+            carModel: car.carModel,
+            carRentalDetails: car.carRentalDetails.toString(),
+            carFeaturesAndSpecifications: car.carFeaturesAndSpecifications.toString(),
+            carImagesAndDocuments: car.carImagesAndDocuments.toString(),
+            rentalAgencyDetails: car.rentalAgencyDetails.toString(),
+            bookings: car.bookings? car.bookings.map((booking: IBooking) => booking.toString()) : [],
+        });
+
+        return mappedCar;
+    } catch (error) {
+        throw new Error(`Something wrong happened: ${error}`);
+    }
+ }
+    

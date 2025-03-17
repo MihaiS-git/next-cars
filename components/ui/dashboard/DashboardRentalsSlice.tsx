@@ -1,15 +1,20 @@
-import { IBooking } from "@/lib/definitions";
-import { DashboardBookingsTable } from "./BookingsTable";
+import { IBooking, User } from "@/lib/definitions";
+import DashboardBookingsTable from "./BookingsTable";
+import { memo } from "react";
 
-export default function DashboardRentalsSlice({
-    isLoading,
-    bookingsData,
-    sliceTitle,
-}: {
+interface DashboardRentalsSliceProps {
     isLoading: boolean;
     bookingsData: IBooking[] | null;
     sliceTitle: string;
-}) {
+    user: User;
+}
+
+const DashboardRentalsSlice: React.FC<DashboardRentalsSliceProps> = ({
+    isLoading,
+    bookingsData,
+    sliceTitle,
+    user
+}) => {
     return (
         <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600">
             <h2 className="font-semibold text-base lg:font-bold lg:text-lg">
@@ -23,7 +28,7 @@ export default function DashboardRentalsSlice({
                     </div>
                 </div>
             ) : bookingsData && bookingsData.length > 0 ? (
-                <DashboardBookingsTable bookingsData={bookingsData} />
+                    <DashboardBookingsTable bookingsData={bookingsData} user={user} />
             ) : (
                 <div className="text-center h-80 flex items-center justify-center">
                     <p>No bookings data found.</p>
@@ -32,3 +37,5 @@ export default function DashboardRentalsSlice({
         </div>
     );
 }
+
+export default memo(DashboardRentalsSlice);

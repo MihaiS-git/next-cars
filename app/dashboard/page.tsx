@@ -3,14 +3,16 @@
 import { getUserByEmail } from "@/lib/db/users";
 import { getInvoicesByUser } from "@/lib/db/invoices";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CloseButton from "@/components/ui/CloseButton";
-import { IBooking, IInvoice } from "@/lib/definitions";
+import { IBooking, IInvoice, User } from "@/lib/definitions";
 import { getPastRentals, getUpcomingRentals } from "@/lib/db/bookings";
 import DashboardRentalsSlice from "@/components/ui/dashboard/DashboardRentalsSlice";
 import DashboardInvoicesSlice from "@/components/ui/dashboard/DashboardInvoicesSlice";
+import { set } from "zod";
 
 export default function DashboardPage() {
+    const [user, setUser] = useState<User | null>(null);
     const [upcomingBookingsData, setUpcomingBookingsData] = useState<
         IBooking[] | null
     >(null);
@@ -24,53 +26,61 @@ export default function DashboardPage() {
     const { data: session, status } = useSession();
     const email = session?.user?.email;
 
-    useEffect(() => {
+    const fetchData = useCallback(async () => {
         if (status === "authenticated" && email) {
-            const fetchData = async () => {
-                try {
-                    const fetchedCustomer = await getUserByEmail(email);
-                    if (!fetchedCustomer) {
-                        setError("User not found");
-                        return;
-                    }
-                    const fetchedCustomerBookings = fetchedCustomer.bookings
-                        ? fetchedCustomer.bookings!.map((booking) =>
-                              booking.toString()
-                          )
-                        : [];
-
-                    if (fetchedCustomer) {
-                        const [
-                            upcomingBookingsData,
-                            pastBookingsData,
-                            invoicesData,
-                        ] = await Promise.all([
-                            getUpcomingRentals(fetchedCustomerBookings),
-                            getPastRentals(fetchedCustomerBookings),
-                            getInvoicesByUser(fetchedCustomer._id!.toString()),
-                        ]);
-
-                        setUpcomingBookingsData(upcomingBookingsData);
-                        setPastBookingsData(pastBookingsData);
-                        setInvoices(invoicesData);
-                    }
-                } catch (error) {
-                    setError(`Failed to fetch data: ${error}`);
-                } finally {
-                    setIsLoading(false);
+            try {
+                const fetchedUser = await getUserByEmail(email);
+                if (!fetchedUser) {
+                    setError("User not found");
+                    return;
                 }
-            };
-            fetchData();
+                setUser(fetchedUser);
+
+                const fetchedUserBookings = fetchedUser.bookings
+                    ? fetchedUser.bookings!.map((booking) => booking.toString())
+                    : [];
+
+                if (fetchedUser) {
+                    const [
+                        upcomingBookingsData,
+                        pastBookingsData,
+                        invoicesData,
+                    ] = await Promise.all([
+                        getUpcomingRentals(fetchedUserBookings),
+                        getPastRentals(fetchedUserBookings),
+                        getInvoicesByUser(fetchedUser._id!.toString()),
+                    ]);
+
+                    setUpcomingBookingsData(upcomingBookingsData);
+                    setPastBookingsData(pastBookingsData);
+                    setInvoices(invoicesData);
+                }
+            } catch (error) {
+                setError(`Failed to fetch data: ${error}`);
+            } finally {
+                setIsLoading(false);
+            }
         }
     }, [status, email]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    if (!user) {
+        return (
+            <div className="flex flex-col items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-red-600 m-8 mx-auto mt-48 mb-8"></div>
+                <div className="text-zinc-400 mb-48">Loading...</div>
+            </div>
+        );
+    }
 
     return (
         <>
             {error ? (
                 <div className="text-center h-80 flex items-center justify-center">
-                    {error.includes(
-                        "User not found"
-                    ) ? (
+                    {error.includes("User not found") ? (
                         <p>
                             Please fill in your{" "}
                             <a href="/account" className="underline">
@@ -92,11 +102,13 @@ export default function DashboardPage() {
                             isLoading={isLoading}
                             bookingsData={upcomingBookingsData}
                             sliceTitle="Upcoming Rentals"
+                            user={user}
                         />
                         <DashboardRentalsSlice
                             isLoading={isLoading}
                             bookingsData={pastBookingsData}
                             sliceTitle="Past Rentals"
+                            user={user}
                         />
                         <DashboardInvoicesSlice
                             isLoading={isLoading}

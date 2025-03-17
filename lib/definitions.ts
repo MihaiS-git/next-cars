@@ -11,8 +11,8 @@ export interface User {
     dob?: Date;
     drivingSince?: Date;
     pictureUrl?: string;
-    bookings?: IBooking[];
-    invoices?: IInvoice[];
+    bookings?: ObjectId[] | IBooking[];
+    invoices?: ObjectId[] | IInvoice[];
     createdAt?: Date;
     updatedAt?: Date;
 };
@@ -65,7 +65,7 @@ export interface ICar {
     carFeaturesAndSpecifications?: string | ICarFeaturesAndSpecifications;
     carImagesAndDocuments?: string | ICarImagesAndDocuments;
     rentalAgencyDetails?: string | IRentalAgencyDetails;
-    bookings?: IBooking[];
+    bookings?: ObjectId[] | IBooking[];
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -88,7 +88,7 @@ export interface IBooking {
 }
 
 export interface IInvoice {
-    _id?: string | ObjectId | undefined;
+    _id?: string | ObjectId;
     customer: string | User | ObjectId;
     booking: string | IBooking | ObjectId;
     issueDate: Date | string;
