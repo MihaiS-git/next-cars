@@ -12,12 +12,14 @@ import Link from "next/link";
 export default function DriverCard({
     driver,
     slug,
+    currentPage
 }: {
     driver: User;
     slug: string;
+    currentPage: number;
 }) {
     return (
-        <Link href={`/drivers/${slug}`} className="hover:animate-pulse">
+        <Link href={`/drivers/${slug}?page=${currentPage}`} className="hover:animate-pulse">
             <Card className="bg-zinc-900 text-zinc-200 border border-red-600 shadow-lg shadow-red-200/50 py-4">
                 <CardHeader>
                     <CardTitle className="text-xl font-bold">
