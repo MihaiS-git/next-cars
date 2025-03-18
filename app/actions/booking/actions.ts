@@ -34,14 +34,17 @@ export async function bookCar(prevState: State, formData: FormData) {
         try {
             customer = await getUserByEmail(customerEmail);
             if (!customer) {
+                console.error("Customer not found");
                 return { message: "Please fill in your Account details first." };
             }
             customerId = customer?._id!.toString();
 
             if (!customerId) {
+                console.error("Customer ID not found");
                 return { message: 'Please fill in your Account details first.' };
             }
         } catch (error) {
+            console.error(`Failed to fetch customer: ${error}`);
             return { message: `Failed to fetch customer: ${error}` };
         }
 
@@ -54,12 +57,19 @@ export async function bookCar(prevState: State, formData: FormData) {
         let selectedCar: ICar | null = null;
         try {
             selectedCar = await getCarById(carId);
-            if (!selectedCar) return { message: "Car not found." };
+            if (!selectedCar) {
+                console.error("Car not found");
+                return { message: "Car not found." };
+            }
             if (selectedCar.bookings && selectedCar.bookings.length > 0) {
                 isCarAvailable = isAvailableForBooking(selectedCar.bookings.filter(booking => typeof booking !== 'string') as IBooking[], startDate, endDate);
             }
-            if (!isCarAvailable) return { message: "The selected car is not available for the chosen interval." }
+            if (!isCarAvailable) {
+                console.error("Car not available");
+                return { message: "The selected car is not available for the chosen interval." }
+            }
         } catch (error) {
+            console.error(`Failed to fetch car: ${error}`);
             return { message: `Failed to fetch car: ${error}` };
         }
 
@@ -68,21 +78,30 @@ export async function bookCar(prevState: State, formData: FormData) {
         let selectedDriver: User | null = null;
         try {
             selectedDriver = await getDriverByIdWithBookings(driverId);
-            if (!selectedDriver) return { message: "Driver not found." }
+            if (!selectedDriver) {
+                console.error("Driver not found");
+                return { message: "Driver not found." }
+            }
             if (selectedDriver.bookings && selectedDriver.bookings.length > 0) {
                 isDriverAvailable = isAvailableForBooking(selectedDriver.bookings.filter(booking => typeof booking !== 'string') as IBooking[], startDate, endDate);
             }
-            if (!isDriverAvailable) return { message: "The selected driver is not available for the chosen interval." }
+            if (!isDriverAvailable) {
+                console.error("Driver not available");
+                return { message: "The selected driver is not available for the chosen interval." }
+            }
         } catch (error) {
+            console.error(`Failed to fetch driver: ${error}`);
             return { message: `Failed to fetch driver: ${error}` };
         }
 
         // calculate total amount
         const carRentalDetails = selectedCar.carRentalDetails;
         if (!carRentalDetails) {
+            console.error("Car rental details not found");
             return { message: "Car rental details not found." };
         }
         if (typeof carRentalDetails === 'string') {
+            console.error("Invalid car rental details");
             return { message: "Invalid car rental details." };
         }
         const totalAmount = carRentalDetails.rentalPricePerDay * daysNo;
@@ -91,9 +110,15 @@ export async function bookCar(prevState: State, formData: FormData) {
         const bookingId = (await createBooking(customerId, carId, driverId, { start: startDate, end: endDate }, 'Pending', totalAmount)).toString();
         
         const carToUpdate = await getCarSummaryById(carId);
-        if(!carToUpdate) return { message: "Car not found." };
+        if(!carToUpdate) {
+            console.error("Car not found");
+            return { message: "Car not found." };
+        }
         const driverToUpdate = await getDriverSummaryById(driverId);
-        if(!driverToUpdate) return { message: "Driver not found." };
+        if(!driverToUpdate) {
+            console.error("Driver not found");
+            return { message: "Driver not found." };
+        }
 
         // save the bookingId in the related documents
         saveBookingInRelatedDocument(carToUpdate, bookingId, 'cars');
@@ -105,6 +130,7 @@ export async function bookCar(prevState: State, formData: FormData) {
         
         return { message: "Booking saved successfully!" };
     } catch (error) {
+        console.error(`Failed to create booking: ${error}`);
         return { message: `Failed to create booking: ${error}` };
     }
 }
