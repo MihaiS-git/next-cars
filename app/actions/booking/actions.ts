@@ -121,12 +121,12 @@ export async function bookCar(prevState: State, formData: FormData) {
         }
 
         // save the bookingId in the related documents
-        saveBookingInRelatedDocument(carToUpdate, bookingId, 'cars');
-        saveBookingInRelatedDocument(driverToUpdate, bookingId, 'users');
-        saveBookingInRelatedDocument(customer, bookingId, 'users');
+        await saveBookingInRelatedDocument(carToUpdate, bookingId, 'cars');
+        await saveBookingInRelatedDocument(driverToUpdate, bookingId, 'users');
+        await saveBookingInRelatedDocument(customer, bookingId, 'users');
 
         // create & save invoice object
-        createInvoice(customerId, bookingId.toString(), totalAmount);
+        await createInvoice(customerId, bookingId.toString(), totalAmount);
         
         return { message: "Booking saved successfully!" };
     } catch (error) {
