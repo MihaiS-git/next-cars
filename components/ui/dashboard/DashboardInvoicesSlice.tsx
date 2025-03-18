@@ -9,7 +9,7 @@ export default function DashboardInvoicesSlice({
     invoices: IInvoice[] | null;
 }) {
     return (
-        <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600 xl:col-span-2">
+        <div className="bg-zinc-700 text-zinc-50 rounded-md p-0 md:p-4 border border-red-600 xl:col-span-2">
             <h2 className="font-semibold text-base lg:font-bold lg:text-lg">
                 Payment & Invoices
             </h2>

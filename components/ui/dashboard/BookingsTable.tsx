@@ -25,7 +25,7 @@ const DashboardBookingsTable: React.FC<DashboardBookingsTableProps> = ({ booking
 
     return (
         <div className="w-full overflow-x-auto">
-            <table className="w-full mt-4 table-fixed">
+            <table className="w-full mt-4 table-fixed text-xs md:text-base">
                 <thead>
                     <tr className="bg-zinc-800 text-zinc-50">
                         <th className="table-header border border-red-600 overflow-hidden">Crt.no.</th>

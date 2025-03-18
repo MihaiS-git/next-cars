@@ -13,8 +13,8 @@ export default function DashboardInvoicesTable({
     const router = useRouter();
 
     return (
-        <div className="w-full overflow-x-auto">
-            <table className="w-full mt-4 table-fixed">
+        <div className="w-full overflow-hidden">
+            <table className="w-full mt-4 table-fixed text-xs md:text-base">
                 <thead>
                     <tr className="bg-zinc-800 text-zinc-50">
                         <th className="table-header border border-red-600 overflow-hidden">
@@ -65,23 +65,24 @@ export default function DashboardInvoicesTable({
                                     <td className="text-center border border-zinc-600 overflow-hidden">
                                         {formatCurrency(invoice.totalAmountDue)}
                                     </td>
-                                    <td className="text-center border border-zinc-600 overflow-auto flex flex-col lg:flex-row justify-center text-sm gap-1">
-                                        <Button
-                                            variant="secondary"
-                                            size="sm"
-                                            className="text-sm"
-                                            onClick={() =>
-                                                router.push(
-                                                    `/invoice/${invoice._id}`
-                                                )
-                                            }
-                                        >
-                                            View
-                                        </Button>
+                                    <td className="text-left border border-zinc-600 overflow-hidden flex flex-col lg:flex-row justify-center lg:justify-evenly text-sm gap-1 md:px-2 py-1">
+                                            <Button
+                                                variant="secondary"
+                                                size="sm"
+                                                className="text-xs md:text-sm w-full overflow-hidden"
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/invoice/${invoice._id}`
+                                                    )
+                                                }
+                                            >
+                                                View
+                                            </Button>
                                         {invoice.status === "Unpaid" && (
                                             <form
                                                 action="/api/checkout_sessions"
                                                 method="POST"
+                                                className="w-full m-0 p-0"
                                             >
                                                 <input
                                                     type="hidden"
@@ -95,17 +96,15 @@ export default function DashboardInvoicesTable({
                                                     name="invoiceId"
                                                     value={invoice._id!.toString()}
                                                 />
-                                                <section>
                                                     <Button
                                                         variant="secondary"
                                                         size="sm"
-                                                        className="text-sm"
+                                                        className="text-xs md:text-sm w-full overflow-hidden"
                                                         type="submit"
                                                         role="link"
                                                     >
                                                         Checkout
                                                     </Button>
-                                                </section>
                                             </form>
                                         )}
                                     </td>

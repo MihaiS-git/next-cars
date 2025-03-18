@@ -92,7 +92,7 @@ export default function DashboardPage() {
                     )}
                 </div>
             ) : (
-                <>
+                <div className="container mx-auto">
                     <h1 className="mb-4 mt-8 text-zinc-200 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
                         <em>Dashboard</em>
                     </h1>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
                             invoices={invoices}
                         />
                     </div>
-                </>
+                </div>
             )}
             <div className="w-full flex flex-row justify-end pb-4 pe-4">
                 <CloseButton target="/" />

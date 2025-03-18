@@ -16,7 +16,7 @@ const DashboardRentalsSlice: React.FC<DashboardRentalsSliceProps> = ({
     user
 }) => {
     return (
-        <div className="bg-zinc-700 text-zinc-50 rounded-md p-4 border border-red-600">
+        <div className="bg-zinc-700 text-zinc-50 rounded-md md:p-4 border border-red-600">
             <h2 className="font-semibold text-base lg:font-bold lg:text-lg">
                 {sliceTitle}
             </h2>
