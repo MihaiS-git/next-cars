@@ -2,14 +2,15 @@ import { IInvoice } from "@/lib/definitions";
 import { Button } from "../button";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/util/format-currency";
+import { memo } from "react";
 
 interface DashboardInvoicesTableProps {
     invoicesData: IInvoice[];
 }
 
-export default function DashboardInvoicesTable({
+const DashboardInvoicesTable =({
     invoicesData,
-}: DashboardInvoicesTableProps) {
+}: DashboardInvoicesTableProps) => {
     const router = useRouter();
 
     return (
@@ -119,3 +120,5 @@ export default function DashboardInvoicesTable({
         </div>
     );
 }
+
+export default memo(DashboardInvoicesTable);

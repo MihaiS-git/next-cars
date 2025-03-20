@@ -48,8 +48,12 @@ export default function InvoicePage({
                 },
             });
             setCustomer(customerData);
-            setCar(bookingData.car);
-            setDriver(bookingData.driver);
+            if (typeof bookingData.car !== "string") {
+                setCar(bookingData.car);
+            }
+            if (typeof bookingData.driver !== "string") {
+                setDriver(bookingData.driver);
+            }
 
             setLoading(false);
         }

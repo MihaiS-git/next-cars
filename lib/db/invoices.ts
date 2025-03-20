@@ -3,6 +3,7 @@
 import { ObjectId } from "mongodb";
 import { connectDB } from "../mongoDb";
 import { IInvoice } from "../definitions";
+import { cache } from "react";
 
 export async function getInvoicesByIds(invoiceIds: string[]): Promise<IInvoice[]> {
     const mappedIds = invoiceIds.map((id) => new ObjectId(id));
@@ -32,7 +33,7 @@ export async function getInvoicesByIds(invoiceIds: string[]): Promise<IInvoice[]
 }
 
 
-export async function getInvoicesByUser(customerId: string): Promise<IInvoice[] | null> {
+export const getInvoicesByUser = cache(async (customerId: string): Promise<IInvoice[] | null> => {
     const db = await connectDB();
     const invoices = await db.collection('invoices').find({ customer: new ObjectId(customerId) }).toArray();
     if (invoices.length === 0) return null;
@@ -52,7 +53,7 @@ export async function getInvoicesByUser(customerId: string): Promise<IInvoice[] 
     }));
 
     return formattedInvoices;
-}
+});
 
 export async function getInvoiceById(invoiceId: string): Promise<IInvoice | null> {
     const db = await connectDB();

@@ -87,6 +87,21 @@ export interface IBooking {
     updatedAt?: Date;
 }
 
+export interface IDashboardBooking {
+    _id?: string;
+    customer: string | User;
+    car: {
+        make: string;
+        carModel: string;
+    };
+    driver: {
+        name: string;
+    };
+    timeInterval: IDatesInterval;
+    status: 'Pending' | 'Confirmed' | 'Cancelled' | 'Completed';
+    totalAmount: number;
+}
+
 export interface IInvoice {
     _id?: string | ObjectId;
     customer: string | User | ObjectId;
@@ -101,7 +116,7 @@ export interface IInvoice {
     notes?: string;
 }
 
-export interface IPicture { 
+export interface IPicture {
     elementId: string;
     elementPicture: string;
 }

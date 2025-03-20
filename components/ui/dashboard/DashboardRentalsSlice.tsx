@@ -4,6 +4,7 @@ import { memo } from "react";
 
 interface DashboardRentalsSliceProps {
     isLoading: boolean;
+    error: Error | null;
     bookingsData: IBooking[] | null;
     sliceTitle: string;
     user: User;
@@ -11,11 +12,13 @@ interface DashboardRentalsSliceProps {
 
 const DashboardRentalsSlice: React.FC<DashboardRentalsSliceProps> = ({
     isLoading,
+    error,
     bookingsData,
     sliceTitle,
     user
 }) => {
     return (
+
         <div className="bg-zinc-700 text-zinc-50 rounded-md md:p-4 border border-red-600">
             <h2 className="font-semibold text-base lg:font-bold lg:text-lg">
                 {sliceTitle}
@@ -27,8 +30,12 @@ const DashboardRentalsSlice: React.FC<DashboardRentalsSliceProps> = ({
                         Loading bookings...
                     </div>
                 </div>
+            ) : error ? (
+                <div className="text-red-600 text-center">
+                    Failed to load bookings: {error.message}
+                </div>
             ) : bookingsData && bookingsData.length > 0 ? (
-                    <DashboardBookingsTable bookingsData={bookingsData} user={user} />
+                <DashboardBookingsTable bookingsData={bookingsData} user={user} />
             ) : (
                 <div className="text-center h-80 flex items-center justify-center">
                     <p>No bookings data found.</p>

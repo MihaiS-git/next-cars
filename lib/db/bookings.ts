@@ -1,7 +1,7 @@
 'use server';
 
-import { getCarById } from "@/lib/db/cars";
-import { IBooking, ICar, IInvoice, User } from "../definitions";
+import { cache } from "react";
+import { IBooking, IDashboardBooking, IInvoice } from "../definitions";
 import { connectDB } from "../mongoDb";
 import { ObjectId } from "mongodb";
 
@@ -33,90 +33,183 @@ export async function getBookingsByIds(bookingIds: string[]): Promise<IBooking[]
     }
 }
 
-async function transformBookings(bookings: IBooking[]): Promise<IBooking[]> {
-    const mappedBookings = bookings.map(async (booking: IBooking) => {
-        try {
-            const db = await connectDB();
-            const car = typeof booking.car === 'string' ? await getCarById(booking.car) : null;
-            if (!car) return null;
-            const driver = typeof booking.driver === 'string' ? await db.collection('users').findOne({ _id: new ObjectId(booking.driver) }) : null;
-            if (!driver) return null;
-            const mappedBooking = {
-                _id: booking._id!.toString(),
-                customer: booking.customer!.toString(),
+export const getUpcomingRentals = cache(async (bookingIds: string[]): Promise<IDashboardBooking[] | null> => {
+    const mappedIds = bookingIds.map((id) => new ObjectId(id));
+    const now = new Date();
+    const todayMidNight = new Date(now.setUTCHours(0, 0, 0, 0));
+
+    try {
+
+        const db = await connectDB();
+        const result = await db.collection('bookings').aggregate([
+            {
+                $match: {
+                    $and: [
+                        { _id: { $in: mappedIds } },
+                        { 'timeInterval.start': { $gte: todayMidNight } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'driver',
+                    foreignField: '_id',
+                    as: 'driver'
+                }
+            },
+            { $unwind: { path: "$driver", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'cars',
+                    localField: 'car',
+                    foreignField: '_id',
+                    as: 'car'
+                }
+            },
+            { $unwind: { path: "$car", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'customer',
+                    foreignField: '_id',
+                    as: 'customer'
+                }
+            },
+            { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } },
+            {
+                $project: {
+                    _id: 1,
+                    driver: {
+                        name: 1,
+                    },
+                    car: {
+                        make: 1,
+                        carModel: 1,
+                    },
+                    customer: 1,
+                    timeInterval: 1,
+                    status: 1,
+                    totalAmount: 1,
+                }
+            }
+        ]).toArray();
+
+        if (!result[0]) return null;
+
+        const bookings: IDashboardBooking[] = result.map((booking) => {
+            return {
+                _id: booking._id.toString(),
+                driver: booking.driver,
                 car: {
-                    _id: car._id ? car._id.toString() : '',
-                    make: car.make,
-                    carModel: car.carModel,
-                    year: car.year,
-                    category: car.category,
-                    seats: car.seats,
-                    doors: car.doors,
-                    transmission: car.transmission,
-                    fuelType: car.fuelType,
-                    mileage: car.mileage,
-                    carRentalDetails: car.carRentalDetails ? car.carRentalDetails.toString() : null,
-                    carFeaturesAndSpecifications: car.carFeaturesAndSpecifications ? car.carFeaturesAndSpecifications.toString() : null,
-                    carImagesAndDocuments: car.carImagesAndDocuments ? car.carImagesAndDocuments.toString() : null,
-                    rentalAgencyDetails: car.rentalAgencyDetails ? car.rentalAgencyDetails.toString() : null,
-                    bookings: car.bookings ? car.bookings : []
-                } as ICar,
-                driver: {
-                    _id: driver._id.toString(),
-                    email: driver.email,
-                    password: driver.password,
-                    name: driver.name,
-                    role: driver.role,
-                    address: driver.address,
-                    phone: driver.phone,
-                    dob: driver.dob ? driver.dob.toISOString().split('T')[0] : null,
-                    drivingSince: driver.drivingSince ? driver.drivingSince.toISOString().split('T')[0] : null,
-                    pictureUrl: driver.pictureUrl,
-                    bookings: driver.bookings ? driver.bookings.map((booking: ObjectId) => booking.toString()) : null,
-                    invoices: driver.invoices ? driver.invoices.map((invoice: ObjectId) => invoice.toString()) : null,
-                    createdAt: driver.createdAt ? driver.createdAt.toISOString().split('T')[0] : null,
-                    updatedAt: driver.updatedAt ? driver.updatedAt.toISOString().split('T')[0] : null
-                } as User,
+                    make: booking.car.make,
+                    carModel: booking.car.carModel,
+                },
+                customer: booking.customer.toString(),
                 timeInterval: {
-                    start: booking.timeInterval.start,
-                    end: booking.timeInterval.end
+                    start: new Date(booking.timeInterval.start),
+                    end: new Date(booking.timeInterval.end),
                 },
                 status: booking.status,
                 totalAmount: booking.totalAmount,
-                createdAt: booking.createdAt,
-                updatedAt: booking.updatedAt,
             }
-            return mappedBooking;
-        } catch (error) {
-            throw new Error(`Failed to transform booking: ${error}`);
-        }
-    });
-    return (await Promise.all(mappedBookings)) as IBooking[];
-}
+        });
 
-export async function getUpcomingRentals(bookingIds: string[]) {
-    const bookings = await getBookingsByIds(bookingIds);
-    if (!bookings) return null;
-    const filteredBookings = (bookings as unknown as IBooking[]).filter((booking: IBooking) =>
-        booking.timeInterval.start >= new Date() ||
-        (booking.timeInterval.start < new Date() && booking.timeInterval.end >= new Date())
-    );
-    const mappedBookings = await transformBookings(filteredBookings);
-    return mappedBookings;
-}
-
-export async function getPastRentals(bookingIds: string[]) {
-    const bookings = await getBookingsByIds(bookingIds);
-    if (!bookings) return null;
-    const filteredBookings = (bookings as unknown as IBooking[]).filter((booking: IBooking) =>
-        booking.timeInterval.end < new Date()
-    );
-    const mappedBookings = await transformBookings(filteredBookings as unknown as IBooking[]);
-    return mappedBookings;
-}
+        return bookings;
+    } catch (error) {
+        throw new Error(`Failed to fetch upcoming rentals: ${error}`);
+    }
+});
 
 
-export async function getBookingById(bookingId: string) {
+export const getPastRentals = cache(async (bookingIds: string[]): Promise<IDashboardBooking[] | null> => {
+    const mappedIds = bookingIds.map((id) => new ObjectId(id));
+    const now = new Date();
+    const todayMidNight = new Date(now.setUTCHours(23, 59, 59, 999));
+
+    try {
+        const db = await connectDB();
+        const result = await db.collection('bookings').aggregate([
+            {
+                $match: {
+                    $and: [
+                        { _id: { $in: mappedIds } },
+                        { 'timeInterval.end': { $lt: todayMidNight } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'driver',
+                    foreignField: '_id',
+                    as: 'driver'
+                }
+            },
+            { $unwind: { path: "$driver", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'cars',
+                    localField: 'car',
+                    foreignField: '_id',
+                    as: 'car'
+                }
+            },
+            { $unwind: { path: "$car", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'customer',
+                    foreignField: '_id',
+                    as: 'customer'
+                }
+            },
+            { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } },
+            {
+                $project: {
+                    _id: 1,
+                    driver: {
+                        name: 1,
+                    },
+                    car: {
+                        make: 1,
+                        carModel: 1,
+                    },
+                    customer: 1,
+                    timeInterval: 1,
+                    status: 1,
+                    totalAmount: 1,
+                }
+            }
+        ]).toArray();
+
+        if (!result[0]) return null;
+
+        const bookings: IDashboardBooking[] = result.map((booking) => {
+            return {
+                _id: booking._id.toString(),
+                driver: booking.driver,
+                car: {
+                    make: booking.car.make,
+                    carModel: booking.car.carModel,
+                },
+                customer: booking.customer.toString(),
+                timeInterval: {
+                    start: new Date(booking.timeInterval.start),
+                    end: new Date(booking.timeInterval.end),
+                },
+                status: booking.status,
+                totalAmount: booking.totalAmount,
+            }
+        });
+
+        return bookings;
+    } catch (error) {
+        throw new Error(`Failed to fetch upcoming rentals: ${error}`);
+    }
+});
+
+export const getBookingById = cache(async (bookingId: string): Promise<IBooking | null> => {
     try {
         const db = await connectDB();
         const fetchedBooking = await db.collection('bookings').aggregate([
@@ -163,8 +256,6 @@ export async function getBookingById(bookingId: string) {
                 drivingSince: booking.customer.drivingSince ? new Date(booking.customer.drivingSince) : null,
                 bookings: booking.customer.bookings ? booking.customer.bookings.map((booking: IBooking) => booking.toString()) : [],
                 invoices: booking.customer.invoices ? booking.customer.invoices.map((invoice: IBooking) => invoice.toString()) : [],
-                /* createdAt: booking.customer.createdAt ? new Date(booking.customer.createdAt).toISOString().split("T")[0] : null, */
-                /* updatedAt: booking.customer.updatedAt ? new Date(booking.customer.updatedAt).toISOString().split("T")[0] : null, */
             } : null,
             car: booking.car ? {
                 ...booking.car,
@@ -182,8 +273,6 @@ export async function getBookingById(bookingId: string) {
                 drivingSince: booking.driver.drivingSince ? new Date(booking.driver.drivingSince) : null,
                 bookings: booking.driver.bookings ? booking.driver.bookings.map((booking: IBooking) => booking.toString()) : [],
                 invoices: booking.driver.invoices ? booking.driver.invoices.map((invoice: IInvoice) => invoice.toString()) : [],
-                /* createdAt: booking.driver.createdAt ? new Date(booking.driver.createdAt).toISOString().split("T")[0] : null, */
-                /* updatedAt: booking.driver.updatedAt ? new Date(booking.driver.updatedAt).toISOString().split("T")[0] : null, */
             } : null,
             timeInterval: {
                 start: new Date(booking.timeInterval.start),
@@ -191,10 +280,12 @@ export async function getBookingById(bookingId: string) {
             },
             status: booking.status,
             totalAmount: booking.totalAmount,
+            createdAt: booking.createdAt,
+            updatedAt: booking.updatedAt,
         };
 
         return formattedBooking;
     } catch (error) {
         throw new Error(`Failed to fetch booking: ${error}`);
     }
-}
+});

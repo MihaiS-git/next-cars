@@ -3,70 +3,92 @@
 import { getUserByEmail } from "@/lib/db/users";
 import { getInvoicesByUser } from "@/lib/db/invoices";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useState } from "react";
 import CloseButton from "@/components/ui/CloseButton";
-import { IBooking, IInvoice, User } from "@/lib/definitions";
+import { IDashboardBooking, IInvoice, User } from "@/lib/definitions";
 import { getPastRentals, getUpcomingRentals } from "@/lib/db/bookings";
-import DashboardRentalsSlice from "@/components/ui/dashboard/DashboardRentalsSlice";
-import DashboardInvoicesSlice from "@/components/ui/dashboard/DashboardInvoicesSlice";
+import { useQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
+
+const DashboardInvoicesSlice = dynamic(() => import('@/components/ui/dashboard/DashboardInvoicesSlice'), { ssr: false });
+const DashboardRentalsSlice = dynamic(() => import('@/components/ui/dashboard/DashboardRentalsSlice'), { ssr: false });
 
 export default function DashboardPage() {
-    const [user, setUser] = useState<User | null>(null);
-    const [upcomingBookingsData, setUpcomingBookingsData] = useState<
-        IBooking[] | null
-    >(null);
-    const [pastBookingsData, setPastBookingsData] = useState<IBooking[] | null>(
-        null
-    );
-    const [invoices, setInvoices] = useState<IInvoice[] | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string>("");
-
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const email = session?.user?.email;
 
-    const fetchData = useCallback(async () => {
-        if (status === "authenticated" && email) {
-            try {
-                const fetchedUser = await getUserByEmail(email);
-                if (!fetchedUser) {
-                    setError("User not found");
-                    return;
-                }
-                setUser(fetchedUser);
+    const {
+        data: user,
+        isLoading: isUserLoading,
+        error: userError,
+    } = useQuery<User | null>({
+        queryKey: ["user", email],
+        queryFn: async () => {
+            if (!email) return null;
+            return getUserByEmail(email as string);
+        },
+        enabled: !!email,
+        staleTime: 6 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
-                const fetchedUserBookings = fetchedUser.bookings
-                    ? fetchedUser.bookings!.map((booking) => booking.toString())
-                    : [];
+    const {
+        data: upcomingBookingsData,
+        isLoading: isUpcomingBookingsLoading,
+        error: upcomingBookingsError,
+    } = useQuery<IDashboardBooking[] | null>({
+        queryKey: ["upcomingBookings", user],
+        queryFn: async () => {
+            if (!email) return null;
+            return getUpcomingRentals(
+                user?.bookings?.map((booking) => booking.toString()) || []
+            );
+        },
+        enabled: !!user,
+        staleTime: 6 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
-                if (fetchedUser) {
-                    const [
-                        upcomingBookingsData,
-                        pastBookingsData,
-                        invoicesData,
-                    ] = await Promise.all([
-                        getUpcomingRentals(fetchedUserBookings),
-                        getPastRentals(fetchedUserBookings),
-                        getInvoicesByUser(fetchedUser._id!.toString()),
-                    ]);
+    const {
+        data: pastBookingsData,
+        isLoading: isPastBookingsLoading,
+        error: pastBookingsError,
+    } = useQuery<IDashboardBooking[] | null>({
+        queryKey: ["pastBookings", user],
+        queryFn: async () => {
+            if (!email) return null;
+            return getPastRentals(
+                user?.bookings?.map((booking) => booking.toString()) || []
+            );
+        },
+        enabled: !!user,
+        staleTime: 6 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
-                    setUpcomingBookingsData(upcomingBookingsData);
-                    setPastBookingsData(pastBookingsData);
-                    setInvoices(invoicesData);
-                }
-            } catch (error) {
-                setError(`Failed to fetch data: ${error}`);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-    }, [status, email]);
+    const {
+        data: invoicesData,
+        isLoading: isInvoicesLoading,
+        error: invoicesError,
+    } = useQuery<IInvoice[] | null>({
+        queryKey: ["invoices", email],
+        queryFn: async () => {
+            if (!user!._id) return null;
+            return getInvoicesByUser(user?._id!.toString() || "");
+        },
+        enabled: !!user,
+        staleTime: 6 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
-    useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+    const isLoading =
+        isUserLoading ||
+        isUpcomingBookingsLoading ||
+        isPastBookingsLoading ||
+        isInvoicesLoading;
 
-    if (!user) {
+    const error = userError ? userError.message : "";
+
+    if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-red-600 m-8 mx-auto mt-48 mb-8"></div>
@@ -75,47 +97,52 @@ export default function DashboardPage() {
         );
     }
 
+    if (error) {
+        return (
+            <div className="text-center h-80 flex items-center justify-center">
+                {error.includes("User not found") ? (
+                    <p>
+                        Please fill in your{" "}
+                        <a href="/account" className="underline">
+                            Account
+                        </a>{" "}
+                        details first.
+                    </p>
+                ) : (
+                    <p>{error}</p>
+                )}
+            </div>
+        );
+    }
+
     return (
         <>
-            {error ? (
-                <div className="text-center h-80 flex items-center justify-center">
-                    {error.includes("User not found") ? (
-                        <p>
-                            Please fill in your{" "}
-                            <a href="/account" className="underline">
-                                Account
-                            </a>{" "}
-                            details first.
-                        </p>
-                    ) : (
-                        <p>{error}</p>
-                    )}
+            <div className="container mx-auto">
+                <h1 className="mb-4 mt-8 text-zinc-200 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
+                    <em>Dashboard</em>
+                </h1>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
+                    <DashboardRentalsSlice
+                        error={upcomingBookingsError}
+                        isLoading={isLoading}
+                        bookingsData={upcomingBookingsData ?? null}
+                        sliceTitle="Upcoming Rentals"
+                        user={user!}
+                    />
+                    <DashboardRentalsSlice
+                        error={pastBookingsError}
+                        isLoading={isLoading}
+                        bookingsData={pastBookingsData ?? null}
+                        sliceTitle="Past Rentals"
+                        user={user!}
+                    />
+                    <DashboardInvoicesSlice
+                        error={invoicesError}
+                        isLoading={isLoading}
+                        invoices={invoicesData ?? null}
+                    />
                 </div>
-            ) : (
-                <div className="container mx-auto">
-                    <h1 className="mb-4 mt-8 text-zinc-200 font-semibold text-xl lg:font-bold lg:text-2xl text-center">
-                        <em>Dashboard</em>
-                    </h1>
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
-                        <DashboardRentalsSlice
-                            isLoading={isLoading}
-                            bookingsData={upcomingBookingsData}
-                            sliceTitle="Upcoming Rentals"
-                            user={user}
-                        />
-                        <DashboardRentalsSlice
-                            isLoading={isLoading}
-                            bookingsData={pastBookingsData}
-                            sliceTitle="Past Rentals"
-                            user={user}
-                        />
-                        <DashboardInvoicesSlice
-                            isLoading={isLoading}
-                            invoices={invoices}
-                        />
-                    </div>
-                </div>
-            )}
+            </div>
             <div className="w-full flex flex-row justify-end pb-4 pe-4">
                 <CloseButton target="/" />
             </div>
