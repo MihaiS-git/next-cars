@@ -3,6 +3,7 @@
 import { ObjectId } from "mongodb";
 import { IBooking, IPicture, User } from "../definitions";
 import { connectDB } from "../mongoDb";
+import { cache } from "react";
 
 export async function getAllDriversSummary(): Promise<IPicture[]> {
     try {
@@ -56,7 +57,7 @@ export async function getAllDriversPaginated(page: number = 1, limit: number = 1
     }
 }
 
-export async function getDriverBySlug(slug: string): Promise<User | null> {
+export const  getDriverBySlug = cache(async(slug: string): Promise<User | null> => {
     try {
         const db = await connectDB();
         const result = await db.collection('users').find({ _id: new ObjectId(slug) }).toArray();
@@ -81,7 +82,7 @@ export async function getDriverBySlug(slug: string): Promise<User | null> {
     } catch (error) {
         throw new Error(`Something wrong happened: ${error}`);
     }
-}
+});
 
 export async function getDriverByIdWithBookings(id: string) {
     try {
