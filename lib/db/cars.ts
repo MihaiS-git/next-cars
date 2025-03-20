@@ -3,6 +3,7 @@
 import { IBooking, ICar, IPicture } from "@/lib/definitions";
 import { connectDB } from "@/lib/mongoDb";
 import { ObjectId } from "mongodb";
+import { cache } from "react";
 
 export async function getAllCarsWithOnePicture(): Promise<IPicture[]> {
     try {
@@ -172,7 +173,7 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
     }
 }
 
-export const getCarBySlug = async (slug: string) => {
+export const getCarBySlug = cache(async (slug: string) => {
     try {
         const db = await connectDB();
         const car = await db.collection('cars').aggregate([
@@ -328,7 +329,7 @@ export const getCarBySlug = async (slug: string) => {
     } catch (error) {
         throw new Error(`Something wrong happened: ${error}`);
     }
-};
+});
 
 export const getCarById = async (id: string) => {
     try {
