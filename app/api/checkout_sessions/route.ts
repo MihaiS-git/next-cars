@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: 'eur',
             product_data: {
               name: 'Invoice Payment',
             },
@@ -37,7 +37,12 @@ export async function POST(request: Request) {
       { _id: new ObjectId(invoiceId) }, { $set: { status: 'Paid' } }
     );
 
-    console.log('Invoice updated:', result.modifiedCount);
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "Invoice not found." },
+        { status: 404 }
+      )
+    }
 
     return NextResponse.redirect(session.url!, 303)
   } catch (err: unknown) {

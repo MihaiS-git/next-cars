@@ -40,7 +40,7 @@ export default function CarCard({ car, slug, page }: { car: ICar; slug: string, 
                     <p>Doors: {car.doors}</p>
                     <p>Seats: {car.seats}</p>
                     <p>Fuel: {car.fuelType}</p>
-                    <p>Mileage: {car.mileage}</p>
+                    <p>Mileage: {car.mileage} km</p>
                     <p>Transmission: {car.transmission}</p>
                 </CardFooter>
             </Card>
