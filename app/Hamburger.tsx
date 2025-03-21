@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import HamburgerMenu from "@/components/ui/navigation/hamburger-menu";
+import HamburgerMenu from "@/app/HamburgerMenu";
 import { Button } from "@/components/ui/button";
 
 export default function Hamburger() {

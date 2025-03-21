@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "../button";
+import { Button } from "../../components/ui/button";
 import { useState } from "react";
 
 export default function BookingForm({

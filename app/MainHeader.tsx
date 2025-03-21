@@ -1,5 +1,5 @@
-import MainNavigation from "@/components/ui/navigation/main-navigation";
-import Hamburger from "@/components/ui/navigation/hamburger";
+import MainNavigation from "@/app/MainNavigation";
+import Hamburger from "@/app/Hamburger";
 import Link from "next/link";
 
 export default function MainHeader() {

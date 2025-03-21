@@ -1,6 +1,6 @@
 "use client";
 
-import AutoCarousel from "@/components/ui/welcome/AutoCarousel";
+import AutoCarousel from "@/app/welcome/AutoCarousel";
 import { getCarsImagesForWelcomeCarousel } from "@/lib/db/cars";
 import { useEffect, useState } from "react";
 

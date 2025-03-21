@@ -1,5 +1,5 @@
 import { IInvoice } from "@/lib/definitions";
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/util/format-currency";
 import { memo } from "react";

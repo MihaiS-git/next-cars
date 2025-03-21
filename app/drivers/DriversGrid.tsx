@@ -1,5 +1,5 @@
 import { User } from "@/lib/definitions";
-import DriverCard from "@/components/ui/drivers/DriverCard";
+import DriverCard from "@/app/drivers/DriverCard";
 
 export default function DriversGrid({
   initialDrivers,

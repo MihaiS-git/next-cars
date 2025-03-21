@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
-import LogoutButton from "@/components/ui/auth/LogoutButton";
-import { Button } from "../button";
+import LogoutButton from "@/app/LogoutButton";
+import { Button } from "../components/ui/button";
 
 export default function MainNavigation() {
     const { status } = useSession();

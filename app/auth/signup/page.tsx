@@ -1,6 +1,6 @@
 'use client';
 
-import SignupForm from "@/components/ui/auth/SignupForm";
+import SignupForm from "@/app/auth/signup/SignupForm";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { redirect } from "next/navigation";

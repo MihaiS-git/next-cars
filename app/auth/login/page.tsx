@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 
-import LoginForm from "@/components/ui/auth/LoginForm";
+import LoginForm from "@/app/auth/login/LoginForm";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { redirect } from "next/navigation";

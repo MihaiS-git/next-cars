@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { User } from "@/lib/definitions";
-import CloseButton from "../CloseButton";
+import CloseButton from "../../../components/ui/CloseButton";
 
 export default function CarDetails({ driver, page }: { driver: User, page: string }) {
     return (

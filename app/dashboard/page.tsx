@@ -9,8 +9,8 @@ import { getPastRentals, getUpcomingRentals } from "@/lib/db/bookings";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 
-const DashboardInvoicesSlice = dynamic(() => import('@/components/ui/dashboard/DashboardInvoicesSlice'), { ssr: false });
-const DashboardRentalsSlice = dynamic(() => import('@/components/ui/dashboard/DashboardRentalsSlice'), { ssr: false });
+const DashboardInvoicesSlice = dynamic(() => import('./DashboardInvoicesSlice'), { ssr: false });
+const DashboardRentalsSlice = dynamic(() => import('./DashboardRentalsSlice'), { ssr: false });
 
 export default function DashboardPage() {
     const { data: session } = useSession();

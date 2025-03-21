@@ -1,5 +1,5 @@
 import { ICar } from "@/lib/definitions";
-import CloseButton from "../CloseButton";
+import CloseButton from "../../../components/ui/CloseButton";
 import CarDetailsCarousel from "./CarDetailsCarousel";
 
 export default function CarDetails({ car, page, filters }: { car: ICar; page: number, filters: {category: string, transmission: string} }) {

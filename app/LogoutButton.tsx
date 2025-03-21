@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { Button } from "../button";
+import { Button } from "../components/ui/button";
 
 export default function LogoutButton() {
     const { status, update } = useSession();

@@ -1,5 +1,5 @@
 import { getDriverBySlug } from "@/lib/db/drivers";
-import DriverDetails from "@/components/ui/drivers/DriverDetails";
+import DriverDetails from "@/app/drivers/[driverSlug]/DriverDetails";
 import { Metadata } from "next";
 
 export async function generateMetadata({

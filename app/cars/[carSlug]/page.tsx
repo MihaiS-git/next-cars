@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { getCarBySlug } from "@/lib/db/cars";
-import CarDetails from "@/components/ui/cars/CarDetails";
+import CarDetails from "@/app/cars/[carSlug]/CarDetails";
 
 export async function generateMetadata({ params }: { params: Promise<{ carSlug: string }> }): Promise<Metadata> {
     const { carSlug } = await params;

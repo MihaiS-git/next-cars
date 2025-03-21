@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Carousel, CarouselContent, CarouselItem } from "../carousel";
+import { Carousel, CarouselContent, CarouselItem } from "../../components/ui/carousel";
 import Image from "next/image";
 import { IPicture } from "@/lib/definitions";
 import React from "react";

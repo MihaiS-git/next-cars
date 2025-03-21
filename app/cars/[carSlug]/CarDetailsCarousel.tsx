@@ -1,7 +1,7 @@
 'use client';
 
 import { ICar } from "@/lib/definitions";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../../../components/ui/carousel";
 import Image from "next/image";
 
 export default function CarDetailsCarousel({ car }: { car: ICar }) {

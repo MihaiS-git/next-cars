@@ -1,5 +1,5 @@
 import CloseButton from "@/components/ui/CloseButton";
-import DriversGrid from "@/components/ui/drivers/DriversGrid";
+import DriversGrid from "@/app/drivers/DriversGrid";
 import PaginationControls from "@/components/ui/navigation/PaginationControls";
 import { getAllDriversPaginated } from "@/lib/db/drivers";
 import { User } from "@/lib/definitions";

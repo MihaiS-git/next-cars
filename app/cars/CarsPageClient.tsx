@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import CarsGrid from "@/components/ui/cars/CarsGrid";
+import CarsGrid from "@/app/cars/CarsGrid";
 import CloseButton from "@/components/ui/CloseButton";
 import PaginationControls from "@/components/ui/navigation/PaginationControls";
 import { ICar } from "@/lib/definitions";

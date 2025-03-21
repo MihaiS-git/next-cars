@@ -3,8 +3,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 
-import MainHeader from "@/components/ui/main-header";
-import MainFooter from "@/components/ui/main-footer";
+import MainHeader from "@/app/MainHeader";
+import MainFooter from "@/app/MainFooter";
 import { metadata } from "@/app/layout-server";
 import "./globals.css";
 import { queryClient } from "@/lib/queryClient";

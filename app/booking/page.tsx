@@ -9,8 +9,8 @@ import { getAllCarsWithOnePicture } from "@/lib/db/cars";
 import { getAllDriversSummary } from "@/lib/db/drivers";
 
 // Dynamically import components
-const BookingCarousel = dynamic(() => import("@/components/ui/booking/booking-carousel"));
-const BookingForm = dynamic(() => import("@/components/ui/booking/BookingForm"));
+const BookingCarousel = dynamic(() => import("@/app/booking/BookingCarousel"));
+const BookingForm = dynamic(() => import("@/app/booking/BookingForm"));
 const CloseButton = dynamic(() => import("@/components/ui/CloseButton"));
 
 export default function BookingPage() {
