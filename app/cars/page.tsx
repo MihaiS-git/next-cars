@@ -1,6 +1,6 @@
 import { getAllCarsWithPicturesPaginated } from "@/lib/db/cars";
-import CarsPageServer from "./CarsPageServer";
 import { Metadata } from "next";
+import CarsPageClient from "./CarsPageClient";
 
 export async function generateMetadata({
     searchParams,
@@ -29,4 +29,31 @@ export async function generateMetadata({
     };
 }
 
-export default CarsPageServer;
+export default async function CarsPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ page?: string; category?: string, transmission?: string }>;
+}) {
+    const { page = "1", category = "All", transmission="All" } = await searchParams;
+    const pageNo = parseInt(page || "1", 10);
+
+    const filters = {
+        category: category,
+        transmission: transmission,
+    };
+
+    const { cars, totalCount } = await getAllCarsWithPicturesPaginated(
+        pageNo,
+        10,
+        filters
+    );
+
+    return (
+        <CarsPageClient
+            cars={cars}
+            totalCount={totalCount}
+            pageNo={pageNo}
+            filters={filters}
+        />
+    );
+}
