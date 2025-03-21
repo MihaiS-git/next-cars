@@ -1,7 +1,7 @@
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../pagination";
 
-export default function PaginationControls({ searchParams }: { searchParams: { currentPage: number; totalPages: number } }) {
-    const { currentPage, totalPages } = searchParams;
+export default function PaginationControls({ searchParams }: { searchParams: { currentPage: number; totalPages: number, category?: string  } }) {
+    const { currentPage, totalPages, category } = searchParams;
 
     return (
         <>
@@ -9,7 +9,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                 <PaginationContent>
                     <PaginationItem>
                         <PaginationPrevious
-                            href={`?page=${currentPage - 1}`}
+                            href={`?category=${category}&page=${currentPage - 1}`}
                             className={`hover:text-zinc-900 hover:bg-red-600 ${
                                 currentPage === 1 ? "hidden disabled" : ""
                             }`}
@@ -18,7 +18,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage > 2 && (
                         <PaginationItem>
                             <PaginationLink
-                                href="?page=1"
+                                href={`?category=${category}&page=1`}
                                 className="hover:text-zinc-900 hover:bg-red-600 active:border-red-600 active:rounded-sm"
                             >
                                 1
@@ -33,7 +33,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage > 1 && (
                         <PaginationItem>
                             <PaginationLink
-                                href={`?page=${currentPage - 1}`}
+                                href={`?category=${category}&page=${currentPage - 1}`}
                                 className="hover:text-zinc-900 hover:bg-red-600"
                             >
                                 {currentPage - 1}
@@ -43,7 +43,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
 
                     <PaginationItem className="">
                         <PaginationLink
-                            href={`?page=${currentPage}`}
+                            href={`?category=${category}&page=${currentPage}`}
                             className="hover:text-zinc-900 hover:bg-red-600 border border-red-600 rounded-sm"
                         >
                             {currentPage}
@@ -53,7 +53,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage < totalPages && (
                         <PaginationItem>
                             <PaginationLink
-                                href={`?page=${currentPage + 1}`}
+                                href={`?category=${category}&page=${currentPage + 1}`}
                                 className="hover:text-zinc-900 hover:bg-red-600"
                             >
                                 {currentPage + 1}
@@ -70,7 +70,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage < totalPages - 1 && (
                         <PaginationItem className="">
                             <PaginationLink
-                                href={`?page=${totalPages}`}
+                                href={`?category=${category}&page=${totalPages}`}
                                 className="hover:text-zinc-900 hover:bg-red-600 active:border-red-600 active:rounded-sm"
                             >
                                 {totalPages}
@@ -80,7 +80,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
 
                     <PaginationItem>
                         <PaginationNext
-                            href={`?page=${currentPage + 1}`}
+                            href={`?category=${category}&page=${currentPage + 1}`}
                             className={`hover:text-zinc-900 hover:bg-red-600 ${
                                 currentPage === totalPages
                                     ? "hidden disabled"

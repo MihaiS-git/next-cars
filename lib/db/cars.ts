@@ -68,12 +68,18 @@ export async function getCarsImagesForWelcomeCarousel() {
     }
 }
 
-export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: number = 10) {
+export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: number = 10,  category: string = "All"): Promise<{ cars: ICar[], totalCount: number }> {
     try {
         const db = await connectDB();
         const skip = (page - 1) * limit;
 
+        const matchStage: Record<string, unknown> = {};
+        if (category && category !== "All") {
+            matchStage.category = category;
+        }
+
         const cars = await db.collection('cars').aggregate([
+            { $match: matchStage },
             {
                 $lookup: {
                     from: 'carimagesanddocuments',
@@ -87,8 +93,8 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
             { $limit: limit },
         ]).toArray();
 
-        const totalCount = await db.collection("cars").countDocuments();
-
+        const totalCount = await db.collection("cars").countDocuments(matchStage);
+        
         if (!cars[0]) return { cars: [], totalCount };
 
         const mappedCars: ICar[] = cars.map(car => ({
@@ -102,35 +108,6 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
             _id: car._id.toString(),
             seats: car.seats,
             doors: car.doors,
-
-            carRentalDetails: car.carRentalDetails
-                ? car.carRentalDetails._id
-                    ? {
-                        _id: car.carRentalDetails._id?.toString(),
-                        rentalPricePerDay: car.carRentalDetails.rentalPricePerDay,
-                        currency: car.carRentalDetails.currency,
-                        availabilityStatus: car.carRentalDetails.availabilityStatus,
-                        carLocation: car.carRentalDetails.carLocation,
-                        minRentalPeriod: car.carRentalDetails.minRentalPeriod,
-                        maxRentalPeriod: car.carRentalDetails.maxRentalPeriod
-                    }
-                    : car.carRentalDetails.toString()
-                : null,
-
-            carFeaturesAndSpecifications: car.carFeaturesAndSpecifications
-                ? car.carFeaturesAndSpecifications._id
-                    ? {
-                        _id: car.carFeaturesAndSpecifications._id?.toString(),
-                        airConditioning: car.carFeaturesAndSpecifications.airConditioning,
-                        gps: car.carFeaturesAndSpecifications.gps,
-                        bluetooth: car.carFeaturesAndSpecifications.bluetooth,
-                        fuelPolicy: car.carFeaturesAndSpecifications.fuelPolicy,
-                        insuranceIncluded: car.carFeaturesAndSpecifications.insuranceIncluded,
-                        additionalFeatures: car.carFeaturesAndSpecifications.additionalFeatures
-                    }
-                    : car.carFeaturesAndSpecifications.toString()
-                : null,
-
             carImagesAndDocuments: car.carImagesAndDocuments
                 ? car.carImagesAndDocuments._id
                     ? {
@@ -141,30 +118,6 @@ export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: n
                     }
                     : car.carImagesAndDocuments.toString()
                 : null,
-
-            rentalAgencyDetails: car.rentalAgencyDetails
-                ? car.rentalAgencyDetails._id
-                    ? {
-                        _id: car.rentalAgencyDetails._id?.toString(),
-                        agencyName: car.rentalAgencyDetails.agencyName,
-                        contactNumber: car.rentalAgencyDetails.contactNumber
-                    }
-                    : car.rentalAgencyDetails.toString()
-                : null,
-
-            bookings: car.bookings
-                ? car.bookings.map((booking: IBooking) => ({
-                    _id: booking._id?.toString(),
-                    customer: booking.customer?.toString(),
-                    car: booking.car?.toString(),
-                    driver: booking.driver?.toString(),
-                    timeInterval: booking.timeInterval,
-                    status: booking.status,
-                    totalAmount: booking.totalAmount,
-                }))
-                : [],
-            /* createdAt: car[0].createdAt, */
-            /* updatedAt: car[0].updatedAt, */
         }));
 
         return { cars: mappedCars, totalCount };
@@ -240,9 +193,6 @@ export const getCarBySlug = cache(async (slug: string) => {
                     carImagesAndDocuments: { $arrayElemAt: ["$carImagesAndDocuments", 0] },
                     rentalAgencyDetails: { $arrayElemAt: ["$rentalAgencyDetails", 0] },
                     bookings: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
-                    __v: 1
                 }
             }
         ]).toArray();
@@ -321,8 +271,6 @@ export const getCarBySlug = cache(async (slug: string) => {
                     totalAmount: booking.totalAmount,
                 }))
                 : [],
-            /* createdAt: car[0].createdAt, */
-            /* updatedAt: car[0].updatedAt, */
         });
 
         return mappedCar;
@@ -398,9 +346,6 @@ export const getCarById = async (id: string) => {
                     carImagesAndDocuments: { $arrayElemAt: ["$carImagesAndDocuments", 0] },
                     rentalAgencyDetails: { $arrayElemAt: ["$rentalAgencyDetails", 0] },
                     bookings: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
-                    __v: 1
                 }
             }
         ]).toArray();
@@ -479,8 +424,6 @@ export const getCarById = async (id: string) => {
                     totalAmount: booking.totalAmount,
                 }))
                 : [],
-            /* createdAt: car[0].createdAt, */
-            /* updatedAt: car[0].updatedAt, */
         });
 
         return mappedCar;
@@ -505,12 +448,11 @@ export async function getCarSummaryById(id: string) {
             carFeaturesAndSpecifications: car.carFeaturesAndSpecifications.toString(),
             carImagesAndDocuments: car.carImagesAndDocuments.toString(),
             rentalAgencyDetails: car.rentalAgencyDetails.toString(),
-            bookings: car.bookings? car.bookings.map((booking: IBooking) => booking.toString()) : [],
+            bookings: car.bookings ? car.bookings.map((booking: IBooking) => booking.toString()) : [],
         });
 
         return mappedCar;
     } catch (error) {
         throw new Error(`Something wrong happened: ${error}`);
     }
- }
-    
+}
