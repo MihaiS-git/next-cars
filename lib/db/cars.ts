@@ -68,16 +68,16 @@ export async function getCarsImagesForWelcomeCarousel() {
     }
 }
 
-export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: number = 10,  filters: {category: string, transmission: string}): Promise<{ cars: ICar[], totalCount: number }> {
+export async function getAllCarsWithPicturesPaginated(page: number = 1, limit: number = 10,  filters?: {category: string, transmission: string}): Promise<{ cars: ICar[], totalCount: number }> {
     try {
         const db = await connectDB();
         const skip = (page - 1) * limit;
 
         const matchStage: Record<string, unknown> = {};
-        if (filters.category && filters.category !== "All") {
+        if (filters && filters.category && filters.category !== "All") {
             matchStage.category = filters.category;
         }
-        if (filters.transmission && filters.transmission !== "All") {
+        if (filters && filters.transmission && filters.transmission !== "All") {
             matchStage.transmission = filters.transmission;
         }
 
