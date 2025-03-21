@@ -4,11 +4,11 @@ import CarCard from "./CarCard";
 export default function CarsGrid({
     initialCars,
     page,
-    category
+    filters
 }: {
     initialCars: ICar[];
         page: number;
-        category: string;
+        filters: { category: string, transmission: string };
 }) {
     return (
         <div className="p-4">
@@ -18,7 +18,7 @@ export default function CarsGrid({
                         <CarCard
                             car={car}
                             page={page}
-                            category={category}
+                            filters={filters}
                             slug={car._id?.toString() || ""}
                         />
                     </li>

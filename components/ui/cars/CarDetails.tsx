@@ -2,7 +2,7 @@ import { ICar } from "@/lib/definitions";
 import CloseButton from "../CloseButton";
 import CarDetailsCarousel from "./CarDetailsCarousel";
 
-export default function CarDetails({ car, page, category }: { car: ICar; page: number, category: string }) {
+export default function CarDetails({ car, page, filters }: { car: ICar; page: number, filters: {category: string, transmission: string} }) {
     return (
         <div>
             <div>
@@ -139,7 +139,7 @@ export default function CarDetails({ car, page, category }: { car: ICar; page: n
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end p-4">
-                <CloseButton target={`/cars?category=${category}&page=${page}`} />
+                <CloseButton target={`/cars?category=${filters.category}&transmission=${filters.transmission}&page=${page}`} />
             </div>
         </div>
     );

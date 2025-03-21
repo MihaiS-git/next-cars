@@ -1,7 +1,7 @@
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../pagination";
 
-export default function PaginationControls({ searchParams }: { searchParams: { currentPage: number; totalPages: number, category?: string  } }) {
-    const { currentPage, totalPages, category } = searchParams;
+export default function PaginationControls({ searchParams }: { searchParams: { currentPage: number; totalPages: number, filters?: {category?: string, transmission: string}  } }) {
+    const { currentPage, totalPages, filters } = searchParams;
 
     return (
         <>
@@ -9,7 +9,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                 <PaginationContent>
                     <PaginationItem>
                         <PaginationPrevious
-                            href={`?category=${category}&page=${currentPage - 1}`}
+                            href={`?category=${filters?.category}&transmission=${filters?.transmission}&page=${currentPage - 1}`}
                             className={`hover:text-zinc-900 hover:bg-red-600 ${
                                 currentPage === 1 ? "hidden disabled" : ""
                             }`}
@@ -18,7 +18,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage > 2 && (
                         <PaginationItem>
                             <PaginationLink
-                                href={`?category=${category}&page=1`}
+                                href={`?category=${filters?.category}&transmission=${filters?.transmission}&page=1`}
                                 className="hover:text-zinc-900 hover:bg-red-600 active:border-red-600 active:rounded-sm"
                             >
                                 1
@@ -33,7 +33,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage > 1 && (
                         <PaginationItem>
                             <PaginationLink
-                                href={`?category=${category}&page=${currentPage - 1}`}
+                                href={`?category=${filters?.category}&transmission=${filters?.transmission}&page=${currentPage - 1}`}
                                 className="hover:text-zinc-900 hover:bg-red-600"
                             >
                                 {currentPage - 1}
@@ -43,7 +43,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
 
                     <PaginationItem className="">
                         <PaginationLink
-                            href={`?category=${category}&page=${currentPage}`}
+                            href={`?category=${filters?.category}&transmission=${filters?.transmission}&page=${currentPage}`}
                             className="hover:text-zinc-900 hover:bg-red-600 border border-red-600 rounded-sm"
                         >
                             {currentPage}
@@ -53,7 +53,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage < totalPages && (
                         <PaginationItem>
                             <PaginationLink
-                                href={`?category=${category}&page=${currentPage + 1}`}
+                                href={`?category=${filters?.category}&transmission=${filters?.transmission}&page=${currentPage + 1}`}
                                 className="hover:text-zinc-900 hover:bg-red-600"
                             >
                                 {currentPage + 1}
@@ -70,7 +70,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
                     {currentPage < totalPages - 1 && (
                         <PaginationItem className="">
                             <PaginationLink
-                                href={`?category=${category}&page=${totalPages}`}
+                                href={`?category=${filters?.category}&transmission=${filters?.transmission}&page=${totalPages}`}
                                 className="hover:text-zinc-900 hover:bg-red-600 active:border-red-600 active:rounded-sm"
                             >
                                 {totalPages}
@@ -80,7 +80,7 @@ export default function PaginationControls({ searchParams }: { searchParams: { c
 
                     <PaginationItem>
                         <PaginationNext
-                            href={`?category=${category}&page=${currentPage + 1}`}
+                            href={`?category=${filters?.category}&transmission=${filters?.transmission}&page=${currentPage + 1}`}
                             className={`hover:text-zinc-900 hover:bg-red-600 ${
                                 currentPage === totalPages
                                     ? "hidden disabled"

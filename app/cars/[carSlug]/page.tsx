@@ -23,10 +23,15 @@ export async function generateMetadata({ params }: { params: Promise<{ carSlug: 
 }
 
 
-export default async function CarSlug({params, searchParams,}: {params: Promise<{ carSlug: string }>; searchParams: Promise<{ page: number, category: string }>;}) {
+export default async function CarSlug({params, searchParams,}: {params: Promise<{ carSlug: string }>; searchParams: Promise<{ page: number, category: string, transmission: string }>;}) {
     const { carSlug } = await params;
-    const { page, category } = await searchParams;
+    const { page, category, transmission } = await searchParams;
     const car = await getCarBySlug(carSlug);
+
+    const filters = {
+        category: category,
+        transmission: transmission,
+    };
 
     if (!car) {
         return (
@@ -36,5 +41,5 @@ export default async function CarSlug({params, searchParams,}: {params: Promise<
         );
     }
 
-    return <CarDetails car={car} page={page} category={category} />;
+    return <CarDetails car={car} page={page} filters={filters} />;
 }

@@ -11,12 +11,12 @@ export default function CarsPageClient({
     cars,
     totalCount,
     pageNo,
-    category,
+    filters,
 }: {
     cars: ICar[];
     totalCount: number;
     pageNo: number;
-     category: string;
+    filters: { category: string; transmission: string };
 }) {
     const router = useRouter();
 
@@ -47,27 +47,53 @@ export default function CarsPageClient({
                 <>
                     <form
                         action="get"
-                        className="flex flex-row justify-start px-4"
+                        className="flex flex-row justify-start ps-4 gap-2"
                     >
-                        <label htmlFor="category">Category: </label>
-                        <select
-                            className="mx-2 text-zinc-950"
-                            name="category"
-                            id="category"
-                            defaultValue={category || "All"}
-                            onChange={(e) => handleFiltersChange("category", e.target.value)}
-                        >
-                            <option value="All">All</option>
-                            <option value="Classic">Classic</option>
-                            <option value="Sport">Sport</option>
-                            <option value="Sedan">Sedan</option>
-                            <option value="SUV">SUV</option>
-                        </select>
+                        <div>
+                            <label htmlFor="category">Category: </label>
+                            <select
+                                className="mx-2 text-zinc-950"
+                                name="category"
+                                id="category"
+                                defaultValue={filters.category || "All"}
+                                onChange={(e) =>
+                                    handleFiltersChange(
+                                        "category",
+                                        e.target.value
+                                    )
+                                }
+                            >
+                                <option value="All">All</option>
+                                <option value="Classic">Classic</option>
+                                <option value="Sport">Sport</option>
+                                <option value="Sedan">Sedan</option>
+                                <option value="SUV">SUV</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="transmission">Transmission: </label>
+                            <select
+                                className="mx-2 text-zinc-950"
+                                name="transmission"
+                                id="transmission"
+                                defaultValue={filters.transmission || "All"}
+                                onChange={(e) =>
+                                    handleFiltersChange(
+                                        "transmission",
+                                        e.target.value
+                                    )
+                                }
+                            >
+                                <option value="All">All</option>
+                                <option value="Automatic">Automatic</option>
+                                <option value="Manual">Manual</option>
+                            </select>
+                        </div>
                     </form>
                     <CarsGrid
                         initialCars={cars}
                         page={pageNo}
-                        category={category}
+                        filters={filters}
                     />
                 </>
             )}
@@ -75,7 +101,7 @@ export default function CarsPageClient({
                 searchParams={{
                     currentPage: pageNo,
                     totalPages: Math.ceil(totalCount / 10),
-                    category: category,
+                    filters: filters,
                 }}
             />
             <div className="flex flex-row justify-end w-full pe-4 pb-4">

@@ -10,9 +10,9 @@ import Image from "next/image";
 import { ICar } from "@/lib/definitions";
 import Link from "next/link";
 
-export default function CarCard({ car, slug, page, category }: { car: ICar; slug: string, page: number, category: string }) {
+export default function CarCard({ car, slug, page, filters }: { car: ICar; slug: string, page: number, filters: {category: string, transmission: string} }) {
     return (
-        <Link href={`/cars/${slug}?category=${category}&page=${page}`} prefetch={true} className="hover:animate-pulse">
+        <Link href={`/cars/${slug}?category=${filters.category}&transmission=${filters.transmission}&page=${page}`} prefetch={true} className="hover:animate-pulse">
             <Card className="bg-zinc-900 text-zinc-200 border border-red-600 shadow-lg shadow-red-200/50">
                 <CardHeader>
                     <CardTitle>{car.make}</CardTitle>
