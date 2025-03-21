@@ -1,7 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { Carousel, CarouselContent, CarouselItem } from "../../components/ui/carousel";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+} from "../../components/ui/carousel";
 import Image from "next/image";
 import { IPicture } from "@/lib/definitions";
 import React from "react";
@@ -47,7 +50,9 @@ const BookingCarousel: React.FC<CarouselProps> = ({
             <h2 className="text-zinc-50 font-semibold text-lg lg:font-bold text-center">
                 Choose a {elementTag}
             </h2>
-            <p className="text-sm text-zinc-200">Swipe and click for more info</p>
+            <p className="text-sm text-zinc-200">
+                Swipe the images to see more options
+            </p>
             <Carousel ref={carouselRef}>
                 <CarouselContent>
                     {isLoading && <LoadingCarouselItem />}
@@ -58,18 +63,16 @@ const BookingCarousel: React.FC<CarouselProps> = ({
                             {...{ [dataAttribute]: element.elementId }}
                             className={`${class_carousel_item} my-auto`}
                         >
-                            <Link href={`/${baseLink}/${element.elementId}`}>
-                                <Image
-                                    src={element.elementPicture || ""}
-                                    alt="Element picture"
-                                    width={640}
-                                    height={480}
-                                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                                    quality={75}
-                                    className="border border-red-600 mx-auto"
-                                    loading="lazy"
-                                />
-                            </Link>
+                            <Image
+                                src={element.elementPicture || ""}
+                                alt="Element picture"
+                                width={640}
+                                height={480}
+                                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                                quality={75}
+                                className="border border-red-600 mx-auto cursor-pointer"
+                                loading="lazy"
+                            />
                         </CarouselItem>
                     ))}
                 </CarouselContent>
