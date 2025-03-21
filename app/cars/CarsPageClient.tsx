@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import CarsGrid from "@/components/ui/cars/CarsGrid";
 import CloseButton from "@/components/ui/CloseButton";
 import PaginationControls from "@/components/ui/navigation/PaginationControls";
@@ -42,7 +43,19 @@ export default function CarsPageClient({
                 <em>Cars List</em>
             </h1>
             {cars.length === 0 ? (
-                <h1>No cars found</h1>
+                <div className="flex flex-col items-center justify-center">
+                    <div className="text-red-600 my-48">
+                        No cars found for the selection.
+                    </div>
+                    <Button
+                        size="lg"
+                        variant="secondary"
+                        onClick={() => router.back()}
+                        className="mt-4 px-4 py-2 text-red-600 border-red-600"
+                    >
+                        Go Back
+                    </Button>
+                </div>
             ) : (
                 <>
                     <form
@@ -97,13 +110,15 @@ export default function CarsPageClient({
                     />
                 </>
             )}
-            <PaginationControls
-                searchParams={{
-                    currentPage: pageNo,
-                    totalPages: Math.ceil(totalCount / 10),
-                    filters: filters,
-                }}
-            />
+            {cars.length > 0 && (
+                <PaginationControls
+                    searchParams={{
+                        currentPage: pageNo,
+                        totalPages: Math.ceil(totalCount / 10),
+                        filters: filters,
+                    }}
+                />
+            )}
             <div className="flex flex-row justify-end w-full pe-4 pb-4">
                 <CloseButton target="/" />
             </div>
