@@ -124,7 +124,6 @@ export default function BookingPage() {
                     carouselElements={cars}
                     elementTag="car"
                     class_carousel_item="car-carousel-item"
-                    baseLink="cars"
                     dataAttribute="data-car-id"
                 />
                 <BookingCarousel
@@ -134,7 +133,6 @@ export default function BookingPage() {
                     carouselElements={drivers}
                     elementTag="driver"
                     class_carousel_item="driver-carousel-item"
-                    baseLink="drivers"
                     dataAttribute="data-driver-id"
                 />
                 <div className="lg:col-span-2 flex flex-col items-center m-auto w-full">

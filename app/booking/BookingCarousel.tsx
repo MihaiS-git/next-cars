@@ -16,7 +16,6 @@ interface CarouselProps {
     carouselElements: IPicture[];
     elementTag: string;
     class_carousel_item: string;
-    baseLink: string;
     dataAttribute: string;
 }
 
@@ -42,7 +41,6 @@ const BookingCarousel: React.FC<CarouselProps> = ({
     carouselElements,
     elementTag,
     class_carousel_item,
-    baseLink,
     dataAttribute,
 }) => {
     return (
